@@ -28,6 +28,7 @@ public class Doc implements Serializable {
 //	屬性
 	private String spec;
 	
+	
 	public Integer getId() {
 		return id;
 	}
