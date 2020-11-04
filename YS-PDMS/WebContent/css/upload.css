@@ -1,0 +1,196 @@
+.content{
+	display:flex;
+}
+/* 修改默认底色，讓input的側邊欄更加有對比性 */
+.content .input-group-text{
+	background-color:#d0d0d0;
+}
+.leftcontent{
+	width:30%;
+}
+.leftcontent .has-success input{
+	border-color: #3c763d;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+}
+.leftcontent .has-error input{
+    border-color: #a94442;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+}
+.number-error-tip{
+	color:red;
+	font-size:14px;
+	margin:-0.8rem 0 0.5rem;
+	padding-left:1rem;
+	display:none;
+}
+#toolbar .title{
+	display: flex;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+}
+#toolbar .content{
+	border:1px solid #dee2e6;
+	padding:20px 10px;
+}
+
+.reason{
+	text-align:center;
+	margin-bottom:1rem;
+}
+
+.rightcontent{
+	width:60%;
+	margin-left:5%;
+}
+.rightcontent .improveImgContent{
+	display:flex;
+}
+.rightcontent .improveImgContent .imgLeft,.rightcontent .improveImgContent .imgRight{
+	flex:1;
+	height:420px;
+}
+.rightcontent .improveImgContent .improveImg{
+	flex:1;
+	height:360px;
+	border:1px solid #dee2e6;
+	margin:10px 30px 20px;
+	overflow:hidden;
+	display:flex;
+	-webkit-box-pack:center;
+	justify-content:center;
+	-ms-flex-pack:center;
+}
+.improveImgContent{
+	
+}
+.improveImgContent label{
+	width:100%;
+	text-align:center;
+	margin-bottom:0px;
+/* 	margin-top:10px; */
+}
+.improveImgContent .uploadbefore,.improveImgContent .uploadafter{
+/* 	margin:15% 0px 0px 0px; */
+/* 	width:40%; */
+/* 	height:40%; */
+	width:100%;
+	height:100%;
+	cursor:pointer;
+}
+
+
+.rightcontent .docTitle{
+	margin-bottom:1rem;
+}
+.rightcontent .docContent{
+	display:flex;
+}
+.rightcontent .docContent input[type='text']{
+	width:75%;
+}
+.rightcontent .docContent label{
+	width:180px;
+	margin-left:20px;
+	cursor:pointer;
+}
+
+.submitContent{
+	margin:10px 30px 10px 0px;
+	display:flex;
+}
+.submitContent .submit{
+	height:48px;
+	width:120px;
+}
+.submitContent .alert{
+	margin-left:30px;
+}
+
+
+
+/* 查詢頁面的樣式 */
+.detailContent .rightcontent .improveImgContent .improveImg{
+	height:200px;
+}
+.detailContent .rightcontent .improveImgContent .imgLeft, .rightcontent .improveImgContent .imgRight{
+	height:330px;
+}
+.detailContent .leftcontent{
+	margin-top:30px;
+	width:20%;
+}
+.detailContent .btnContent{
+	text-align:center;
+}
+.detailContent .rightcontent{
+	width:40%;
+}
+.detailContent .uploadDoc .docBox{
+	height:220px;
+	overflow-y:scroll;
+	padding-right:10px;
+}
+.rightcontent .docContent a{
+	margin-bottom: 0.5rem;
+	width: 180px;
+    margin-left: 20px;
+    cursor: pointer;
+}
+.detailContent .improvePDF{
+	height:86%;
+	border:1px solid #ccc;
+	margin-bottom:10px;
+}
+.detailContent .improvePDF embed{
+	width:100%;
+	height:100%;
+	
+}
+.detailContent .uploadDocRgiht{
+	padding-top:50px;
+	margin-left:20px;
+}
+.detailContent .reason{
+	margin-top:30px;
+}
+.detailContent .docSingle{
+	margin:0px 0px 10px;
+}
+.detailContent .docSingle a{
+	display:block;
+}
+
+.detailContent .rightContent2{
+	width:30%;
+	margin-left:5%;
+}
+#ShowImage_Form{
+	background:#fff;
+	top:5%;
+	left:5%;
+	width:90%;
+	height:90%;
+}
+#ShowImage_Form .close{
+	color:#000;
+}
+#ShowImage_Form #img_show{
+	height:100%;
+}
+
+/* 查詢報表頁面 */
+#docSearchKeyWord{
+	flex:1.5;
+}
+
+
+
+
+
+
+

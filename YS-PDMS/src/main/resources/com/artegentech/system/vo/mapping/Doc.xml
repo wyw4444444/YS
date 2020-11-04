@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.IDocDAO">
+	<cache />
+	<insert id="add" parameterType="Doc" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO tbldocment(id,part_code,version,change_reason,changeimg_before,changeimg_after,doc_pdf,doc_dwg,doc_ppt)
+		VALUES(#{id},#{part_code},#{version},#{change_reason},#{changeimg_before},#{changeimg_after},#{doc_pdf},#{doc_dwg},#{doc_ppt});
+	</insert>
+	<select id="getDocByCode" resultType="Doc" parameterType="String">
+		SELECT id,part_code,version FROM tbldocment WHERE part_code=#{code};
+	</select>
+	<select id="findAllSplit" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT tbldocment.id,tbldocment.part_code,version,change_reason,changeimg_before,changeimg_after,doc_pdf,doc_dwg,doc_ppt,spec FROM tbldocment,tblpartinfo
+		<where>
+			tbldocment.part_code=tblpartinfo.part_code
+			<if test="column != null and keyword !=null">
+				and ${column} LIKE #{keyword}
+			</if>
+		</where>
+		ORDER BY tbldocment.id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="getAllCount" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM tbldocment
+		<where>
+			<if test="column != null and keyword !=null">
+				${column} LIKE #{keyword}
+			</if>
+		</where>
+	</select>
+	<select id="findOnedoc" parameterType="java.util.Map" resultType="Doc">
+		SELECT id,part_code,version,change_reason,changeimg_before,changeimg_after,doc_pdf,doc_dwg,doc_ppt FROM tbldocment WHERE part_code=#{part_code} and version=#{version};
+	</select>
+	<select id="findByPartCode" parameterType="java.util.Map" resultType="Doc">
+		SELECT tbldocment.id,tbldocment.part_code,version,change_reason,spec FROM tbldocment,tblpartinfo
+		<where>
+			tbldocment.part_code=tblpartinfo.part_code
+			<if test="part_code != null and part_code != ''">
+				and tbldocment.part_code LIKE #{part_code}
+			</if>
+		</where>
+		ORDER BY tbldocment.id ASC LIMIT #{start},#{lineSize};
+	</select>
+	<select id="findNewByPartCode" parameterType="java.util.Map" resultType="Doc">
+		select id,part_code,version,change_reason,spec
+		from(select row_number() over(partition by tbldocment.part_code order by version desc) 'rn',
+        tbldocment.id,tbldocment.part_code,version,change_reason,spec
+ 		from tbldocment,tblpartinfo where tbldocment.part_code=tblpartinfo.part_code)t where t.rn=1 and part_code like #{part_code}
+	</select>
+	<select id="findAllNewDoc" resultType="Doc">
+		select id,part_code,version,change_reason,spec
+		from(select row_number() over(partition by tbldocment.part_code order by version desc) 'rn',
+        tbldocment.id,tbldocment.part_code,version,change_reason,spec
+ 		from tbldocment,tblpartinfo where tbldocment.part_code=tblpartinfo.part_code)t where t.rn=1
+	</select>
+</mapper>

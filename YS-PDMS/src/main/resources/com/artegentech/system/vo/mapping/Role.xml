@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.IRoleDAO">
+	<cache />
+	<insert id="doCreate" parameterType="Role" useGeneratedKeys="true" keyProperty="role_id">
+		INSERT INTO tblrole(role_id,title,flag,locked) VALUES(#{role_id},#{title},#{flag},#{locked});
+	</insert>
+	<update id="doUpdate" parameterType="Role">
+		UPDATE tblrole SET flag=#{flag},title=#{title},locked=#{locked} WHERE role_id=#{role_id};
+	</update>
+	<select id="findAllRoleFlagByMid" resultType="String" parameterType="String" flushCache="true">
+		SELECT flag FROM tblrole WHERE role_id IN(
+			SELECT role_id FROM tblmember_role WHERE member_id=#{member_id}
+		);
+	</select>
+	<select id="findByFlag" resultType="Role" parameterType="String">
+		SELECT role_id,flag,title,locked FROM tblrole WHERE flag=#{flag};
+	</select>
+	<select id="findByTitle" resultType="Role" parameterType="String">
+		SELECT role_id,flag,title,locked FROM tblrole WHERE title=#{title};
+	</select>
+	<select id="findByMid" resultType="Role" parameterType="String">
+		SELECT role_id,flag,title,locked FROM tblrole WHERE role_id IN(
+			SELECT role_id FROM tblmember_role WHERE member_id=#{member_id}
+		);
+	</select>
+	<insert id="doCreateRoleAndAction" parameterType="java.util.Map">
+		INSERT INTO tblrole_action(role_id,action_id) VALUES(#{role_id},#{action_id});
+	</insert>
+	<delete id="removeRoleAndAction" parameterType="java.util.Map">
+		DELETE FROM tblrole_action WHERE role_id=#{role_id};
+	</delete>
+	<select id="findAllActionByRid" resultType="Action" parameterType="Integer" flushCache="true">
+		SELECT action_id,flag,title,locked FROM tblaction WHERE action_id IN(
+			SELECT action_id FROM tblrole_action WHERE role_id=#{role_id}
+		);
+	</select>
+	<select id="findAllByActionId" resultType="Role" parameterType="java.util.Map" flushCache="true">
+		SELECT role_id,flag,title,locked FROM tblrole WHERE role_id IN(
+			SELECT role_id FROM tblrole_action
+		<where>
+			<if test="column != null and keyword !=null">
+				${column} = #{keyword}
+			</if>
+		</where>
+		)
+		ORDER BY role_id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="findAll" resultType="Role">
+		SELECT role_id,flag,title,locked FROM tblrole;
+	</select>
+	<select id="findById" resultType="Role" parameterType="Integer">
+		SELECT role_id,flag,title,locked FROM tblrole WHERE role_id=#{role_id};
+	</select>
+	<select id="findAllSplit" parameterType="java.util.Map" resultType="Role">
+		SELECT role_id,flag,title,locked FROM tblrole
+		<where>
+			<if test="column != null and keyword !=null">
+				${column} LIKE #{keyword}
+			</if>
+		</where>
+		ORDER BY role_id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="findAllUnlocked" resultType="Role">
+		SELECT role_id,flag,title,locked FROM tblrole WHERE locked=0;
+	</select>
+	<select id="findAllUnlockedSplit" parameterType="java.util.Map" resultType="Role">
+		SELECT role_id,flag,title,locked FROM tblrole
+		WHERE locked=0
+		<if test="column != null and keyword !=null">
+			and ${column} LIKE #{keyword}
+		</if>
+		ORDER BY role_id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="getAllCount" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM tblrole
+		<where>
+			<if test="column != null and keyword !=null">
+				${column} LIKE #{keyword}
+			</if>
+		</where>
+	</select>
+	<select id="getAllCountByActionId" parameterType="Integer" resultType="Long" flushCache="true">
+		SELECT COUNT(*) FROM tblrole_action WHERE
+		action_id=#{action_id};
+	</select>
+	<select id="getAllUnlockedCount" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM tblrole
+		WHERE locked=0
+		<if test="column != null and keyword !=null">
+			and ${column} LIKE #{keyword}
+		</if>
+	</select>
+</mapper>

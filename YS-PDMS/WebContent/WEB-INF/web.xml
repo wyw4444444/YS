@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	id="WebApp_ID" version="3.1">
+	<display-name>YS-PDMS</display-name>
+	<!-- 在Web容器裡面進行Spring容器的加載 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>YS-PDMS</param-value>
+	</context-param>
+	<!-- 此配置描述的是在項目開發過程之中，Spring容器所需要使用到的配置文件 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			classpath:applicationContext.xml ,
+			classpath:applicationShiro.xml 
+		</param-value>
+	</context-param>
+
+	<!-- 進行Shiro的過濾器的配置 -->
+	<filter>
+		<filter-name>shiroFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<!-- 該參數表示Shiro的生命週期將交由Spring容器進行管理（默認情況下，取值為false） -->
+		<!-- 如果將其內容設置為true，則標示由Servlet容器進行管理 -->
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>ERROR</dispatcher>
+	</filter-mapping>
+
+	<!-- 此為Spring MVC配置所需要的程序文件，所有的請求都提交給Spring的Servlet程序 -->
+	<servlet>
+		<servlet-name>springmvc</servlet-name>
+		<!-- 此為Spring MVC自己提供的servlet程序，一定要寫上，因為其可以處理用戶請求 -->
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<!-- 配置Spring MVC所需要的配置文件，可以與Spring容器寫在一起 -->
+			<param-value>classpath:applicationMVC.xml</param-value>
+		</init-param>
+	</servlet>
+	<!-- SpringMVC中所有路徑的請求映射，使用的是“*.action” -->
+	<servlet-mapping>
+		<servlet-name>springmvc</servlet-name>
+		<url-pattern>*.action</url-pattern>
+	</servlet-mapping>
+	<!-- Spring中提供的編碼過濾器，使用的編碼都是UTF-8 -->
+	<filter>
+		<filter-name>encoding</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encoding</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<error-page>
+		<exception-type>org.apache.shiro.authz.UnauthenticatedException</exception-type>
+		<location>/loginUrl.action</location>
+	</error-page>
+	<error-page>
+		<exception-type>org.apache.shiro.authz.UnauthorizedException</exception-type>
+		<location>/unauthUrl.action</location>
+	</error-page>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>

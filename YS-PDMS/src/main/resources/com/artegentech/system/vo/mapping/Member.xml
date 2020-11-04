@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.IMemberDAO">
+	<cache />
+	<select id="findById" resultType="Member" parameterType="String">
+		SELECT member_id,password,member_name,reg_date,locked FROM tblmember
+		WHERE member_id=#{member_id} AND locked=0;
+	</select>
+	<select id="findByIdAll" resultType="Member" parameterType="String">
+		SELECT member_id,password,member_name,reg_date,locked FROM tblmember WHERE member_id=#{member_id};
+	</select>
+	<select id="findAll" resultType="Member">
+		SELECT member_id,password,member_name,reg_date,locked FROM tblmember;
+	</select>
+	<select id="findAllUnlocked" resultType="Member">
+		SELECT member_id,password,member_name,reg_date,locked FROM tblmember WHERE locked=0;
+	</select>
+	<insert id="doCreate" parameterType="Member">
+		INSERT INTO tblmember(member_id,member_name,password,reg_date,locked)
+		VALUES(#{member_id},#{member_name},#{password},#{reg_date},#{locked});
+	</insert>
+	<update id="doUpdate" parameterType="Member">
+		UPDATE tblmember SET member_name=#{member_name},locked=#{locked} WHERE member_id=#{member_id};
+	</update>
+	<update id="doUpdatePassword" parameterType="Member">
+		UPDATE tblmember SET password=#{password} WHERE member_id=#{member_id};
+	</update>
+	<select id="findAllUnlockedSplit" parameterType="java.util.Map" resultType="Member">
+		SELECT member_id,member_name,password,reg_date,locked FROM tblmember
+		WHERE locked=0
+		<if test="column != null and keyword !=null">
+			and ${column} LIKE #{keyword}
+		</if>
+		ORDER BY member_id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="findAllSplit" parameterType="java.util.Map" resultType="Member">
+		SELECT member_id,member_name,password,reg_date,locked FROM tblmember
+		<where>
+			<if test="column != null and keyword !=null">
+				${column} LIKE #{keyword}
+			</if>
+		</where>
+		ORDER BY member_id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="getAllUnlockedCount" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM tblmember
+		WHERE locked=0
+		<if test="column != null and keyword !=null">
+			and ${column} LIKE #{keyword};
+		</if>
+	</select>
+	<select id="getAllCount" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM tblmember
+		<where>
+			<if test="column !=null and keyword !=null">
+				${column} LIKE #{keyword}
+			</if>
+		</where>
+	</select>
+	<insert id="doCreateMemberAndRole" parameterType="java.util.Map">
+		INSERT INTO tblmember_role(member_id,role_id)VALUES(#{member_id},#{role_id});
+	</insert>
+	<insert id="doCreateMemberAndDept" parameterType="java.util.Map">
+		INSERT INTO tblmember_dept(member_id,dept_id)VALUES(#{member_id},#{dept_id});
+	</insert>
+	<delete id="RemoveMemberAndRole" parameterType="java.util.Map">
+		DELETE FROM tblmember_role WHERE member_id=#{member_id};
+	</delete>
+	<delete id="RemoveMemberAndDept" parameterType="java.util.Map">
+		DELETE FROM tblmember_dept WHERE member_id=#{member_id};
+	</delete>
+	<select id="findAllUnlockedByRoleFlag" parameterType="String" resultType="Member" flushCache="true">
+		SELECT member_id,member_name,password,reg_date,locked FROM tblmember
+		WHERE locked=0 AND member_id IN(
+			SELECT member_id FROM tblmember_role WHERE role_id IN(
+				SELECT role_id FROM tblrole WHERE flag=#{flag}
+			)
+		)
+		ORDER BY member_id ASC;
+	</select>
+	<select id="findAllSplitByRole" parameterType="java.util.Map" resultType="Member" flushCache="true">
+		SELECT member_id,member_name,password,reg_date,locked FROM tblmember
+		<where>
+			<if test="column !=null and keyword !=null">
+				member_id IN(
+					SELECT member_id FROM tblmember_role WHERE role_id = #{keyword}
+				)
+			</if>
+		</where>
+		ORDER BY member_id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="findAllSplitByDept" parameterType="java.util.Map" resultType="Member" flushCache="true">
+		SELECT member_id,member_name,password,reg_date,locked FROM tblmember
+		<where>
+			<if test="column !=null and keyword !=null">
+				member_id IN(
+					SELECT member_id FROM tblmember_dept WHERE dept_id = #{keyword}
+				)
+			</if>
+		</where>
+		ORDER BY member_id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="getAllCountByRole" parameterType="java.util.Map" resultType="Long" flushCache="true">
+		SELECT COUNT(*) FROM tblmember
+		<where>
+			<if test="column !=null and keyword !=null">
+				member_id IN(
+					SELECT member_id FROM tblmember_role WHERE role_id = #{keyword}
+				)
+			</if>
+		</where>
+	</select>
+	<select id="getAllCountByDept" parameterType="java.util.Map" resultType="Long" flushCache="true">
+		SELECT COUNT(*) FROM tblmember
+		<where>
+			<if test="column !=null and keyword !=null">
+				member_id IN(
+					SELECT member_id FROM tblmember_dept WHERE dept_id = #{keyword}
+				)
+			</if>
+		</where>
+	</select>
+	<select id="getAllUnlockedCountByRole" parameterType="java.util.Map" resultType="Long" flushCache="true">
+		SELECT COUNT(*) FROM tblmember
+		WHERE locked=0
+		<if test="column != null and keyword !=null">
+			and member_id IN(
+				SELECT member_id FROM tblmember_role WHERE role_id = #{keyword}
+			);
+		</if>
+	</select>
+	<select id="getAllUnlockedCountByDept" parameterType="java.util.Map" resultType="Long" flushCache="true">
+		SELECT COUNT(*) FROM tblmember
+		WHERE locked=0
+		<if test="column !=null and keyword !=null">
+			member_id IN(
+				SELECT member_id FROM tblmember_dept WHERE dept_id = #{keyword}
+			);
+		</if>
+	</select>
+	<select id="findAllDeptByMid" resultType="Dept" parameterType="String" flushCache="true">
+		SELECT dept_id,dept_code,dept_name,locked FROM tbldept WHERE dept_id IN(
+			SELECT dept_id FROM tblmember_dept WHERE member_id=#{member_id}
+		);
+	</select>
+	<select id="findAllRoleByMid" resultType="Role" parameterType="String" flushCache="true">
+		SELECT role_id,flag,title,locked FROM tblrole WHERE role_id IN(
+			SELECT role_id FROM tblmember_role WHERE member_id=#{member_id}
+		);
+	</select>
+</mapper>
