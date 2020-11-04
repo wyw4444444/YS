@@ -29,6 +29,7 @@
 					<div class="input-group-prepend">
 						<span class="input-group-text">日期</span>
 					</div>
+					
 					<input type="text" class="form-control" id="date" name="date" placeholder="自動生成日期" readonly/>
 				</div>
 				<div class="name input-group mb-3">
