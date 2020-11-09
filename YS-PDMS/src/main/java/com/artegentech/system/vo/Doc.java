@@ -1,6 +1,7 @@
 package com.artegentech.system.vo;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class Doc implements Serializable {
@@ -24,7 +25,7 @@ public class Doc implements Serializable {
 	private String doc_ppt;
 	
 //	日期
-	private String date;
+	private Date reg_time;
 //	屬性
 	private String spec;
 	
@@ -83,11 +84,11 @@ public class Doc implements Serializable {
 	public void setDoc_ppt(String doc_ppt) {
 		this.doc_ppt = doc_ppt;
 	}
-	public String getDate() {
-		return date;
+	public Date getReg_time() {
+		return reg_time;
 	}
-	public void setDate(String date) {
-		this.date = date;
+	public void setReg_time(Date date) {
+		this.reg_time = date;
 	}
 	public String getSpec() {
 		return spec;

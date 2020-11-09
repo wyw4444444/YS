@@ -2445,7 +2445,7 @@ function searchDoc(url){
 					valign : 'middle',
 					align : 'center'
 				}, {
-					field : 'dept_name',
+					field : 'reg_time',
 					title : '日期',
 					valign : 'middle',
 					align : 'center'
@@ -2596,7 +2596,7 @@ function loadProcess() {
 					valign : 'middle',
 					align : 'center'
 				}, {
-					field : 'dept_name',
+					field : 'reg_date',
 					title : '日期',
 					valign : 'middle',
 					align : 'center'
@@ -2708,23 +2708,27 @@ function loadArchive() {
 					field : 'part_code',
 					title : '料號',
 					valign : 'middle',
-					align : 'center'
+					align : 'center',
+					width:200
 
 				}, {
 					field : 'version',
 					title : '版本',
 					valign : 'middle',
-					align : 'center'
+					align : 'center',
+					width:100
 				}, {
-					field : 'date',
+					field : 'reg_time',
 					title : '日期',
 					valign : 'middle',
-					align : 'center'
+					align : 'center',
+					width:100
 				},{
 					field : 'spec',
 					title : '屬性',
 					valign : 'middle',
-					align : 'center'
+					align : 'center',
+					width:100
 				}, {
 					field : 'change_reason',
 					title : '新增和設變原因',
@@ -2735,8 +2739,10 @@ function loadArchive() {
 					title : '查看',
 					valign : 'middle',
 					align : 'center',
+					width:100,
 					events : operateEvents,
 					formatter:function(value,row,index){
+						console.log("123",value,row,index)
 			            return [
 			            	"<button id='searchDoc' class='btn btn-primary' href='#' title='查看'>查看</button>"
 			            ].join("");

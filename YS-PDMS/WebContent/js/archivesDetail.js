@@ -18,8 +18,21 @@ $('document').ready(function(){
 			$("#number").val(data.part_code);
 			$("#version").val(data.version);
 			$("#changereason").val(data.change_reason);
-			$(".uploadbefore").attr("src",localFormatUrl(data.changeimg_before));
-			$(".uploadafter").attr("src",localFormatUrl(data.changeimg_after));
+			
+			//渲染改善前圖片
+			var arrCB = data.changeimg_before.split(",")
+			for(var i =0;i<arrCB.length;i++){
+				if(i==0) var html = '<div class="carousel-item active" style="height:100%;"><img src="'+localFormatUrl(arrCB[i])+'" style="width:100%;height:100%;"></div>';
+				else var html = '<div class="carousel-item" style="height:100%;"><img src="'+localFormatUrl(arrCB[i])+'" style="width:100%;height:100%;"></div>';
+				$('.imgBefore .carousel-inner').append(html)
+			}
+			//渲染改善後圖片
+			var arrCA = data.changeimg_after.split(",")
+			for(var i =0;i<arrCA.length;i++){
+				if(i==0) var html = '<div class="carousel-item active" style="height:100%;"><img src="'+localFormatUrl(arrCA[i])+'" style="width:100%;height:100%;"></div>';
+				else var html = '<div class="carousel-item" style="height:100%;"><img src="'+localFormatUrl(arrCA[i])+'" style="width:100%;height:100%;"></div>';
+				$('.imgAfter .carousel-inner').append(html)
+			}
 			if(data.doc_pdf){
 //				pdf文檔可能出現多個，所以需要轉成數組，拿第一個出來顯示
 				var pdfUrl = data.doc_pdf.split(",");
@@ -104,23 +117,25 @@ function localFormatUrl(url){
 }
 //显示大图    
 function showimage(t,type){
-	var source = $('.'+t).attr('src')
 	if(type=="pdf"){
+		var source = $('.'+t).attr('src')
 		$("#ShowImage_Form").find("#img_show").html('<embed class="uploadPDF img-responsive" src="'+source+'" style="width:100%;height:100%;">');
 		$('.modal-body').css("height","90%")
 	}else{
+		var source = $('.'+t+' .active img').attr('src');
 		$("#ShowImage_Form").find("#img_show").html("<image src='"+source+"' class='carousel-inner img-responsive img-rounded' />");
 	}
 	$("#ShowImage_Form").modal();
 }
 function downloadimage(t){
-	var source = $('.'+t).attr('src')
-	var url = source;
-	console.log(url)
-	let a = document.createElement('a') // 创建a标签
-	let e = document.createEvent('MouseEvents') // 创建鼠标事件对象
-	e.initEvent('click', false, false) // 初始化事件对象
-	a.href = url // 设置下载地址
-	a.download = '' // 设置下载文件名
-	a.dispatchEvent(e)
+	var source = $('.'+t+' img')
+	for(var i=0;i<source.length;i++){
+		var url = source.eq(i).attr('src');
+		let a = document.createElement('a') // 创建a标签
+		let e = document.createEvent('MouseEvents') // 创建鼠标事件对象
+		e.initEvent('click', false, false) // 初始化事件对象
+		a.href = url // 设置下载地址
+		a.download = '' // 设置下载文件名
+		a.dispatchEvent(e)
+	}	
 }

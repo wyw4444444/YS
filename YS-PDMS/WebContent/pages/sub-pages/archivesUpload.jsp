@@ -48,7 +48,7 @@
 					<span class="input-group-text">設變原因</span>
 				</div>
 				<div class="reasondetail">
-					<textarea id="changereason" class="form-control" rows="13" placeholder="客戶需求設變"></textarea>
+					<textarea id="changereason" class="form-control" rows="13" placeholder="客戶需求設變，100字以內"></textarea>
 				</div>
 			</div>
 			<div class="rightcontent">
@@ -59,12 +59,20 @@
 							<label for="fileImproveImgBefore"><img class="uploadbefore img-fluid" src="images/upload.png"></label>
 							<input id="fileImproveImgBefore" type="file" style="display:none" accept=".jpg,.png" multiple>
 						</div>
+						<div class="btnContent">
+							<button class="btn btn-primary" onclick="showimage('fileImproveImgBefore')">查看所選圖片</button>
+							<button class="btn btn-primary" onclick="reuploadimage('fileImproveImgBefore')">重新上傳</button>
+						</div>
 					</div>
 					<div class="imgRight">
 						<label><span style="color:red">*</span>請上傳改善後圖片</label>
 						<div class="improveImg imgAfter">
 							<label for="fileImproveImgAfter"><img class="uploadafter img-responsive" src="images/upload.png"></label>
 							<input id="fileImproveImgAfter" type="file" style="display:none" accept=".jpg,.png" multiple> 
+						</div>
+						<div class="btnContent">
+							<button class="btn btn-primary" onclick="showimage('fileImproveImgAfter')">查看所選圖片</button>
+							<button class="btn btn-primary" onclick="reuploadimage('fileImproveImgAfter')">重新上傳</button>
 						</div>
 					</div>
 				</div>
@@ -118,6 +126,33 @@
 			</div>
 		</div>
 	</div>
+	<div id="ShowImage_Form" class="modal hide" style="overflow-y:hidden;">         
+         <div class="modal-header">
+             <button data-dismiss="modal" class="close" type="button">×</button>
+         </div>
+         <div class="modal-body" style="overflow-y:scroll;height:100%;">
+            <div id="demo" class="carousel slide" data-ride="carousel">
+				<!-- 指示符 -->
+				  <ul class="carousel-indicators" id="carousel-indicators2">
+				  </ul>
+				 
+				 
+				  <!-- 轮播图片 -->
+				  <div class="carousel-inner">
+
+				  </div>
+				
+				  <!-- 左右切换按钮 -->
+				  <a class="carousel-control-prev" href="#demo" data-slide="prev">
+					<span class="carousel-control-prev-icon"></span>
+				  </a>
+				  <a class="carousel-control-next" href="#demo" data-slide="next">
+					<span class="carousel-control-next-icon"></span>
+				  </a>
+ 
+			</div>	
+        </div>
+    </div>
 
 <%-- 	<jsp:include page="/pages/plugins/include_alert.jsp" /> --%>
 

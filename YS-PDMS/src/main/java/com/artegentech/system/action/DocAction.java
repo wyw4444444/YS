@@ -91,8 +91,8 @@ public class DocAction extends AbstractAction {
 		if (keyword == null || "".equals(keyword) || "undefined".equals(keyword)) {
 			keyword = null;
 		}
-		System.out.println("column : " + column);
-		System.out.println("keyword : " + keyword);
+		System.out.println("findAlldoccolumn : " + column);
+		System.out.println("findAlldockeyword : " + keyword);
 		Map<String, Object> map = new HashMap<String, Object>();
 		Long count = (long) 0;
 		count = this.docService.getAllCount(column, keyword);

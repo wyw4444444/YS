@@ -34,11 +34,13 @@ $('document').ready(function(){
 			$('#docPDF').val('')
 			$('#filePDF').val('')
 			toalert("文件數量不能大於4個")
-		}
-		if(obj.length>1){
-			$('#docPDF').val($(this)[0].files[0].name+"等"+obj.length+"个文件")	
 		}else{
-			$('#docPDF').val($(this)[0].files[0].name)			
+			$('.alert-danger').hide();
+			if(obj.length>1){
+				$('#docPDF').val($(this)[0].files[0].name+"等"+obj.length+"个文件")	
+			}else{
+				$('#docPDF').val($(this)[0].files[0].name)			
+			}
 		}
 	})
 	//dwg文檔的顯示
@@ -48,11 +50,13 @@ $('document').ready(function(){
 			$('#docDWG').val('')
 			$('#fileDWG').val('')
 			toalert("文件數量不能大於4個")
-		}
-		if(obj.length>1){
-			$('#docDWG').val($(this)[0].files[0].name+"等"+obj.length+"个文件")	
 		}else{
-			$('#docDWG').val($(this)[0].files[0].name)			
+			$('.alert-danger').hide();
+			if(obj.length>1){
+				$('#docDWG').val($(this)[0].files[0].name+"等"+obj.length+"个文件")	
+			}else{
+				$('#docDWG').val($(this)[0].files[0].name)			
+			}
 		}
 	})
 	//ppt文檔的顯示
@@ -62,11 +66,13 @@ $('document').ready(function(){
 			$('#docPPT').val('')
 			$('#filePPT').val('')
 			toalert("文件數量不能大於4個")
-		}
-		if(obj.length>1){
-			$('#docPPT').val($(this)[0].files[0].name+"等"+obj.length+"个文件")	
 		}else{
-			$('#docPPT').val($(this)[0].files[0].name)			
+			$('.alert-danger').hide();
+			if(obj.length>1){
+				$('#docPPT').val($(this)[0].files[0].name+"等"+obj.length+"个文件")	
+			}else{
+				$('#docPPT').val($(this)[0].files[0].name)			
+			}
 		}
 	})
 //	submit
@@ -81,13 +87,21 @@ $('document').ready(function(){
 			var change_reason = $('#changereason').val();//設變原因
 //			改善前圖片
 			var changeimg_before = ''
-			if($('#fileImproveImgBefore').val()){
-				changeimg_before = formatLocalPath("doc",{part_code:part_code,version:version})+"_changeimg_before.jpg";
+			var changeimg_beforeFiles = $('#fileImproveImgBefore')[0].files;
+			for(var i = 0;i<changeimg_beforeFiles.length;i++){
+				var fileExtension = changeimg_beforeFiles[i].name.split('.').pop().toLowerCase();
+				var path = formatLocalPath("doc",{part_code:part_code,version:version})+"_changeimg_before_"+i+"."+fileExtension;
+				if(i==0) changeimg_before+=path;
+				else changeimg_before+=","+path;
 			}
 //			改善後圖片
 			var changeimg_after = ''
-			if($('#fileImproveImgAfter').val()){
-				changeimg_after = formatLocalPath("doc",{part_code:part_code,version:version})+"_changeimg_after.jpg";				
+			var changeimg_afterFiles = $('#fileImproveImgAfter')[0].files;
+			for(var i = 0;i<changeimg_afterFiles.length;i++){
+				var fileExtension = changeimg_afterFiles[i].name.split('.').pop().toLowerCase();
+				var path = formatLocalPath("doc",{part_code:part_code,version:version})+"_changeimg_after_"+i+"."+fileExtension;
+				if(i==0) changeimg_after+=path;
+				else changeimg_after+=","+path;
 			}
 //			pdf文档
 			var docPdfFiles = $('#filePDF')[0].files;
@@ -169,6 +183,7 @@ $('document').ready(function(){
 	$('.close').on('click', function () {
 	  	$(this).parents('.alert').hide()
 	})
+	$('.carousel').carousel()
 })
 function uploadFile(id,path){
 	var files = $('#'+id)[0].files;
@@ -202,6 +217,11 @@ function checkForm(){
 	var changereason = $('#changereason').val();
 	if(!changereason){
 		toalert("請填寫設變原因");
+		return false;
+	}
+	console.log(changereason.length)
+	if(changereason.length>100){
+		toalert("設變原因請控制在100字以內");
 		return false;
 	}
 	var fileImproveImgBefore = $('#fileImproveImgBefore').val();
@@ -309,4 +329,42 @@ function formatLocalPath(type,param){
 	return url;
 }
 
+//显示大图    
+function showimage(t){
+	console.log($('#'+t)[0].files)
+	var obj=$('#'+t)[0].files;
+//	for(var i=0;i<obj.length;i++){
+//		if(i==0){
+//			var html = '<li data-target="#ShowImage_Form" data-slide-to="'+i+'" class="active"></li>';
+//		}else{
+//			var html = '<li data-target="#ShowImage_Form" data-slide-to="'+i+'"></li>';
+//		}
+//		var html2 = '<div class="carousel-item"><img src=""></div>';
+//		$("#ShowImage_Form .carousel-indicators").append(html)
+//		$("#ShowImage_Form .carousel-inner").append(html2)
+//	}
+	$("#demo .carousel-indicators").html('')
+	$("#demo .carousel-inner").html('')
+	$.each(obj,function(i,value){
+		var source = value
+		var fr=new FileReader();
+		fr.onload=function () {
+			if(i==0){
+				var html = '<li data-target="#demo" data-slide-to="'+i+'" class="active"></li>';
+				var html2 = '<div class="carousel-item active"><img class="c-img" src="'+this.result+'"></div>';
+			}else{
+				var html = '<li data-target="#demo" data-slide-to="'+i+'"></li>';
+				var html2 = '<div class="carousel-item"><img class="c-img" src="'+this.result+'"></div>';
+			}
+			$("#demo .carousel-indicators").append(html)
+			$("#demo .carousel-inner").append(html2)
+		};
+		fr.readAsDataURL(source);
+    })
 
+	
+	$("#ShowImage_Form").modal();
+}
+function reuploadimage(id){
+	$('#'+id).click();
+}

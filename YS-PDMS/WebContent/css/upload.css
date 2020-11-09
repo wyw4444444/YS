@@ -52,7 +52,8 @@
 }
 .rightcontent .improveImgContent .imgLeft,.rightcontent .improveImgContent .imgRight{
 	flex:1;
-	height:420px;
+	height:480px;
+	width:50%;
 }
 .rightcontent .improveImgContent .improveImg{
 	flex:1;
@@ -64,6 +65,9 @@
 	-webkit-box-pack:center;
 	justify-content:center;
 	-ms-flex-pack:center;
+}
+.rightcontent .improveImgContent .btnContent{
+	text-align:center;
 }
 .improveImgContent{
 	
@@ -109,6 +113,18 @@
 }
 .submitContent .alert{
 	margin-left:30px;
+}
+/* 修改輪播圖樣式 */
+.c-img{
+	width:100%;
+	height:100%;
+}
+#demo .carousel-indicators{
+	top:0px;
+	bottom:auto;
+}
+#demo .carousel-indicators li{
+	height:30px;
 }
 
 

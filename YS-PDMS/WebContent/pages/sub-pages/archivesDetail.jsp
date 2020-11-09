@@ -10,7 +10,7 @@
 </head>
 <body>
 	<div id="toolbar" class="col-md-10 col-lg-10">
-		<div class="title"><h4>查看檔案</h4>
+		<div class="title"><h4>圖檔詳情</h4>
 		</div>
 		<div class="content detailContent">
 			<input id="archives_partCode" type="hidden">
@@ -50,7 +50,7 @@
 					<span class="input-group-text">設變原因</span>
 				</div>
 				<div class="reasondetail">
-					<textarea id="changereason" class="form-control" rows="13" placeholder="客戶需求設變"></textarea>
+					<textarea id="changereason" class="form-control" rows="13" placeholder="客戶需求設變" readonly></textarea>
 				</div>
 			</div>
 			<div class="rightcontent">
@@ -58,21 +58,47 @@
 					<div class="imgLeft">
 						<label>改善前圖片</label>
 						<div class="improveImg imgBefore">
-							<img class="uploadbefore img-fluid" src="images/upload.png">
+							<div id="demo" class="carousel slide" data-ride="carousel" style="width:100%;">
+								  <!-- 轮播图片 -->
+								  <div class="carousel-inner" style="height:100%; ">
+								  </div>
+								
+								  <!-- 左右切换按钮 -->
+								  <a class="carousel-control-prev" href="#demo" data-slide="prev">
+									<span class="carousel-control-prev-icon"></span>
+								  </a>
+								  <a class="carousel-control-next" href="#demo" data-slide="next">
+									<span class="carousel-control-next-icon"></span>
+								  </a>
+				 
+							</div>	
 						</div>
 						<div class="btnContent">
-							<button class="btn btn-primary" onclick="showimage('uploadbefore')">放大</button>
-							<button class="btn btn-primary" onclick="downloadimage('uploadbefore')">下載</button>
+							<button class="btn btn-primary" onclick="showimage('imgBefore')">放大</button> 
+							<button class="btn btn-primary" onclick="downloadimage('imgBefore')">下載</button>
 						</div>
 					</div>
 					<div class="imgRight">
 						<label>改善後圖片</label>
 						<div class="improveImg imgAfter">
-							<img class="uploadafter img-responsive" src="images/upload.png">
+							<div id="demo2" class="carousel slide" data-ride="carousel" style="width:100%;">
+								  <!-- 轮播图片 -->
+								  <div class="carousel-inner" style="height:100%; ">
+								  </div>
+								
+								  <!-- 左右切换按钮 -->
+								  <a class="carousel-control-prev" href="#demo2" data-slide="prev">
+									<span class="carousel-control-prev-icon"></span>
+								  </a>
+								  <a class="carousel-control-next" href="#demo2" data-slide="next">
+									<span class="carousel-control-next-icon"></span>
+								  </a>
+				 
+							</div>
 						</div>
 						<div class="btnContent">
-							<button class="btn btn-primary" onclick="showimage('uploadafter')">放大</button>
-							<button class="btn btn-primary" onclick="downloadimage('uploadafter')">下載</button>
+							<button class="btn btn-primary" onclick="showimage('imgAfter')">放大</button>
+							<button class="btn btn-primary" onclick="downloadimage('imgAfter')">下載</button>
 						</div>
 					</div>
 				</div>

@@ -9,8 +9,8 @@
 	<select id="getDocByCode" resultType="Doc" parameterType="String">
 		SELECT id,part_code,version FROM tbldocment WHERE part_code=#{code};
 	</select>
-	<select id="findAllSplit" parameterType="java.util.Map" resultType="java.util.Map">
-		SELECT tbldocment.id,tbldocment.part_code,version,change_reason,changeimg_before,changeimg_after,doc_pdf,doc_dwg,doc_ppt,spec FROM tbldocment,tblpartinfo
+	<select id="findAllSplit" parameterType="java.util.Map" resultType="Doc">
+		SELECT tbldocment.id,tbldocment.part_code,version,change_reason,changeimg_before,changeimg_after,doc_pdf,doc_dwg,doc_ppt,spec,reg_time FROM tbldocment,tblpartinfo
 		<where>
 			tbldocment.part_code=tblpartinfo.part_code
 			<if test="column != null and keyword !=null">
@@ -32,7 +32,7 @@
 		SELECT id,part_code,version,change_reason,changeimg_before,changeimg_after,doc_pdf,doc_dwg,doc_ppt FROM tbldocment WHERE part_code=#{part_code} and version=#{version};
 	</select>
 	<select id="findByPartCode" parameterType="java.util.Map" resultType="Doc">
-		SELECT tbldocment.id,tbldocment.part_code,version,change_reason,spec FROM tbldocment,tblpartinfo
+		SELECT tbldocment.id,tbldocment.part_code,version,change_reason,spec,reg_time FROM tbldocment,tblpartinfo
 		<where>
 			tbldocment.part_code=tblpartinfo.part_code
 			<if test="part_code != null and part_code != ''">
@@ -42,15 +42,15 @@
 		ORDER BY tbldocment.id ASC LIMIT #{start},#{lineSize};
 	</select>
 	<select id="findNewByPartCode" parameterType="java.util.Map" resultType="Doc">
-		select id,part_code,version,change_reason,spec
+		select id,part_code,version,change_reason,spec,reg_time
 		from(select row_number() over(partition by tbldocment.part_code order by version desc) 'rn',
-        tbldocment.id,tbldocment.part_code,version,change_reason,spec
+        tbldocment.id,tbldocment.part_code,version,change_reason,spec,reg_time
  		from tbldocment,tblpartinfo where tbldocment.part_code=tblpartinfo.part_code)t where t.rn=1 and part_code like #{part_code}
 	</select>
 	<select id="findAllNewDoc" resultType="Doc">
-		select id,part_code,version,change_reason,spec
+		select id,part_code,version,change_reason,spec,reg_time
 		from(select row_number() over(partition by tbldocment.part_code order by version desc) 'rn',
-        tbldocment.id,tbldocment.part_code,version,change_reason,spec
+        tbldocment.id,tbldocment.part_code,version,change_reason,spec,reg_time
  		from tbldocment,tblpartinfo where tbldocment.part_code=tblpartinfo.part_code)t where t.rn=1
 	</select>
 </mapper>
