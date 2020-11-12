@@ -65,6 +65,20 @@
 					
 				</ul>
 			</li>
+			<li><a class="inactive active"><i class="fa fa-cubes fa-fw fa-lg"></i> 知識庫管理</a>
+				<ul>
+					<li><a id="btn_knowledgePartAdd"><i class="fa fa-outdent fa-fw"></i> 添加分階</a></li>
+					<li><a id="btn_knowledgeProcessed"><i class="fa fa-search fa-fw"></i> 待处理分階</a></li>
+					<li><a id="btn_knowledgePartReject"><i class="fa fa-search fa-fw"></i> 被駁回分階</a></li>
+					<li><a id="btn_knowledgePart"><i class="fa fa-search fa-fw"></i> 查询分階</a></li>
+					<li><a id="btn_knowledgeAdd"><i class="fa fa-outdent fa-fw"></i> 合併分階</a></li>
+					<li><a id="btn_knowledgeQuery"><i class="fa fa-search fa-fw"></i> 查詢成品</a></li>
+					<li><a id="btn_knowledgePending"><i class="fa fa-search fa-fw"></i> 待審核成品</a></li>
+					<li><a id="btn_knowledgeReject"><i class="fa fa-search fa-fw"></i> 被駁回成品</a></li>
+					<li><a id="btn_knowledgeQueryByPart"><i class="fa fa-search fa-fw"></i> 上階查詢</a></li>
+					
+				</ul>
+			</li>
 			<shiro:hasAnyRoles name="super_admin,admin,sales_manager,problem_confirm,PM">
 				<li><a class="inactive active"><i class="fa fa-database fa-fw fa-lg"></i> 数据导出 </a>
 					<ul>

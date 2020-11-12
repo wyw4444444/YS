@@ -1,0 +1,86 @@
+.content{
+	display:flex;
+	margin-top:20px;
+}
+/* 修改默认底色，讓input的側邊欄更加有對比性 */
+.content .input-group-text{
+	background-color:#d0d0d0;
+}
+#toolbar>.title{
+	margin-top:30px;
+	width: 200px;
+    border-bottom: 3px solid green;
+    padding-bottom: 10px;
+}
+ 
+/* 添加分階頁面 */
+
+.leftcontent{
+	width:30%;
+}
+.partAdd .fileUpload{
+	margin-top:20px;
+	display:flex;
+}
+.partAdd .fileUpload input{
+	width:70%;
+}
+.partAdd .fileUpload label{
+	width:30%;
+}
+.partAdd .rightcontent{
+	width:50%;
+	margin-left:5%;
+}
+.partAdd .rightcontent .fileContent{
+	height:650px;
+	width:550px;
+	border:1px solid #ccc;
+}
+.partAdd .submitContent{
+	margin-top:200px;
+}
+.partAdd .leftcontent{
+	margin-top:30px;
+}
+
+
+
+/* 分階詳情頁面 */
+.partDetail .leftcontent{
+	margin:30px;
+}
+
+
+/* 合併分階 */
+.knowledgeAdd>.title{
+	margin-top:30px;
+	width: 200px;
+    border-bottom: 3px solid green;
+    padding-bottom: 10px;
+}
+.knowledgeAdd .rightcontent{
+	width:60%;
+	margin-top:-43px;
+	margin-left:5%;
+}
+.knowledgeAdd .partList{
+	border:1px solid #ccc;
+	height:300px;
+	overflow-y:scroll;
+}
+.knowledgeAdd .submitContent{
+	margin-top:20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+

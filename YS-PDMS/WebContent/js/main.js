@@ -69,6 +69,37 @@ $(document).ready(function() {
 	$("#btn_archivesQuery").on("click", function() {
 		change_page('archivesQuery');
 	});
+	$("#btn_knowledgePartAdd").on("click", function() {
+		localStorage.setItem("knowledge_part_id",'')
+		localStorage.setItem("knowledgePartType",'add')
+		change_page('knowledgePartAdd');
+	});
+	$("#btn_knowledgeProcessed").on("click", function() {
+		change_page('knowledgeProcessed');
+	});
+	$("#btn_knowledgePartReject").on("click", function() {
+		change_page('knowledgePartReject');
+	});
+	$("#btn_knowledgePart").on("click", function() {
+		change_page('knowledgePart');
+	});
+	$("#btn_knowledgeAdd").on("click", function() {
+		localStorage.setItem("knowledge_id",'')
+		localStorage.setItem("knowledgeType",'add')
+		change_page('knowledgeAdd');
+	});
+	$("#btn_knowledgeQuery").on("click", function() {
+		change_page('knowledgeQuery');
+	});
+	$("#btn_knowledgePending").on("click", function() {
+		change_page('knowledgePending');
+	});
+	$("#btn_knowledgeReject").on("click", function() {
+		change_page('knowledgeReject');
+	});
+	$("#btn_knowledgeQueryByPart").on("click", function() {
+		change_page('knowledgeQueryByPart');
+	});
 	
 });
 
@@ -180,6 +211,40 @@ function loadPageSetting(name) {
 			uploadSetting();
 			archivesDetail();
 			break;
+		case "knowledgePartAdd" :
+			knowledgeSetting();
+			knowledgePartAdd();
+			break;
+		case "knowledgeProcessed" :
+			knowledgeSetting();
+			knowledgeProcessed();
+			break;
+		case "knowledgePart" :
+			knowledgeSetting();
+			knowledgePart();
+			break;
+		case "knowledgeAdd" :
+			knowledgeSetting();
+			knowledgeAdd();
+			break;
+		case "knowledgeQuery" :
+			knowledgeSetting();
+			knowledgeQuery();
+			break;
+		case "knowledgePending" :
+			knowledgeSetting();
+			knowledgePending();
+			break;
+		case "knowledgePartReject" :
+			loadProcessedPart('0');
+			break;
+		case "knowledgeReject" :
+			knowledgeSetting();
+			loadKnowledge('0');
+			break;
+		case "knowledgeQueryByPart":
+			knowledgeSetting();
+			loadKnowledgeByPart('2');
 	}
 }
 
@@ -211,10 +276,11 @@ function change_page(name) {
 		loadPageSetting(name)
 	});
 }
-function open_page(name,part_code,version){
+function open_page(name,part_code,version,typename,id){
 	var win = window.open("/YS-PDMS/index.action#"+name)
 	localStorage.setItem('part_code', part_code);
 	localStorage.setItem('archives_version', version);
+	localStorage.setItem(typename, id);
 }
 
 // 顯示隱藏左側菜單控制函數
@@ -2750,8 +2816,631 @@ function loadArchive() {
 				}]
 	});
 }
+//操作知識庫分階添加頁面
+function knowledgeSetting() {
+//		//設置showUpdateDept模態框關閉的更新列表事件
+	$('#amodal').on('hide.bs.modal', function(e) {
+		$("#contentDept").bootstrapTable("refresh");
+	});
+	
+	// 設置更新部門模態框的垂直位置
+	$('#amodal').on('show.bs.modal', function(e) {
+		$(this).find('.modal-dialog').css({
+			'margin-top' : function() {
+				var modalHeight = $('#showUpdateDept').find('.modal-dialog').height();
+				return ($(window).height() / 2 - (modalHeight / 2) - 250);
+			}
+		});
+	});
+	$("#toolbar").css({
+		'padding-top' : 10,
+		'padding-left' : 15
+	})
+}
+function knowledgePartAdd(){
+	
+}
+function loadProcessedPart(status){
+	var table = $("#contentDept");
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: "knowledge/findPartByCode.action",
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,10,15,20,50,100],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			console.log(params,parseInt(params.offset/5)+1);
+			console.log(params.limit);
+            return {
+            	part_code:$('#docSearchKeyWord').val(),
+            	status:status,
+            	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit,
+//					column : column,
+//					keyword : keyword
+            }
+        },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+        showColumns: true,
+        showRefresh: true,
+        clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表頭顏色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['excel','xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allDoc', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+            console.log(111,data);
+        },
+        idField: 'id',//主键
+		columns : [{
+					field : 'part_code',
+					title : '料號',
+					valign : 'middle',
+					align : 'center'
+
+		}, {
+			field : 'name',
+			title : '名稱',
+			valign : 'middle',
+			align : 'center',
+		}, {
+			field : 'version',
+			title : '版本',
+			valign : 'middle',
+			align : 'center',
+		},{
+			field : 'desc',
+			title : '描述',
+			valign : 'middle',
+			align : 'center',
+		}, {
+			field : 'operation',
+			title : '查看',
+			valign : 'middle',
+			align : 'center',
+			events : operateEvents,
+			formatter:function(value,row,index){
+				console.log("123",value,row,index)
+	            return [
+	            	"<button id='knowledgePartDetail' class='btn btn-primary' href='#' title='查看'>查看</button>"
+	            ].join("");
+		    }
+		}]
+	});
+}
 
 
+function knowledgeProcessed(){
+	$("#toolbar").css("padding-top","");
+	$("#toolbar").css("padding-left","");
+	var url = "knowledge/findProcessed.action";
+	var column="1";
+	var keyword="1";
+	var table = $("#contentDept");
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: url,
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,10,15,20,50,100],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			console.log(params,parseInt(params.offset/5)+1);
+			console.log(params.limit);
+            return {
+            	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit,
+				column : column,
+				keyword : keyword
+            }
+        },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+        showColumns: true,
+        showRefresh: true,
+        clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表頭顏色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['excel','xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allDept', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+            console.log(111,data);
+        },
+        idField: 'id',//主键
+		columns : [{
+					field : 'part_code',
+					title : '料號',
+					valign : 'middle',
+					align : 'center',
+
+				}, {
+					field : 'name',
+					title : '名稱',
+					valign : 'middle',
+					align : 'center',
+				}, {
+					field : 'version',
+					title : '版本',
+					valign : 'middle',
+					align : 'center',
+				},{
+					field : 'desc',
+					title : '描述',
+					valign : 'middle',
+					align : 'center',
+				}, {
+					field : 'operation',
+					title : '查看',
+					valign : 'middle',
+					align : 'center',
+					events : operateEvents,
+					formatter:function(value,row,index){
+						console.log("123",value,row,index)
+			            return [
+			            	"<button id='knowledgePartDetail' class='btn btn-primary' href='#' title='查看'>查看</button>"
+			            ].join("");
+				    }
+				}]
+	});
+}
+function knowledgeAdd(){
+	$("#toolbar").css("padding-top","");
+	$("#toolbar").css("padding-left","");
+	var url = "knowledge/findAllPart.action";
+	var column="1";
+	var keyword="1";
+	var table = $("#contentDept");
+	console.log(table)
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: url,
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,10,15,20,50,100],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			console.log(params,parseInt(params.offset/5)+1);
+			console.log(params.limit);
+            return {
+            	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit,
+				column : column,
+				keyword : keyword
+            }
+        },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+        showColumns: true,
+        showRefresh: true,
+        clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表頭顏色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['excel','xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allDept', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+            console.log(111,data);
+        },
+        idField: 'id',//主键
+		columns : [{
+					field : 'part_code',
+					title : '料號',
+					valign : 'middle',
+					align : 'center',
+
+		}, {
+			field : 'name',
+			title : '名稱',
+			valign : 'middle',
+			align : 'center',
+		}, {
+			field : 'version',
+			title : '版本',
+			valign : 'middle',
+			align : 'center',
+		},{
+			field : 'desc',
+			title : '描述',
+			valign : 'middle',
+			align : 'center',
+		},  {
+			field : 'operation',
+			title : '查看',
+			valign : 'middle',
+			align : 'center',
+			events : operateEvents,
+			formatter:function(value,row,index){
+				console.log("123",value,row,index)
+	            return [
+	            	"<button id='knowledgePartDetail' class='btn btn-primary' href='#' title='查看'>查看</button>"
+	            ].join("");
+		    }
+		}, {
+			field : 'operation',
+			title : '選擇',
+			valign : 'middle',
+			align : 'center',
+			events : operateEvents,
+			formatter:function(value,row,index){
+	            return [
+	            	"<input type='hidden' value='"+row.id+"'><button id='knowledgePartChoose' class='btn btn-primary' href='#' title='選擇'>選擇</button>"
+	            ].join("");
+		    }
+		}]
+	});
+}
+
+
+function knowledgePart(){
+	$("#toolbar").css("padding-top","");
+	$("#toolbar").css("padding-left","");
+	var url = "knowledge/findAllPart.action";
+	var column="1";
+	var keyword="1";
+	var table = $("#contentDept");
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: url,
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,10,15,20,50,100],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			console.log(params,parseInt(params.offset/5)+1);
+			console.log(params.limit);
+            return {
+            	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit,
+				column : column,
+				keyword : keyword
+            }
+        },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+        showColumns: true,
+        showRefresh: true,
+        clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表頭顏色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['excel','xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allDept', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+            console.log(111,data);
+        },
+        idField: 'id',//主键
+		columns : [{
+					field : 'part_code',
+					title : '料號',
+					valign : 'middle',
+					align : 'center',
+		}, {
+			field : 'name',
+			title : '名稱',
+			valign : 'middle',
+			align : 'center',
+		}, {
+			field : 'version',
+			title : '版本',
+			valign : 'middle',
+			align : 'center',
+		},{
+			field : 'desc',
+			title : '描述',
+			valign : 'middle',
+			align : 'center',
+		}, {
+			field : 'operation',
+			title : '查看',
+			valign : 'middle',
+			align : 'center',
+			events : operateEvents,
+			formatter:function(value,row,index){
+				console.log("123",value,row,index)
+	            return [
+	            	"<button id='knowledgePartDetail' class='btn btn-primary' href='#' title='查看'>查看</button>"
+	            ].join("");
+		    }
+		}]
+	});
+}
+
+
+function knowledgeQuery(){
+	$("#toolbar").css("padding-top","");
+	$("#toolbar").css("padding-left","");
+	var url = "knowledge/findAllKnowledge.action";
+	var column="1";
+	var keyword="1";
+	var table = $("#contentDept");
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: url,
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,10,15,20,50,100],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			console.log(params,parseInt(params.offset/5)+1);
+			console.log(params.limit);
+            return {
+            	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit,
+				column : column,
+				keyword : keyword
+            }
+        },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+        showColumns: true,
+        showRefresh: true,
+        clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表頭顏色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['excel','xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allDept', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+            console.log(111,data);
+        },
+        idField: 'id',//主键
+		columns : [{
+					field : 'part_code',
+					title : '料號',
+					valign : 'middle',
+					align : 'center',
+					width:200
+
+		}, {
+			field : 'part_name',
+			title : '名稱',
+			valign : 'middle',
+			align : 'center',
+			width:100
+		}, {
+			field : 'version',
+			title : '版本',
+			valign : 'middle',
+			align : 'center',
+			width:100
+		},{
+			field : 'descr',
+			title : '描述',
+			valign : 'middle',
+			align : 'center',
+			width:100
+		}, {
+			field : 'operation',
+			title : '查看',
+			valign : 'middle',
+			align : 'center',
+			width:100,
+			events : operateEvents,
+			formatter:function(value,row,index){
+				console.log("123",value,row,index)
+	            return [
+	            	"<button id='knowledgeDetail' class='btn btn-primary' href='#' title='查看'>查看</button>"
+	            ].join("");
+		    }
+		}]
+	});
+}
+function knowledgePending(){
+	$("#toolbar").css("padding-top","");
+	$("#toolbar").css("padding-left","");
+	var url = "knowledge/findKnowledgeByCode.action";
+	var column="1";
+	var keyword="1";
+	var table = $("#contentDept");
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: url,
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,10,15,20,50,100],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			console.log(params,parseInt(params.offset/5)+1);
+			console.log(params.limit);
+            return {
+            	status:'1',
+            	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit,
+				column : column,
+				keyword : keyword
+            }
+        },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+        showColumns: true,
+        showRefresh: true,
+        clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表頭顏色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['excel','xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allDept', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+            console.log(111,data);
+        },
+        idField: 'id',//主键
+		columns : [{
+					field : 'part_code',
+					title : '料號',
+					valign : 'middle',
+					align : 'center',
+					width:200
+
+		}, {
+			field : 'part_name',
+			title : '名稱',
+			valign : 'middle',
+			align : 'center',
+			width:100
+		}, {
+			field : 'version',
+			title : '版本',
+			valign : 'middle',
+			align : 'center',
+			width:100
+		},{
+			field : 'descr',
+			title : '描述',
+			valign : 'middle',
+			align : 'center',
+			width:100
+		}, {
+			field : 'operation',
+			title : '查看',
+			valign : 'middle',
+			align : 'center',
+			width:100,
+			events : operateEvents,
+			formatter:function(value,row,index){
+				console.log("123",value,row,index)
+	            return [
+	            	"<button id='knowledgeDetail' class='btn btn-primary' href='#' title='查看'>查看</button>"
+	            ].join("");
+		    }
+		}]
+	});
+}
 
 /****************************** 公共函數 *********************************/
 
@@ -3032,32 +3721,38 @@ window.operateEvents = {
 		var part_code = row.part_code;
 		var version = row.version;
 		open_page("archivesDetail",part_code,version)
-
-		//需要後台查詢該料號和版本的數據
-//		$.ajax({
-//			type : "POST",
-//			url : "doc/findOnedoc.action",
-//			dataType : "json",
-//			data : {
-//				part_code : part_code,
-//				version : version,
-//			},
-//			traditional : true,
-//			success : function(data) {
-//				console.log(data)
-//				$("#number").val(data.part_code);
-//				$("#version").val(data.version);
-//				$("#change_reason").val(data.change_reason);
-//				
-//				//清空異常提示文字
-//				$("#modalActionMsg").text("");
-//				
-//				//顯示模態框
-//				$("#showDoc").modal("show");
-//			}
-//		
-//		})
 	},
+	"click #knowledgePartDetail" : function(e, value, row, index) {
+		console.log(123)
+		//如果flag和title兩個一起查詢可以查到的話，如果action_id不同，則不允許修改權限資料
+		$("#showUpdateAction .modal-dialog .modal-content .modal-header .modal-title").text("查詢")
+		//$("#modalActionFlag").attr("disabled", true);
+		$("#modalActionFlag").val("");
+		$("#modalActionTitle").val("");
+		$("#modalActionLockedDiv").fadeIn(10);
+		$("#btnUpdateAction").fadeIn(10);
+		$("#btnAddAction").fadeOut(10);
+		var id = row.id;
+		var part_code = row.part_code;
+		var version = row.version;
+		open_page("knowledgePartDetail",part_code,version,"knowledge_part_id",id)
+	},
+	"click #knowledgeDetail" : function(e, value, row, index) {
+		//如果flag和title兩個一起查詢可以查到的話，如果action_id不同，則不允許修改權限資料
+		$("#showUpdateAction .modal-dialog .modal-content .modal-header .modal-title").text("查詢")
+		//$("#modalActionFlag").attr("disabled", true);
+		$("#modalActionFlag").val("");
+		$("#modalActionTitle").val("");
+		$("#modalActionLockedDiv").fadeIn(10);
+		$("#btnUpdateAction").fadeIn(10);
+		$("#btnAddAction").fadeOut(10);
+		var id = row.id;
+		if(row.knowledge_id) id = row.knowledge_id;
+		var part_code = row.part_code;
+		var version = row.version;
+		open_page("knowledgeDetail",part_code,version,"knowledge_id",id)
+	},
+	
 	
 	"click #lockOrUnlockRole" : function(e, value, row, index) {
 		var role_id = row.role_id;
