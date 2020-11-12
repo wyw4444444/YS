@@ -60,4 +60,6 @@ public interface IKnowledgeDAO extends IDAO<Integer, Knowledge_part> {
 	public boolean updateKnowledgeStatus(Map<String,Object> params) throws Exception;
 	
 	public boolean updateKnowledgePartRelation(Map<String,Object> params) throws Exception;
+	
+	public String findNewPartByCode(String part_code) throws Exception;
 }

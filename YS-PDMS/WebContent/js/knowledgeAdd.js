@@ -42,6 +42,10 @@ $('document').ready(function(){
 			traditional : true,
 			success : function(data) {
 				console.log(data)
+				if(data){
+					alert("提交成功")
+					location.reload()
+				}
 			}
 		})
 	})

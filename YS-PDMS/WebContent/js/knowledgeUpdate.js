@@ -40,7 +40,7 @@ $('document').ready(function(){
 					success : function(data) {
 						console.log(data)
 						for(var i=0;i<data.length;i++){
-							var html = '<tr><td>'+data[i].part_code+'</td><td style="display:none">'+data[i].version+'</td>'
+							var html = '<tr><td>'+data[i].part_code+'</td><td>'+data[i].version+'</td>'
 							+'<td><button class="choose_knowledgePartDetail btn btn-primary" title="查看">查看</button></td>'
 							+'<td><button class="choose_knowledgePartRemove btn btn-primary" title="刪除">刪除</button></td><td style="display:none">'+data[i].id
 							+'</td></tr>'
@@ -85,7 +85,7 @@ $('document').ready(function(){
 					success : function(data) {
 						console.log(data)
 						for(var i=0;i<data.length;i++){
-							var html = '<tr><td>'+data[i].part_code+'</td><td style="display:none">'+data[i].version+'</td>'
+							var html = '<tr><td>'+data[i].part_code+'</td><td>'+data[i].version+'</td>'
 							+'<td><button class="choose_knowledgePartDetail btn btn-primary" title="查看">查看</button></td>'
 							+'<td><button class="choose_knowledgePartRemove btn btn-primary" title="刪除">刪除</button></td><td style="display:none">'+data[i].id
 							+'</td></tr>'
@@ -137,6 +137,10 @@ $('document').ready(function(){
 			traditional : true,
 			success : function(data) {
 				console.log(data)
+				if(data){
+					alert("提交成功")
+					window.close();
+				}
 			}
 		})
 	})

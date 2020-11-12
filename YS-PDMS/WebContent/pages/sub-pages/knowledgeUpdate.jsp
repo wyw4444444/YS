@@ -64,6 +64,7 @@
 						<thead>
 							<tr style="text-align:center;">
 								<td>料號</td>
+								<td>版本</td>
 								<td colspan=2>操作</td>
 							</tr>
 						</thead>

@@ -120,5 +120,8 @@
 	<update id="updateKnowledgePartRelation" parameterType="java.util.Map">
 		UPDATE tblknowledge_part_knowledge SET knowledge_part_id=#{knowledge_part_id} WHERE id=#{id};
 	</update> 
+	<select id="findNewPartByCode" resultType="String"> 
+		SELECT version FROM ys_pdms_db.tblknowledge_part where part_code=#{part_code} order by version desc limit 1;	
+	</select> 
 	  
 </mapper>

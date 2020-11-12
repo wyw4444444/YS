@@ -49,7 +49,7 @@ $('document').ready(function(){
 				console.log(data)
 				if(data){
 					alert("審核成功")
-					location.reload();
+					window.close();
 				}
 			}
 		})
@@ -69,22 +69,52 @@ $('document').ready(function(){
 				console.log(data)
 				if(data){
 					alert("駁回成功")
-					location.reload();
+					window.close();
 				}
 			}
 		})
 	})
 	$('.update').click(function(){
-		console.log("駁回")
+		console.log("修改")
 		localStorage.setItem("knowledgePartType","update")
 		localStorage.setItem("id",id)
 		change_page("knowledgePartAdd")
 	})
 	$('.levelup').click(function(){
 		console.log("升版")
-		localStorage.setItem("knowledgePartType","levelup")
-		localStorage.setItem("id",id)
-		change_page("knowledgePartAdd")
+//		要判斷是否可以升版
+//		找到當前料號的最新版本
+		$.ajax({
+			type : "POST",
+			url : "knowledge/findNewPartByCode.action",
+			dataType : "json",
+			data : {
+				part_code : part_code
+			},
+			traditional : true,
+			success : function(data) {
+				console.log(data)
+				if(version==data){
+					localStorage.setItem("knowledgePartType","levelup")
+					localStorage.setItem("id",id)
+					change_page("knowledgePartAdd")
+				}
+				else{
+					alert("當前版本不是最新版本")
+				}
+			},
+			error:function(data){
+				console.log(data.responseText)
+				if(version==data.responseText){
+					localStorage.setItem("knowledgePartType","levelup")
+					localStorage.setItem("id",id)
+					change_page("knowledgePartAdd")
+				}
+				else{
+					alert("當前版本不是最新版本")
+				}
+			}
+		})
 	})
 })
 function localFormatUrl(url){

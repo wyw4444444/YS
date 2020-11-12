@@ -18,7 +18,7 @@ $('document').ready(function(){
 			success : function(data) {
 				console.log(data)
 				$('#number').val(data.part_code);
-				$('#version').val(String.fromCharCode(data.version.charCodeAt(0) + 1));
+				$('#version').val(data.version);
 				$('#name').val(data.name);
 				$('#desc').val(data.desc);
 				$('.fileShow').show()
@@ -50,7 +50,7 @@ $('document').ready(function(){
 			$(".fileShow").show();
 		};
 		fr.readAsDataURL(obj);
-		$('#fileUpload input[type="text"]').val('');
+		$('.fileUpload input[type="text"]').val($('#file')[0].files[0].name);
 	})
 	$('.submit').click(function(){
 		console.log("提交")
@@ -103,8 +103,30 @@ $('document').ready(function(){
 			})
 		}
 	})
+	//料號填寫時，1、判斷料號是否正確，在接入料號系統的時候需要補上。2、判斷料號是否已經存在，存在的話就提示應該去升版
 	$('.leftcontent #number').on('keyup',function(){
-		
+		var value = $(this).val();
+		$.ajax({
+			type : "POST",
+			url : "knowledge/findOnePart.action",
+			dataType : "json",
+			data : {
+				part_code : value,
+				version:"A"
+			},
+			traditional : true,
+			success : function(data) {
+				console.log(data)
+				$('.number-error-tip').show()
+				$('.number-error-tip').html("料號已存在，請進入升版界面操作")
+			},
+			error:function(data){
+				if(!data.responseText){
+					console.log("沒有數據")
+					$('.number-error-tip').hide()
+				}
+			}
+		})
 	})
 	$('#showUpdateKnowledge').on('click','#knowledgeUpdate',function(){
 		console.log("同步");
@@ -125,6 +147,12 @@ $('document').ready(function(){
 				console.log(data)
 			}
 		})
+	})
+	$('.close').on('click', function () {
+	  	$(this).parents('.alert').hide()
+	})
+	$('#showUpdateKnowledge').on('hidden.bs.modal', function (e) {
+	  	window.close()
 	})
 })
 function uploadFile(id,path){

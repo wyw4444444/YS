@@ -62,5 +62,7 @@ public interface IKnowledgeService {
 	public boolean updateKnowledgeStatus(Integer id,String status) throws Exception;
 	
 	public boolean updateKnowledgePartRelation(Integer id,String kid,String kpid,String oldid) throws Exception;
+	
+	public String findNewPartByCode(String part_code) throws Exception;
 
 }

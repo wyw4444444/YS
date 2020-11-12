@@ -225,4 +225,10 @@ public class KnowledgeServiceImpl extends AbstractService implements IKnowledgeS
 		map.put("knowledge_part_id", kpid);
 		return this.knowledgedao.updateKnowledgePartRelation(map);
 	}
+
+	@Override
+	public String findNewPartByCode(String part_code) throws Exception {
+		// TODO Auto-generated method stub
+		return this.knowledgedao.findNewPartByCode(part_code);
+	}
 }

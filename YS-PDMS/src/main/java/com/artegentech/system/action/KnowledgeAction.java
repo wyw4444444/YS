@@ -339,7 +339,13 @@ public class KnowledgeAction extends AbstractAction {
 		this.knowledgeService.updateKnowledgeStatus(Integer.parseInt(knowledge_id),"1");
 //		修改分階的id
 		this.knowledgeService.updateKnowledgePartRelation(id,knowledge_id,knowledge_part_id,oldid);
-		return false;
+		return true;
+	}
+	@RequiresUser
+	@RequestMapping("findNewPartByCode")
+	public String findNewPartByCode(HttpServletRequest request) throws Exception {
+		String part_code = request.getParameter("part_code");
+		return this.knowledgeService.findNewPartByCode(part_code);
 	}
 
 	@Override

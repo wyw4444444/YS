@@ -43,7 +43,7 @@ $('document').ready(function(){
 				success : function(data) {
 					console.log(data)
 					for(var i=0;i<data.length;i++){
-						var html = '<tr><td>'+data[i].part_code+'</td>'
+						var html = '<tr><td>'+data[i].part_code+'</td><td>'+data[i].version+'</td>'
 						+'<td><button class="choose_knowledgePartDetail btn btn-primary" title="查看">查看</button></td>'
 						+'<td class="fileUrl" style="display:none;">'+data[i].file+'</td>'
 						+'</tr>';
@@ -70,7 +70,7 @@ $('document').ready(function(){
 				console.log(data)
 				if(data){
 					alert("審核成功")
-					location.reload();
+					window.close();
 				}
 			}
 		})
@@ -78,12 +78,12 @@ $('document').ready(function(){
 	$('.update').click(function(){
 		console.log("修改")
 		localStorage.setItem("knowledgeDetailType","update")
-		window.open("/YS-PDMS/index.action#knowledgeUpdate")
+		change_page('knowledgeUpdate')
 	})
 	$('.levelup').click(function(){
 		console.log("升級")
 		localStorage.setItem("knowledgeDetailType","levelup")
-		window.open("/YS-PDMS/index.action#knowledgeUpdate")
+		change_page('knowledgeUpdate')
 	})
 	$('.cancel').click(function(){
 		console.log("駁回")
@@ -99,7 +99,7 @@ $('document').ready(function(){
 				console.log(data)
 				if(data){
 					alert("駁回成功")
-					location.reload();
+					window.close();
 				}
 			}
 		})

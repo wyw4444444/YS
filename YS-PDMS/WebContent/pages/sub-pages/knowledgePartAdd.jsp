@@ -18,6 +18,7 @@
 					</div>
 					<input type="text" class="form-control" id="number" name="number" placeholder="請輸入料號" />
 				</div>
+				<p class="number-error-tip">料號已存在，請進入升版界面操作</p>
 				<div class="version input-group mb-3">
 					<div class="input-group-prepend">
 						<span class="input-group-text">名稱</span>
@@ -50,13 +51,13 @@
 				<div class="fileUpload">
 					<input type="text" class="form-control" placeholder="請選擇附件" readonly/>
 					<label for="file" class="btn btn-info"><span style="color:red">*</span>上傳附件</label>
-					<input id="file" type="file" style="display:none" accept=".pdf,.jpg,.png">
+					<input id="file" type="file" style="display:none" accept=".jpg,.png">
 				</div>
 				<div class="submitContent">
 					<button class="submit btn btn-primary">提交</button>
-					<div class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
-						  <button type="button" class="close"><span aria-hidden="true">&times;</span></button>
-						  <span class="text"></span>
+					<div class="alert alert-danger alert-dismissible" role="alert" style="display:none;margin-top:10px;">
+						<button type="button" class="close"><span aria-hidden="true">&times;</span></button>
+						<span class="text"></span>
 					</div>
 				</div>
 

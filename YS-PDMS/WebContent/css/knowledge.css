@@ -2,6 +2,13 @@
 	display:flex;
 	margin-top:20px;
 }
+.number-error-tip{
+	color: red;
+    font-size: 14px;
+    margin: -0.8rem 0 0.5rem;
+    padding-left: 1rem;
+    display: none;
+}
 /* 修改默认底色，讓input的側邊欄更加有對比性 */
 .content .input-group-text{
 	background-color:#d0d0d0;
@@ -38,7 +45,7 @@
 	border:1px solid #ccc;
 }
 .partAdd .submitContent{
-	margin-top:200px;
+	margin-top:150px;
 }
 .partAdd .leftcontent{
 	margin-top:30px;
