@@ -218,7 +218,7 @@ public class KnowledgeServiceImpl extends AbstractService implements IKnowledgeS
 	}
 
 	@Override
-	public boolean updateKnowledgePartRelation(Integer id, String kid, String kpid, String oldid) throws Exception {
+	public boolean updateKnowledgePartRelation(Integer id, String kid, String kpid) throws Exception {
 		// TODO Auto-generated method stub
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("id", id);

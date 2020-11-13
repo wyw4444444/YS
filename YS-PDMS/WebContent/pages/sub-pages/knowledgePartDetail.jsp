@@ -64,6 +64,35 @@
 	</div>
 	<div class="col-md-6 col-lg-6">
 	</div>
+	<div class="modal fade" id="showUpdateKnowledge">
+		<div class="modal-dialog" style="max-width:70%;">
+			<div class="modal-content">
+				<!-- 模态框头部 -->
+				<div class="modal-header">
+					<h4 class="modal-title">選擇同步成品</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<!-- 模态框主体 -->
+				<div class="modal-body">
+<!-- 					<div id="toolbar2"> -->
+<!-- 						<div class="form-inline"> -->
+<!-- 							<div class="form-group"> -->
+<!-- 								<div class="input-group"> -->
+<!-- 									<input class="form-control" type="text" placeholder="输入料號" id="docSearchKeyWord" name="docSearchKeyWord"/> -->
+<!-- 									<button class="btn btn-secondary form-control" onclick="loadKnowledge('2')">查詢</button> -->
+<!-- 								</div> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+					<table id="contentDept" class="table-sm table-striped">
+					</table>
+					<div class="">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal" style="float: right;">关闭</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 

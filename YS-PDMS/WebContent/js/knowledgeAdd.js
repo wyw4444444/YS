@@ -2,52 +2,65 @@ $('document').ready(function(){
 	var curentTime = CurentTime();
 	$('#date').val(curentTime);
 	$('body').on("click","#knowledgePartChoose",function(){
-		console.log(1)
-		partChoose($(this).parents('tr'))
+		var chooseVal = $(this).parents('tr').find('td').eq(0).text()
+		var list = $('.partList tbody tr');
+		var rs = true;
+		for(var i=0;i<list.length;i++){
+			if(chooseVal==list.eq(i).find('td').eq(0).text()){
+				rs=false
+			}
+		}
+		if(rs){
+			partChoose($(this).parents('tr'))			
+		}else{
+			alert("已存在該料號")
+		}
 	})
 	$('.submit').click(function(){
 		console.log("提交");
 //		獲取信息
-		var part_type = $('#part_type').val()
-		var part_code = $('#number').val();
-		var part_name = $('#name').val();
-		var version = $('#version').val();
-		var desc = $('#desc').val();
-		var date = $('#date').val();
-
-		var list = $('.partList tbody tr');
-		var arr = [];
-		for(var i=0;i<list.length;i++){
-			var obj = {
-				knowledge_part_id:list.eq(i).find('td').eq(4).text(),
-				part_code:list.eq(i).find('td').eq(0).text(),
-				version:list.eq(i).find('td').eq(1).text()
-			}
-			arr.push(obj);
-		}
-		console.log(arr)
-		$.ajax({
-			type : "POST",
-			url : "knowledge/add.action",
-			dataType : "json",
-			data : {
-				part_type : part_type,
-				part_code : part_code,
-				part_name : part_name,
-				version : version,
-				desc : desc,
-				date : date,
-				partArr:JSON.stringify(arr)
-			},
-			traditional : true,
-			success : function(data) {
-				console.log(data)
-				if(data){
-					alert("提交成功")
-					location.reload()
+		if(checkForm()){
+			var part_type = $('#part_type').val()
+			var part_code = $('#number').val();
+			var part_name = $('#name').val();
+			var version = $('#version').val();
+			var desc = $('#desc').val();
+			var date = $('#date').val();
+			
+			var list = $('.partList tbody tr');
+			var arr = [];
+			for(var i=0;i<list.length;i++){
+				var obj = {
+						knowledge_part_id:list.eq(i).find('td').eq(4).text(),
+						part_code:list.eq(i).find('td').eq(0).text(),
+						version:list.eq(i).find('td').eq(1).text()
 				}
+				arr.push(obj);
 			}
-		})
+			console.log(arr)
+			$.ajax({
+				type : "POST",
+				url : "knowledge/add.action",
+				dataType : "json",
+				data : {
+					part_type : part_type,
+					part_code : part_code,
+					part_name : part_name,
+					version : version,
+					desc : desc,
+					date : date,
+					partArr:JSON.stringify(arr)
+				},
+				traditional : true,
+				success : function(data) {
+					console.log(data)
+					if(data){
+						alert("提交成功")
+						location.reload()
+					}
+				}
+			})
+		}
 	})
 	$('.partList').on("click","#choose_knowledgePartDetail",function(){
 		var row = $(this).parents('tr');
@@ -59,7 +72,33 @@ $('document').ready(function(){
 		var row = $(this).parents('tr');
 		row.remove()
 	})
+	$('.close').on('click', function () {
+	  	$(this).parents('.alert').hide()
+	})
 })
+function checkForm(){
+	var partcode = $('#number').val();
+	if(!partcode){
+		toalert("請填寫料號");
+		return false;
+	}
+	var name = $('#name').val();
+	if(!name){
+		toalert("請填寫名称");
+		return false;
+	}
+	var list = $('.partList tbody tr').length;
+	if(!list){
+		toalert("請選擇分階");
+		return false;
+	}
+
+	return true;
+}
+function toalert(value){
+	$('.alert-danger').show();
+	$('.alert-danger span.text').text(value)
+}
 
 function partChoose(row){
 	var part_code = row.find('td').eq(0).text();

@@ -73,7 +73,7 @@
 				
 				<div class="submitContent">
 					<button class="submit btn btn-primary">提交</button>
-					<div class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+					<div class="alert alert-danger alert-dismissible" role="alert" style="display:none;margin-top:10px;">
 						  <button type="button" class="close"><span aria-hidden="true">&times;</span></button>
 						  <span class="text"></span>
 					</div>

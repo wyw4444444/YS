@@ -37,7 +37,15 @@ import net.sf.json.JsonConfig;
 public class KnowledgeAction extends AbstractAction {
 	@Resource
 	private IKnowledgeService knowledgeService;
-
+	/**
+	 * 添加分階
+	 * 分兩種情況
+	 * 1、有id時，是修改
+	 * 2、無id時，是新建
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("addPart")
 	public Integer addPart(HttpServletRequest request) throws Exception {
@@ -81,6 +89,13 @@ public class KnowledgeAction extends AbstractAction {
 		
 			
 	}
+	/**
+	 * 上傳圖片
+	 * 
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping("addpicture")
 	public ModelAndView addpicture(MultipartFile file, HttpServletRequest request) throws Exception {
 		String path = request.getParameter("path");
@@ -93,7 +108,12 @@ public class KnowledgeAction extends AbstractAction {
 		}
 		return null;
 	}
-	
+	/**
+	 * 查詢待審核的分階
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("findProcessed")
 	public JSONObject findProcessed(HttpServletRequest request) throws Exception {
@@ -109,6 +129,13 @@ public class KnowledgeAction extends AbstractAction {
 		JSONObject json = JSONObject.fromObject(map);
 		return json;
 	}
+	/**
+	 * 查詢全部審核通過的分階
+	 * 在sql語句中固定查詢status=2的記錄
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("findAllPart")
 	public JSONObject findAllPart(HttpServletRequest request) throws Exception {
@@ -124,6 +151,14 @@ public class KnowledgeAction extends AbstractAction {
 		JSONObject json = JSONObject.fromObject(map);
 		return json;
 	}
+	/**
+	 * 查詢一條分階記錄
+	 * 通過料號和版本號查詢，原則上是唯一的
+	 * 通過id查詢分階記錄更加穩定，此方法是適用於不知道id的情況下查詢
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("findOnePart")
 	public Knowledge_part findOnePart(HttpServletRequest request) throws Exception {
@@ -132,6 +167,27 @@ public class KnowledgeAction extends AbstractAction {
 		Knowledge_part Knowledge_part = this.knowledgeService.findOnePart(part_code, version);
 		return Knowledge_part;
 	}
+	/**
+	 * 查詢一條分階記錄
+	 * 通過id
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@RequiresUser
+	@RequestMapping("findPartById")
+	public Knowledge_part findPartById(HttpServletRequest request) throws Exception {
+		Integer id = Integer.parseInt(request.getParameter("id"));
+		Knowledge_part result = this.knowledgeService.findPartById(id);
+		return result;
+	}
+	/**
+	 * 審核分階申請
+	 * 將分階記錄的status改成2
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("updatePartPass")
 	public boolean updatePartPass(HttpServletRequest request) throws Exception {
@@ -143,6 +199,13 @@ public class KnowledgeAction extends AbstractAction {
 		boolean rs = this.knowledgeService.updatePartPass(Knowledge_part);
 		return rs;
 	}
+	/**
+	 * 駁回分階申請
+	 * 將分階記錄的status改成0
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("updatePartReject")
 	public boolean updatePartReject(HttpServletRequest request) throws Exception {
@@ -154,6 +217,15 @@ public class KnowledgeAction extends AbstractAction {
 		boolean rs = this.knowledgeService.updatePartReject(Knowledge_part);
 		return rs;
 	}
+	/**
+	 * 添加成品記錄
+	 * 分兩種情況
+	 * 1、如果有id傳入，修改
+	 * 2、如果沒有id傳入，新建
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("add")
 	public boolean add(HttpServletRequest request) throws Exception {
@@ -214,6 +286,12 @@ public class KnowledgeAction extends AbstractAction {
 		}
 		return rs;
 	}
+	/**
+	 * 查詢所有成品
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("findAllKnowledge")
 	public JSONObject findAllKnowledge(HttpServletRequest request) throws Exception {
@@ -229,6 +307,14 @@ public class KnowledgeAction extends AbstractAction {
 		JSONObject json = JSONObject.fromObject(map);
 		return json;
 	}
+	/**
+	 * 查詢分階記錄
+	 * 模糊查詢，適用所有狀態，
+	 * status：0代表駁回；1代表待審核；2代表通過審核
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("findPartByCode")
 	public JSONObject findPartByCode(HttpServletRequest request) throws Exception {
@@ -245,13 +331,13 @@ public class KnowledgeAction extends AbstractAction {
 		JSONObject json = JSONObject.fromObject(map);
 		return json;
 	}
-	@RequiresUser
-	@RequestMapping("findPartById")
-	public Knowledge_part findPartById(HttpServletRequest request) throws Exception {
-		Integer id = Integer.parseInt(request.getParameter("id"));
-		Knowledge_part result = this.knowledgeService.findPartById(id);
-		return result;
-	}
+	/**
+	 * 查詢成品
+	 * 通過id
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("findKnowledgeById")
 	public Knowledge findKnowledgeById(HttpServletRequest request) throws Exception {
@@ -259,6 +345,14 @@ public class KnowledgeAction extends AbstractAction {
 		Knowledge result = this.knowledgeService.findKnowledgeById(id);
 		return result;
 	}
+	/**
+	 * 查詢成品
+	 * 模糊查詢，適用所有狀態，
+	 * status：0代表駁回；1代表待審核；2代表通過審核
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("findKnowledgeByCode")
 	public JSONObject findKnowledgeByCode(HttpServletRequest request) throws Exception {
@@ -275,6 +369,13 @@ public class KnowledgeAction extends AbstractAction {
 		JSONObject json = JSONObject.fromObject(map);
 		return json;
 	}
+	/**
+	 * 查詢一個成品
+	 * 通過料號和版本號
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("findOneKnowledge")
 	public Knowledge findOneKnowledge(HttpServletRequest request) throws Exception {
@@ -283,6 +384,12 @@ public class KnowledgeAction extends AbstractAction {
 		Knowledge Knowledge = this.knowledgeService.findOneKnowledge(part_code, version);
 		return Knowledge;
 	}
+	/**
+	 * 查詢分階列表
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("findPartList")
 	public List<Knowledge_part> findPartList(HttpServletRequest request) throws Exception {
@@ -290,6 +397,12 @@ public class KnowledgeAction extends AbstractAction {
 		List<Knowledge_part> Knowledge = this.knowledgeService.findPartList(knowledge_id);
 		return Knowledge;
 	}
+	/**
+	 * 審核成品
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("updateKnowledgePass")
 	public boolean updateKnowledgePass(HttpServletRequest request) throws Exception {
@@ -301,6 +414,12 @@ public class KnowledgeAction extends AbstractAction {
 		boolean rs = this.knowledgeService.updateKnowledgePass(Knowledge);
 		return rs;
 	}
+	/**
+	 * 駁回成品
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("updateKnowledgeReject")
 	public boolean updateKnowledgeReject(HttpServletRequest request) throws Exception {
@@ -310,6 +429,12 @@ public class KnowledgeAction extends AbstractAction {
 		boolean rs = this.knowledgeService.updateKnowledgeReject(Knowledge);
 		return rs;
 	}
+	/**
+	 * 上階查詢
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("findKnowledgeByPart")
 	public JSONObject findKnowledgeByPart(HttpServletRequest request) throws Exception {
@@ -327,20 +452,31 @@ public class KnowledgeAction extends AbstractAction {
 		JSONObject json = JSONObject.fromObject(map);
 		return json;
 	}
+	/**
+	 * 分階升版時成品同步更新
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("updateKnowledgeByPart")
 	public boolean updateKnowledgeByPart(HttpServletRequest request) throws Exception {
 		String knowledge_id = request.getParameter("knowledge_id");
 		Integer id = Integer.parseInt(request.getParameter("id"));
 		String knowledge_part_id = request.getParameter("knowledge_part_id");
-		String oldid = request.getParameter("oldid");
 		System.out.println(knowledge_id+","+id+","+knowledge_part_id);
 //		修改成品的狀態
 		this.knowledgeService.updateKnowledgeStatus(Integer.parseInt(knowledge_id),"1");
 //		修改分階的id
-		this.knowledgeService.updateKnowledgePartRelation(id,knowledge_id,knowledge_part_id,oldid);
+		this.knowledgeService.updateKnowledgePartRelation(id,knowledge_id,knowledge_part_id);
 		return true;
 	}
+	/**
+	 * 查詢分階的最大版本號
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
 	@RequiresUser
 	@RequestMapping("findNewPartByCode")
 	public String findNewPartByCode(HttpServletRequest request) throws Exception {

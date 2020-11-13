@@ -89,10 +89,8 @@ $('document').ready(function(){
 						uploadFile("file",fileUrl)
 					}
 					if(knowledgeType=="levelup"){
-						alert("提交成功，請選擇同步升版的成品")
-						$('#showUpdateKnowledge').modal()
-						showKnowledgeList(data.part_code)
-						$('body').data("kpid",data)
+						alert("提交成功")
+						window.close()
 					}else{
 						alert("提交成功")
 						location.reload()
@@ -128,31 +126,8 @@ $('document').ready(function(){
 			}
 		})
 	})
-	$('#showUpdateKnowledge').on('click','#knowledgeUpdate',function(){
-		console.log("同步");
-		var id = $(this).parents("tr").find("input.id").val();
-		var kid = $(this).parents("tr").find("input.kid").val();
-		$.ajax({
-			type : "POST",
-			url : "knowledge/updateKnowledgeByPart.action",
-			dataType : "json",
-			data : {
-				id:id,
-				knowledge_id:kid,
-				knowledge_part_id:$('body').data('kpid'),
-				oldid:localStorage.getItem("knowledge_part_id")
-			},
-			traditional : true,
-			success : function(data) {
-				console.log(data)
-			}
-		})
-	})
 	$('.close').on('click', function () {
 	  	$(this).parents('.alert').hide()
-	})
-	$('#showUpdateKnowledge').on('hidden.bs.modal', function (e) {
-	  	window.close()
 	})
 })
 function uploadFile(id,path){
