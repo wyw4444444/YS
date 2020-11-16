@@ -245,6 +245,7 @@
 		    <artifactId>commons-codec</artifactId>
 		    <version>1.12</version>
 		</dependency>
+		
 		<dependency>  
 		    <groupId>com.itextpdf</groupId> 
 		    <artifactId>itextpdf</artifactId> 
@@ -258,6 +259,7 @@
 	
 	</dependencies>
 	<build>
+	 <defaultGoal>compile</defaultGoal>  
 		<finalName>YS-PDMS</finalName>
 		<plugins>  
             <plugin>  

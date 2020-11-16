@@ -6,7 +6,7 @@ import java.util.Map;
 
 public abstract class AbstractService {
 	/**
-	 * 針對於MyBatis中需要接受Map集合的操作進行統一的定義，以保證傳入的空字符串可以變為null
+	 * 針對於MyBatis中需要接受Map集合的操作進行統一的定義，以保證傳入的空字符串可以變為null--模糊&分頁
 	 * 
 	 * @param column      模糊查詢的數據列
 	 * @param keyword     模糊查詢關鍵字
@@ -40,7 +40,7 @@ public abstract class AbstractService {
 	}
 
 	/**
-	 * 針對於MyBatis中需要接受Map集合的操作進行統一的定義，以保證傳入的空字符串可以變為null
+	 * 針對於MyBatis中需要接受Map集合的操作進行統一的定義，以保證傳入的空字符串可以變為null--模糊&不分頁
 	 * 
 	 * @param column  模糊查詢的數據列
 	 * @param keyword 模糊查詢關鍵字
@@ -64,7 +64,7 @@ public abstract class AbstractService {
 	}
 
 	/**
-	 * 針對於MyBatis中需要接受Map集合的操作進行統一的定義，以保證傳入的空字符串可以變為null
+	 * 針對於MyBatis中需要接受Map集合的操作進行統一的定義，以保證傳入的空字符串可以變為null--精確&分頁
 	 * 
 	 * @param column      模糊查詢的數據列
 	 * @param keyword     模糊查詢關鍵字
@@ -98,7 +98,7 @@ public abstract class AbstractService {
 	}
 
 	/**
-	 * 針對於MyBatis中需要接受Map集合的操作進行統一的定義，以保證傳入的空字符串可以變為null
+	 * 針對於MyBatis中需要接受Map集合的操作進行統一的定義，以保證傳入的空字符串可以變為null--精確&不分頁
 	 * 
 	 * @param column  模糊查詢的數據列
 	 * @param keyword 模糊查詢關鍵字
@@ -121,6 +121,29 @@ public abstract class AbstractService {
 		return map;
 	}
 
+	/**
+	 * 針對於MyBatis中需要接受Map集合的操作進行統一的定義，以保證傳入的空字符串可以變為null--分頁
+	 * 
+	 * @param currentPage 當前所在頁
+	 * @param lineSize    每頁顯示的數據行
+	 * @return 根據指定的參數返回相關的數據，包含以下內容：<br>
+	 *         1、key=start,value=(currentPage - 1) * lineSize<br>
+	 *         2、key=lineSize,value=每頁顯示的數據行數<br>
+	 */
+	protected Map<String, Object> handleParams1(int currentPage, int lineSize) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		if ((currentPage - 1) * lineSize < 0) {
+			map.put("start", 0);
+		} else {
+			map.put("start", (currentPage - 1) * lineSize);
+		}
+		map.put("lineSize", lineSize > 0 ? lineSize : 10);
+		return map;
+	}
+	
+	
+	
+	
 	protected Map<String, Object> handleParams2(String column1, String keyword1, String column2, String keyword2) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if ("".equals(column1) || column1 == null || "null".equalsIgnoreCase(column1)) {

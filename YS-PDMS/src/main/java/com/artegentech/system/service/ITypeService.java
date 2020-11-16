@@ -30,7 +30,6 @@ public interface ITypeService {
 	public List<Type> getAllParentType() throws Exception;
 
 
-	
 	/**
 	 * 抓取所有類型資料的總行數
 	 * 
@@ -82,7 +81,14 @@ public interface ITypeService {
 			throws Exception;
 	
 	
-	
 	public boolean edit(Type type) throws Exception;
+	
+	
+	
+	
+	public List<Type> getSubTypeByFirstType(String parent_type) throws Exception;
+
+	public List<Type> getSubTypeByUpperID(Integer upper_id) throws Exception;
+
 
 }

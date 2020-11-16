@@ -1,5 +1,5 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<title>产品开发及管理系统</title>
+<title>产品开发管理系统</title>
 <link rel="Shortcut Icon" href="images/Logo-YS.ico">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -32,4 +32,5 @@
 <script type="text/javascript" src="bootstrap-table/tableExport/tableExport.js"></script>
 <script type="text/javascript" src="bootstrap-table/js/bootstrap-table-zh-CN.min.js"></script>
 <!-- 引入主要js控制文件 -->
-<script type="text/javascript" src="js/main.js?ver=12"></script>
+<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/spark.js"></script>

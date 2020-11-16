@@ -3,12 +3,6 @@
 <mapper namespace="com.artegentech.system.dao.ITypeDAO">
 	<cache />
 	
-	<select id="findByChildAndParentAndUpper" resultType="Type" parameterType="java.util.Map">
-		SELECT * FROM tbltype 
-		WHERE parent_type=#{parent_type} AND sub_type=#{sub_type} AND upper_id=#{upper_id} limit 1;
-	</select>
-	
-
 	<insert id="doCreate" parameterType="Type" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO tbltype(id,parent_type,sub_type,upper_id,reg_time,member_id,locked)
 		VALUES(#{id},#{parent_type},#{sub_type},#{upper_id},#{reg_time},#{member_id},#{locked});
@@ -22,7 +16,7 @@
 		SELECT * FROM tbltype WHERE parent_type=#{parent_type} AND sub_type=#{sub_type}  AND upper_id=#{upper_id} LIMIT 1;
 	</select>
 	
-	<select id="findParentTypeFirst" resultType="Type" >
+	<select id="findFirstParentType" resultType="Type" >
 		SELECT * FROM tbltype WHERE  locked=0 AND upper_id = 0 GROUP BY parent_type ORDER BY parent_type;
 	</select>
 	
@@ -31,7 +25,11 @@
 	</select>
 	
 	
-	<select id="findSubTypeByUpperID" resultType="Type" >
+	<select id="findSubTypeByFirstType" resultType="Type" parameterType="String">
+		SELECT * FROM tbltype WHERE  locked=0 AND upper_id = 0 AND parent_type=#{parent_type};
+	</select>
+	
+	<select id="findSubTypeByUpperID" resultType="Type" parameterType="Integer">
 		SELECT * FROM tbltype WHERE  locked=0 AND upper_id=#{upper_id};
 	</select>
 	
@@ -81,6 +79,11 @@
 	
 	<select id="findById" resultType="Type" parameterType="Integer">
 		SELECT * FROM tbltype WHERE id=#{id};
+	</select>
+	
+		
+	<select id="findJointType" resultType="Type" parameterType="String">
+		SELECT * FROM tbltype WHERE  locked=0 AND #{joint_type}= CONCAT(CONCAT(parent_type,'-'),sub_type);
 	</select>
 	
 </mapper>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.IPartInfoDAO">
+	<cache />
+	
+	<select id="findByCode" resultType="PartInfo" parameterType="String">
+		SELECT * FROM tblpartinfo WHERE part_code=#{part_code} AND status!=4;
+	</select>
+	
+	<insert id="doCreate" parameterType="PartInfo" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO tblpartinfo(part_code,tradename,spec,unit,loss,prop1,prop2,prop3,prop4,prop5,status,locked)
+		VALUES(#{part_code},#{tradename},#{spec},#{unit},#{loss},#{prop1},#{prop2},#{prop3},#{prop4},#{prop5},#{status},#{locked});
+	</insert>
+	
+	
+	<select id="findAwaitCheckSplit" parameterType="java.util.Map" resultType="PartInfo">
+		SELECT * FROM tblpartinfo WHERE status=1
+		ORDER BY id ASC;
+	</select>
+	
+	<select id="findAwaitRehandleSplit" parameterType="java.util.Map" resultType="PartInfo">
+		SELECT * FROM tblpartinfo WHERE status=2 or status=3
+		ORDER BY id ASC;
+	</select>
+	
+	
+	<update id="doUpdateStatus" parameterType="PartInfo">
+		UPDATE tblpartinfo SET status=#{status} WHERE id=#{id};
+	</update>
+	
+	<update id="doUpdateLock" parameterType="PartInfo">
+		UPDATE tblpartinfo SET locked=#{locked} WHERE id=#{id};
+	</update>
+	
+	<select id="findById" resultType="PartInfo" parameterType="Integer">
+		SELECT * FROM tblpartinfo WHERE id=#{id};
+	</select>
+	
+	<update id="doUpdate" parameterType="PartInfo">
+		UPDATE tblpartinfo SET tradename=#{tradename},spec=#{spec},unit=#{unit},loss=#{loss},
+		prop1=#{prop1},prop2=#{prop2},prop3=#{prop3},prop4=#{prop4},prop5=#{prop5},
+		status=#{status},locked=#{locked} WHERE id=#{id};
+	</update>
+	
+	
+	<select id="getAllUnlockedCount" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM tblpartinfo
+		WHERE locked=0 and status=5
+			<if test="part_code != null">
+				AND	part_code LIKE #{part_code}
+			</if>
+			<if test="tradename != null">
+				AND tradename LIKE #{tradename}
+			</if>
+			<if test="spec != null">
+				AND spec LIKE #{spec}
+			</if>
+			<if test="prop != null">
+				AND (prop1 LIKE #{prop} or prop2 LIKE #{prop} or prop3 LIKE #{prop} or prop4 LIKE #{prop} or prop5 LIKE #{prop})
+			</if>
+	</select>
+	
+	<select id="findAllUnlockedSplit" parameterType="java.util.Map" resultType="PartInfo">
+		SELECT * FROM tblpartinfo
+		WHERE locked=0 and status=5
+			<if test="part_code != null">
+				AND	part_code LIKE #{part_code}
+			</if>
+			<if test="tradename != null">
+				AND tradename LIKE #{tradename}
+			</if>
+			<if test="spec != null">
+				AND spec LIKE #{spec}
+			</if>
+			<if test="prop != null">
+				AND (prop1 LIKE #{prop} or prop2 LIKE #{prop} or prop3 LIKE #{prop} or prop4 LIKE #{prop} or prop5 LIKE #{prop})
+			</if>
+		ORDER BY id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	
+	<select id="getAllCount" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM tblpartinfo WHERE  status=5
+			<if test="part_code != null">
+				AND	part_code LIKE #{part_code}
+			</if>
+			<if test="tradename != null">
+				AND tradename LIKE #{tradename}
+			</if>
+			<if test="spec != null">
+				AND spec LIKE #{spec}
+			</if>
+			<if test="prop != null">
+				AND (prop1 LIKE #{prop} or prop2 LIKE #{prop} or prop3 LIKE #{prop} or prop4 LIKE #{prop} or prop5 LIKE #{prop})
+			</if>
+	</select>
+	
+	<select id="findAllSplit" parameterType="java.util.Map" resultType="PartInfo">
+		SELECT * FROM tblpartinfo WHERE status=5
+			<if test="part_code != null">
+				AND	part_code LIKE #{part_code}
+			</if>
+			<if test="tradename != null">
+				AND tradename LIKE #{tradename}
+			</if>
+			<if test="spec != null">
+				AND spec LIKE #{spec}
+			</if>
+			<if test="prop != null">
+				AND (prop1 LIKE #{prop} or prop2 LIKE #{prop} or prop3 LIKE #{prop} or prop4 LIKE #{prop} or prop5 LIKE #{prop})
+			</if>
+		ORDER BY id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	
+</mapper>
