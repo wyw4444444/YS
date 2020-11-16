@@ -19,7 +19,7 @@ $(document).ready(function() {
 				window.location = "index.action";
 				return false;
 			}
-			/*
+			/* 
 			if (textStatus == "parsererror") {
 				alert("登錄超時！請重新登錄！");
 				//window.location.href = 'login';
