@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.IKnowledgeDAO">
+	<cache />
+	<insert id="doCreate" parameterType="Knowledge_part" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO tblknowledge_part(id,part_code,version,part_name,descr,fileUrl)
+		VALUES(#{id},#{part_code},#{version},#{name},#{desc},#{file}); 
+	</insert>
+	<select id="findProcessed" parameterType="java.util.Map" resultType="Knowledge_part">
+		SELECT id,part_code,version,descr,part_name,fileUrl FROM tblknowledge_part
+		<where>
+			status = '1'
+			<if test="part_code != null and part_code != ''">
+				and part_code LIKE #{part_code} 
+			</if>
+		</where>
+		ORDER BY id ASC LIMIT #{start},#{lineSize};
+	</select>
+	<select id="findAllPart" parameterType="java.util.Map" resultType="Knowledge_part">
+		SELECT id,part_code,version,descr,part_name,fileUrl,status FROM tblknowledge_part
+		<where>
+			<if test="part_code != null and part_code != ''">
+				part_code LIKE #{part_code} 
+			</if>
+		</where>
+		ORDER BY id ASC LIMIT #{start},#{lineSize};
+	</select>
+	<select id="findOnePart" parameterType="java.util.Map" resultType="Knowledge_part">
+		SELECT id,part_code,version,descr,part_name,fileUrl,status FROM tblknowledge_part WHERE part_code=#{part_code} and version=#{version};
+	</select>
+	<update id="updatePartStatus" parameterType="Knowledge_part">
+		UPDATE tblknowledge_part SET status=#{status} WHERE id=#{id}; 
+	</update>
+	<update id="updatePartPass" parameterType="Knowledge_part">
+		UPDATE tblknowledge_part SET status="5" WHERE part_code=#{part_code} and version=#{version}; 
+	</update>
+	<update id="updatePartReject" parameterType="Knowledge_part">
+		UPDATE tblknowledge_part SET status="3" WHERE part_code=#{part_code} and version=#{version}; 
+	</update>
+	 
+	<insert id="add" parameterType="Knowledge" useGeneratedKeys="true" keyProperty="id"> 
+		INSERT INTO tblknowledge(id,part_code,version,part_type,part_name,date,descr)
+		VALUES(#{id},#{part_code},#{version},#{part_type},#{part_name},#{date},#{descr});
+	</insert>
+	<select id="findAllKnowledge" parameterType="java.util.Map" resultType="Knowledge">
+		SELECT id,part_code,version,descr,part_name FROM tblknowledge
+		<where>
+			status = #{status}
+			<if test="part_code != null and part_code != ''">
+				and part_code LIKE #{part_code}  
+			</if>
+		</where>
+		ORDER BY id ASC LIMIT #{start},#{lineSize};
+	</select>
+	<select id="findPartById" parameterType="java.util.Map" resultType="Knowledge_part">
+		SELECT id,part_code,version,descr,part_name,fileUrl,status FROM tblknowledge_part WHERE id=#{id}
+	</select>
+	<select id="findKnowledgeById" parameterType="java.util.Map" resultType="Knowledge">
+		SELECT * FROM tblknowledge WHERE id=#{id}
+	</select>
+	<select id="findPartByCode" parameterType="java.util.Map" resultType="Knowledge_part">
+		SELECT id,part_code,version,descr,part_name,fileUrl,status FROM tblknowledge_part
+		<where>
+			status = #{status} 
+			<if test="part_code != null and part_code != ''">
+				and part_code LIKE #{part_code} 
+			</if>
+		</where>
+		ORDER BY id ASC LIMIT #{start},#{lineSize}; 
+	</select>
+	<select id="findKnowledgeByCode" parameterType="java.util.Map" resultType="Knowledge">
+		SELECT * FROM tblknowledge
+		<where>
+			status = #{status} 
+			<if test="part_code != null and part_code != ''">
+				and part_code LIKE #{part_code} 
+			</if>
+		</where>
+		ORDER BY id ASC LIMIT #{start},#{lineSize};
+	</select>
+	<select id="findOneKnowledge" parameterType="java.util.Map" resultType="Knowledge">
+		SELECT * FROM tblknowledge WHERE part_code=#{part_code} and version=#{version};
+	</select>
+	<insert id="addKnowledge_part_knowledge" parameterType="Knowledge_part_knowledge" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO tblknowledge_part_knowledge(id,knowledge_id,knowledge_part_id)
+		VALUES(#{id},#{knowledge_id},#{knowledge_part_id}); 
+	</insert>
+	<select id="findPartList" resultType="Knowledge_part"> 
+		SELECT tblknowledge_part.id,part_code,part_name,descr,version,fileUrl,status FROM tblknowledge_part_knowledge,tblknowledge_part WHERE knowledge_id=#{knowledge_id} and tblknowledge_part.id=tblknowledge_part_knowledge.knowledge_part_id;
+	</select> 
+	<update id="updateKnowledgePass" parameterType="Knowledge">
+		UPDATE tblknowledge SET status="5",fileUrl=#{fileUrl} WHERE part_code=#{part_code} and version=#{version};
+	</update> 
+	<update id="updateKnowledgeReject" parameterType="Knowledge">
+		UPDATE tblknowledge SET status="3" WHERE id=#{id};
+	</update> 
+	<update id="updateKnowledge_part" parameterType="Knowledge_part">
+		UPDATE tblknowledge_part SET status="1",part_code=#{part_code},part_name=#{part_name},descr=#{desc},version=#{version},fileUrl=#{file} WHERE id=#{id};
+	</update> 
+	<update id="updateKnowledge" parameterType="Knowledge">
+		UPDATE tblknowledge SET status="1",part_code=#{part_code},part_name=#{part_name},descr=#{descr},version=#{version} WHERE id=#{id};
+	</update> 
+	<update id="deleteKnowledgeRelation">
+		DELETE from tblknowledge_part_knowledge WHERE knowledge_id=#{id};
+	</update> 
+	  
+	<select id="findKnowledgeByPart" parameterType="java.util.Map" resultType="Knowledge_total"> 
+		SELECT knowledge_id,kpk.id,knowledge_part_id,kp.part_code,k.part_code as code,kp.version as part_version,k.version FROM tblknowledge_part_knowledge AS kpk
+		JOIN tblknowledge_part AS kp ON kpk.knowledge_part_id = kp.id
+		JOIN tblknowledge AS k ON kpk.knowledge_id = k.id
+		<where>
+			k.status = #{status} 
+			<if test="part_code != null and part_code != ''">
+				and kp.part_code LIKE #{part_code} 
+			</if>
+		</where>
+		ORDER BY kpk.id ASC LIMIT #{start},#{lineSize};
+	</select>  
+	<update id="updateKnowledgeStatus" parameterType="java.util.Map">
+		UPDATE tblknowledge SET status=#{status} WHERE id=#{id};
+	</update>   
+	<update id="updateKnowledgePartRelation" parameterType="java.util.Map">
+		UPDATE tblknowledge_part_knowledge SET knowledge_part_id=#{knowledge_part_id} WHERE id=#{id};
+	</update> 
+	<select id="findNewPartByCode" resultType="String"> 
+		SELECT version FROM ys_pdms_db.tblknowledge_part where part_code=#{part_code} order by version desc limit 1;	
+	</select>
+	<select id="findOneKnowledgePartList" resultType="Knowledge_total"> 
+		SELECT knowledge_id,kpk.id,knowledge_part_id,kp.part_code,k.part_code as code,kp.version as part_version,k.version,kp.fileUrl FROM tblknowledge_part_knowledge AS kpk
+		JOIN tblknowledge_part AS kp ON kpk.knowledge_part_id = kp.id
+		JOIN tblknowledge AS k ON kpk.knowledge_id = k.id
+		where kpk.knowledge_id=#{id}
+	</select>  
+	<select id="getAllPartCount" parameterType="java.util.Map" resultType="Long"> 
+		SELECT COUNT(*) FROM tblknowledge_part
+		<where>
+			status = #{status} 
+			<if test="part_code != null and part_code != ''">
+				and part_code LIKE #{part_code} 
+			</if>
+		</where>
+	</select>  
+</mapper>

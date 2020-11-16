@@ -1,0 +1,15 @@
+body {
+	height: 100%;
+	width: 100%;
+	align-items: center;
+	height: 750px;
+}
+
+#bgLoginDiv{
+	margin:0px;
+	padding:0px;
+}
+
+#footDiv{
+	margin-top:20px;
+}

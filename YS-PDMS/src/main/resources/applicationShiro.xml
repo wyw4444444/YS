@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	<!-- 配置Shiro過濾器 -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<!-- 標示現在要配置的是一個安全管理器 -->
+		<property name="securityManager" ref="securityManager" />
+		<!-- 出現錯誤之後的跳轉路徑的配置 -->
+		<property name="loginUrl" value="/loginUrl.action" />
+		<!-- 認證失敗之後的跳轉路徑頁面 -->
+		<property name="unauthorizedUrl" value="/unauthUrl.action" />
+		<!-- 登錄成功之後的跳轉訪問路徑 -->
+		<property name="successUrl" value="/successUrl.action" />
+		<!-- 配置Shiro裡面需要使用到的過濾器操作 -->
+		<property name="filters">
+			<map>
+				<entry key="authc" value-ref="formAuthenticationFilter" />
+			</map>
+		</property>
+		<!-- Shiro裡面需要針對於所有的路徑進行配置，所有的配置需要通過文本的形式設置 -->
+		<property name="filterChainDefinitions">
+			<value>
+				/loginUrl.action=authc
+				/captcha.jpg=anon
+				/checkRandAndCode.action=anon
+				/registerpage.action=anon
+				/loginApp.action=anon
+				/loginWeb.action=anon
+				/registerpage.html=anon
+				/*=user
+				<!-- /*=anon -->
+			</value>
+		</property>
+	</bean>
+	<!-- 以下為Shiro需要的配置項 -->
+	<!-- 此處表示使用內置的表單登錄控制驗證 -->
+	<bean id="formAuthenticationFilter" class="com.artegentech.action.filter.CustomerFormAuthenticationFilter">
+		<!-- 定義出需要使用的參數，此參數與表單一一對應 -->
+		<property name="usernameParam" value="mid" />
+		<property name="passwordParam" value="password" />
+		<property name="rememberMeParam" value="rememberMe" />
+		<property name="loginUrl" value="/loginUrl.action" />
+	</bean>
+
+	<!-- 配置SecurityManager的管理 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<!--多realm的權限策略設置，配置為必須滿足全部realm才算成功，不在realms前配置的話authenticator中的realm集合為空-->
+        <!--securityManager注入realms的時候，會把realm也放一份到authenticator中，所以必須寫在realms上面!!!-->
+        <property name="authenticator">
+            <bean class="org.apache.shiro.authc.pam.ModularRealmAuthenticator">
+                <property name="authenticationStrategy">
+                    <bean class="org.apache.shiro.authc.pam.AllSuccessfulStrategy"/>
+                </property>
+            </bean>
+        </property>
+		<!-- 配置你需要使用的Realms -->
+		<!-- 如果只有一個realm的話，可以直接注入realm屬性，不需要注入realms屬性-->
+        <!-- 為了以後的擴展，即使只有一個realm還是注入了realms屬性（雖然以後估計也都是單realm）-->
+        <property name="realms">
+            <list>
+                <bean class="com.artegentech.realm.MemberRealm">
+                    <property name="credentialsMatcher">
+                        <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                            <!--指定加密算法-->
+                            <property name="hashAlgorithmName" value="MD5"/>
+                            <!--指定對密碼連續進行5輪MD5加密-->
+                            <property name="hashIterations" value="5"/>
+                            <!--是否存儲散列后的密碼為16進制，需要和生成密碼時的一樣，默認是base64 -->
+							<property name="storedCredentialsHexEncoded" value="true" />
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+		<property name="cacheManager" ref="cacheManager" />
+		<!-- 定義要使用的session管理器 -->
+		<property name="sessionManager" ref="sessionManager" />
+		<!-- 定義RememberMe的管理器 -->
+		<property name="rememberMeManager" ref="rememberMeManager" />
+	</bean>
+
+	<!-- 進行緩存的操作配置 -->
+	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManagerConfigFile" value="classpath:ehcache.xml" />
+	</bean>
+
+	<!-- 定義Session ID生成管理器 -->
+	<bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator" />
+
+	<!-- 配置Session DAO的操作處理 -->
+	<bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+		<!-- 設置session緩存的名字，這個名字可以任意 -->
+		<property name="activeSessionsCacheName" value="shiro-activeSessionCache" />
+		<!-- 定義該Session DAO操作中所使用的ID生成器 -->
+		<property name="sessionIdGenerator" ref="sessionIdGenerator" />
+	</bean>
+
+	<!-- 配置需要向Cookie中保存數據的配置模板（RememberMe） -->
+	<bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<!-- 設置Cookie在瀏覽器中保存內容的名字，由用戶自己來設置 -->
+		<constructor-arg value="ATG-RememberMe" />
+		<!-- 保證該系統不會受到跨域腳本操作攻擊 -->
+		<property name="httpOnly" value="true" />
+		<!-- 定義Cookie的過期時間為一小時 -->
+		<property name="maxAge" value="3600" />
+	</bean>
+
+	<!-- 定義RememberMe工程的程序管理類 -->
+	<bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+		<!-- 定義在進行RememberMe功能實現的時候所需要使用到的Cookie的處理類 -->
+		<property name="cookie" ref="rememberMeCookie" />
+	</bean>
+
+	<!-- 配置需要向Cookie中保存數據的配置模板 -->
+	<bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<!-- 在Tomcat運行下默認使用的Cookie的名字為SESSIONID -->
+		<constructor-arg value="ATG-session-id" />
+		<!-- 保證該系統不會受到跨域的腳本操作攻擊 -->
+		<property name="httpOnly" value="true" />
+		<!-- 定義Cookie的過期時間，單位為秒，如果設置為-1表示瀏覽器關閉時Cookie消失 -->
+		<property name="maxAge" value="-1" />
+	</bean>
+
+	<!-- 定義會話管理器的操作 -->
+	<!-- <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager"> -->
+	<bean id="sessionManager" class="com.artegentech.action.shiro.ShiroSession">
+		<!-- 定義的是全局的session會話超時時間，此操作會覆蓋web.xml文件中的超時時間配置 -->
+		<!-- <property name="globalSessionTimeout" value="1000000" /> -->
+		<property name="globalSessionTimeout" value="-1000000" />
+		<!-- 刪除所有無效的Session對象，此時的session被保存在了內存裡面 -->
+		<property name="deleteInvalidSessions" value="true" />
+		<!-- 定義要使用的無效的Session定期調度器 -->
+		<property name="sessionValidationScheduler" ref="sessionValidationScheduler" />
+		<!-- 需要讓此session可以使用該定時調度器進行檢測 -->
+		<property name="sessionValidationSchedulerEnabled" value="true" />
+		<!-- 定義Session可以進行序列化的工具類 -->
+		<property name="sessionDAO" ref="sessionDAO" />
+		<!-- 所有的session一定要將id設置到Cookie之中，需要提供有Cookie的操作模板 -->
+		<property name="sessionIdCookie" ref="sessionIdCookie" />
+		<!-- 定義sessionIdCookie模板可以進行操作的啟用 -->
+		<property name="sessionIdCookieEnabled" value="true" />
+	</bean>
+
+	<!-- 配置session的定时验证检测程序类，以让无效的session释放 -->
+	<!-- <bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler"> -->
+	<bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler">
+		<!-- 設置session的失效掃描間隔，單位為毫秒 -->
+		<!-- <property name="sessionValidationInterval" value="100000" /> -->
+		<property name="interval" value="100000" />
+		<!-- 隨後還需要定義有一個會話管理器的程序類的引用 -->
+		<property name="sessionManager" ref="sessionManager" />
+	</bean>
+
+	<!-- 配置Shiro在Spring中的生命週期的控制操作 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<!-- 啟動在Shiro裡面進行Annotation的相關驗證處理操作 -->
+	<bean id="controllerDefaultAdvisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor">
+		<!-- 進行目標程序類的代理控制 -->
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+	<!-- 針對于安全管理實現的AOP處理操作 -->
+	<bean id="controllerAuthorizationAttributeSourceAdvisor" class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
+</beans>
