@@ -60,7 +60,9 @@
 .partDetail .leftcontent .title{
 	margin-bottom:30px;
 }
-
+.partDetail #showUpdateKnowledge .fixed-table-body{
+	height:90%;
+}
 /* 合併分階 */
 .knowledgeAdd>.title{
 	margin-top:30px;

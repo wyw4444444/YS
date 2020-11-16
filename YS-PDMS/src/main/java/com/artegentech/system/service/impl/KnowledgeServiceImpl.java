@@ -246,4 +246,10 @@ public class KnowledgeServiceImpl extends AbstractService implements IKnowledgeS
 		map.put("status", status);
 		return this.knowledgedao.getAllPartCount(map);
 	}
+
+	@Override
+	public boolean updatePartStatus(Knowledge_part Knowledge_part) throws Exception {
+		// TODO Auto-generated method stub
+		return this.knowledgedao.updatePartStatus(Knowledge_part);
+	}
 }

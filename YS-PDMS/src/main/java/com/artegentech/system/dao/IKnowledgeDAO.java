@@ -66,4 +66,6 @@ public interface IKnowledgeDAO extends IDAO<Integer, Knowledge_part> {
 	public List<Knowledge_total> findOneKnowledgePartList(Integer id) throws Exception;
 	
 	public Long getAllPartCount(Map<String,Object> params) throws Exception;
+	
+	public boolean updatePartStatus(Knowledge_part Knowledge_part) throws Exception;
 }

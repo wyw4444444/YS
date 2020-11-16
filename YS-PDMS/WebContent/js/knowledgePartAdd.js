@@ -116,7 +116,11 @@ $('document').ready(function(){
 			success : function(data) {
 				console.log(data)
 				$('.number-error-tip').show()
-				$('.number-error-tip').html("料號已存在，請進入升版界面操作")
+//				因為有數據，所以自動將部分數據帶出來
+				$('#name').val(data.name);
+				$('#desc').val(data.desc);
+				$('#version').val(String.fromCharCode(data.version.charCodeAt(0) + 1))
+				$('.number-error-tip').html("料號已存在，版本號自動升一級")
 			},
 			error:function(data){
 				if(!data.responseText){

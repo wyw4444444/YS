@@ -190,6 +190,24 @@ public class KnowledgeAction extends AbstractAction {
 	 * @throws Exception
 	 */
 	@RequiresUser
+	@RequestMapping("updatePartStatus")
+	public boolean updatePartStatus(HttpServletRequest request) throws Exception {
+		Integer id = Integer.parseInt(request.getParameter("id"));
+		String status = request.getParameter("status");
+		Knowledge_part Knowledge_part = new Knowledge_part();
+		Knowledge_part.setId(id);
+		Knowledge_part.setStatus(status);
+		boolean rs = this.knowledgeService.updatePartStatus(Knowledge_part);
+		return rs;
+	}
+	/**
+	 * 審核分階申請
+	 * 將分階記錄的status改成2
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@RequiresUser
 	@RequestMapping("updatePartPass")
 	public boolean updatePartPass(HttpServletRequest request) throws Exception {
 		String part_code = request.getParameter("part_code");

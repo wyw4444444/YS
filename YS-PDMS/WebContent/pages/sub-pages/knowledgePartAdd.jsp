@@ -18,7 +18,7 @@
 					</div>
 					<input type="text" class="form-control" id="number" name="number" placeholder="請輸入料號" />
 				</div>
-				<p class="number-error-tip">料號已存在，請進入升版界面操作</p>
+				<p class="number-error-tip">料號已存在，版本號自動升一級</p>
 				<div class="version input-group mb-3">
 					<div class="input-group-prepend">
 						<span class="input-group-text">名稱</span>

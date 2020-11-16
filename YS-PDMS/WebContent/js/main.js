@@ -2840,7 +2840,8 @@ function knowledgeSetting() {
 function knowledgePartAdd(){
 	
 }
-function loadProcessedPart(status){
+
+function showKnowledgeList(part_code){
 	var table = $("#contentDept");
 	table.bootstrapTable('destroy');
 	table.empty();
@@ -2848,9 +2849,9 @@ function loadProcessedPart(status){
 	table.bootstrapTable({
 		method: 'post',
 		contentType: "application/x-www-form-urlencoded",
-		url: "knowledge/findPartByCode.action",
+		url: "knowledge/findKnowledgeByPart.action",
 		dataType: "json",
-		height : tableHeight(),
+		height : 500,
 		striped: true,
 		cache: false,
 		sortable: true,
@@ -2866,8 +2867,8 @@ function loadProcessedPart(status){
 			console.log(params,parseInt(params.offset/5)+1);
 			console.log(params.limit);
             return {
-            	part_code:$('#docSearchKeyWord').val(),
-            	status:status,
+            	status:2,
+            	part_code:part_code,
             	currentPage : parseInt(params.offset/params.limit)+1,
 				lineSize : params.limit,
 //					column : column,
@@ -2877,7 +2878,7 @@ function loadProcessedPart(status){
 		paginationLoop: false,
 		paginationHAlign : "left",
 		//buttonsPrefix: 'btn btn-sm',
-		toolbar: "#toolbar",
+		toolbar: "#toolbar2",
         showColumns: true,
         showRefresh: true,
         clickToSelect: true,//是否启用点击选中行
@@ -2898,24 +2899,24 @@ function loadProcessedPart(status){
         },
         idField: 'id',//主键
 		columns : [{
-					field : 'part_code',
-					title : '料號',
-					valign : 'middle',
-					align : 'center'
-
-		}, {
-			field : 'name',
-			title : '名稱',
+			field : 'code',
+			title : '成品料號',
 			valign : 'middle',
 			align : 'center',
 		}, {
 			field : 'version',
-			title : '版本',
+			title : '成品版本',
 			valign : 'middle',
 			align : 'center',
 		},{
-			field : 'desc',
-			title : '描述',
+			field : 'part_code',
+			title : '分階料號',
+			valign : 'middle',
+			align : 'center'
+
+		}, {
+			field : 'part_version',
+			title : '分階版本',
 			valign : 'middle',
 			align : 'center',
 		}, {
@@ -2927,13 +2928,23 @@ function loadProcessedPart(status){
 			formatter:function(value,row,index){
 				console.log("123",value,row,index)
 	            return [
-	            	"<button id='knowledgePartDetail' class='btn btn-primary' href='#' title='查看'>查看</button>"
+	            	"<button id='knowledgeDetail' class='btn btn-primary' href='#' title='查看'>查看</button>"
+	            ].join("");
+		    }
+		}, {
+			field : 'operation',
+			title : '操作',
+			valign : 'middle',
+			align : 'center',
+			formatter:function(value,row,index){
+				console.log("123",value,row,index)
+	            return [
+	            	"<input class='id' type='hidden' value='"+row.id+"'><input class='kid' type='hidden' value='"+row.knowledge_id+"'><button id='knowledgeUpdate' class='btn btn-primary' href='#' title='同步'>同步</button>"
 	            ].join("");
 		    }
 		}]
 	});
 }
-
 
 function knowledgeProcessed(){
 	$("#toolbar").css("padding-top","");
@@ -3140,7 +3151,7 @@ function knowledgeAdd(){
 	});
 }
 
-
+//當打開查詢分階頁面時執行
 function knowledgePart(){
 	$("#toolbar").css("padding-top","");
 	$("#toolbar").css("padding-left","");
@@ -3221,6 +3232,35 @@ function knowledgePart(){
 			title : '描述',
 			valign : 'middle',
 			align : 'center',
+		}, {
+			field : 'status',
+			title : '申請狀態',
+			valign : 'middle',
+			align : 'center',
+			formatter:function(value,row,index){
+				var rs = "未知";
+				switch(value){
+				case "1":
+					rs = "待審核";
+					break;
+				case "2":
+					rs = "取回重辦";
+					break;
+				case "3":
+					rs = "退回重辦";
+					break;
+				case "4":
+					rs = "已取消";
+					break;
+				case "5":
+					rs = "已發行";
+					break;
+				case "6":
+					rs = "已廢止";
+					break;
+				}
+	            return rs;
+		    }
 		}, {
 			field : 'operation',
 			title : '查看',

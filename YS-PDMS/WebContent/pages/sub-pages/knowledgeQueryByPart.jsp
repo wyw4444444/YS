@@ -10,7 +10,7 @@
 		<div class="form-inline">
 			<div class="form-group">
 				<div class="input-group">
-					<input class="form-control" type="text" placeholder="输入料號" id="docSearchKeyWord" name="docSearchKeyWord"/>
+					<input class="form-control" type="text" placeholder="输入分階料號" id="docSearchKeyWord" name="docSearchKeyWord"/>
 					<button class="btn btn-secondary form-control" onclick="loadKnowledgeByPart('2')">查詢</button>
 				</div>
 			</div>

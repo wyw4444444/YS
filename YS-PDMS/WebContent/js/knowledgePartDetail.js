@@ -23,13 +23,16 @@ $('document').ready(function(){
 			if(data.status=="1"){
 				$('.submit').show();
 				$('.cancel').show();
+				$('.getback').show();
+				$('.reject').show();
 			}
-			if(data.status=="0"){
+			if(data.status=="3"||data.status=="2"||data.status=="4"){
 				$('.update').show();
 			}
-			if(data.status=="2"){
+			if(data.status=="5"){
 				$('.levelup').show(); 
 				$('.print').show(); 
+				$('.delete').show(); 
 			}
 		}
 	})
@@ -56,7 +59,7 @@ $('document').ready(function(){
 			}
 		})
 	})
-	$('.cancel').click(function(){
+	$('.reject').click(function(){
 		console.log("駁回")
 		$.ajax({
 			type : "POST",
@@ -71,6 +74,66 @@ $('document').ready(function(){
 				console.log(data)
 				if(data){
 					alert("駁回成功")
+					window.close();
+				}
+			}
+		})
+	})
+	$('.cancel').click(function(){
+		console.log("取消")
+		$.ajax({
+			type : "POST",
+			url : "knowledge/updatePartStatus.action",
+			dataType : "json",
+			data : {
+				id : id,
+				status : "4",
+			},
+			traditional : true,
+			success : function(data) {
+				console.log(data)
+				if(data){
+					alert("取消成功")
+					window.close();
+				}
+			}
+		})
+	})
+	$('.getback').click(function(){
+		console.log("取回")
+		$.ajax({
+			type : "POST",
+			url : "knowledge/updatePartStatus.action",
+			dataType : "json",
+			data : {
+				id : id,
+				status : "2",
+			},
+			traditional : true,
+			success : function(data) {
+				console.log(data)
+				if(data){
+					alert("取回成功")
+					window.close();
+				}
+			}
+		})
+	})
+	$('.delete').click(function(){
+		console.log("廢止")
+		$.ajax({
+			type : "POST",
+			url : "knowledge/updatePartStatus.action",
+			dataType : "json",
+			data : {
+				id : id,
+				status : "6",
+			},
+			traditional : true,
+			success : function(data) {
+				console.log(data)
+				if(data){
+					alert("廢止成功")
 					window.close();
 				}
 			}
@@ -154,110 +217,7 @@ $('document').ready(function(){
 function localFormatUrl(url){
 	return "/file"+url.substring(15);
 }
-function showKnowledgeList(part_code){
-	var table = $("#contentDept");
-	table.bootstrapTable('destroy');
-	table.empty();
-	table.fadeIn(100);
-	table.bootstrapTable({
-		method: 'post',
-		contentType: "application/x-www-form-urlencoded",
-		url: "knowledge/findKnowledgeByPart.action",
-		dataType: "json",
-		height : 500,
-		striped: true,
-		cache: false,
-		sortable: true,
-		totalField: "count",
-		dataField: "list", //后端 json 对应的表格数据 key
-		pageNumber: 1,
-		pagination: true,
-		pageSize: 15, //单页记录数
-		pageList: [5,10,15,20,50,100],//分页步进值
-		sidePagination : "server",//指定服务器端分页
-		//queryParamsType:'',//查询参数组织方式
-		queryParams: function (params) {
-			console.log(params,parseInt(params.offset/5)+1);
-			console.log(params.limit);
-            return {
-            	status:2,
-            	part_code:part_code,
-            	currentPage : parseInt(params.offset/params.limit)+1,
-				lineSize : params.limit,
-//					column : column,
-//					keyword : keyword
-            }
-        },
-		paginationLoop: false,
-		paginationHAlign : "left",
-		//buttonsPrefix: 'btn btn-sm',
-		toolbar: "#toolbar2",
-        showColumns: true,
-        showRefresh: true,
-        clickToSelect: true,//是否启用点击选中行
-		minimumCountColumns: 2,
-		theadClasses : "thead-dark", // 表頭顏色
-		showExport : true, // 是否显示导出按钮
-		buttonsAlign : "right", // 按钮位置
-		exportTypes : ['excel','xlsx'], // 导出文件类型
-		exportDataType : "limit",
-		exportOptions : {
-			// ignoreColumn: [0,0], //忽略某一列的索引
-			fileName : 'allDoc', // 文件名称设置
-			worksheetName : 'Sheet1', // 表格工作区名称
-			tableName : 'DataTable'
-		},
-		onLoadSuccess : function(data) {
-            console.log(111,data);
-        },
-        idField: 'id',//主键
-		columns : [{
-			field : 'code',
-			title : '成品料號',
-			valign : 'middle',
-			align : 'center',
-		}, {
-			field : 'version',
-			title : '成品版本',
-			valign : 'middle',
-			align : 'center',
-		},{
-			field : 'part_code',
-			title : '分階料號',
-			valign : 'middle',
-			align : 'center'
 
-		}, {
-			field : 'part_version',
-			title : '分階版本',
-			valign : 'middle',
-			align : 'center',
-		}, {
-			field : 'operation',
-			title : '查看',
-			valign : 'middle',
-			align : 'center',
-			events : operateEvents,
-			formatter:function(value,row,index){
-				console.log("123",value,row,index)
-	            return [
-	            	"<button id='knowledgeDetail' class='btn btn-primary' href='#' title='查看'>查看</button>"
-	            ].join("");
-		    }
-		}, {
-			field : 'operation',
-			title : '操作',
-			valign : 'middle',
-			align : 'center',
-			formatter:function(value,row,index){
-				console.log("123",value,row,index)
-	            return [
-	            	"<input class='id' type='hidden' value='"+row.id+"'><input class='kid' type='hidden' value='"+row.knowledge_id+"'><button id='knowledgeUpdate' class='btn btn-primary' href='#' title='同步'>同步</button>"
-	            ].join("");
-		    }
-		}]
-	});
-}
 
 function doPrint() {
     bdhtml=window.document.body.innerHTML;

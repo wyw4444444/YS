@@ -17,11 +17,10 @@
 		ORDER BY id ASC LIMIT #{start},#{lineSize};
 	</select>
 	<select id="findAllPart" parameterType="java.util.Map" resultType="Knowledge_part">
-		SELECT id,part_code,version,descr,part_name,fileUrl FROM tblknowledge_part
+		SELECT id,part_code,version,descr,part_name,fileUrl,status FROM tblknowledge_part
 		<where>
-			status = '2'
 			<if test="part_code != null and part_code != ''">
-				and part_code LIKE #{part_code} 
+				part_code LIKE #{part_code} 
 			</if>
 		</where>
 		ORDER BY id ASC LIMIT #{start},#{lineSize};
@@ -29,11 +28,14 @@
 	<select id="findOnePart" parameterType="java.util.Map" resultType="Knowledge_part">
 		SELECT id,part_code,version,descr,part_name,fileUrl,status FROM tblknowledge_part WHERE part_code=#{part_code} and version=#{version};
 	</select>
+	<update id="updatePartStatus" parameterType="Knowledge_part">
+		UPDATE tblknowledge_part SET status=#{status} WHERE id=#{id}; 
+	</update>
 	<update id="updatePartPass" parameterType="Knowledge_part">
-		UPDATE tblknowledge_part SET status="2" WHERE part_code=#{part_code} and version=#{version};
+		UPDATE tblknowledge_part SET status="5" WHERE part_code=#{part_code} and version=#{version}; 
 	</update>
 	<update id="updatePartReject" parameterType="Knowledge_part">
-		UPDATE tblknowledge_part SET status="0" WHERE part_code=#{part_code} and version=#{version};
+		UPDATE tblknowledge_part SET status="3" WHERE part_code=#{part_code} and version=#{version}; 
 	</update>
 	 
 	<insert id="add" parameterType="Knowledge" useGeneratedKeys="true" keyProperty="id"> 
@@ -43,7 +45,7 @@
 	<select id="findAllKnowledge" parameterType="java.util.Map" resultType="Knowledge">
 		SELECT id,part_code,version,descr,part_name FROM tblknowledge
 		<where>
-			status = '2'
+			status = #{status}
 			<if test="part_code != null and part_code != ''">
 				and part_code LIKE #{part_code}  
 			</if>
@@ -87,10 +89,10 @@
 		SELECT tblknowledge_part.id,part_code,part_name,descr,version,fileUrl,status FROM tblknowledge_part_knowledge,tblknowledge_part WHERE knowledge_id=#{knowledge_id} and tblknowledge_part.id=tblknowledge_part_knowledge.knowledge_part_id;
 	</select> 
 	<update id="updateKnowledgePass" parameterType="Knowledge">
-		UPDATE tblknowledge SET status="2",fileUrl=#{fileUrl} WHERE part_code=#{part_code} and version=#{version};
+		UPDATE tblknowledge SET status="5",fileUrl=#{fileUrl} WHERE part_code=#{part_code} and version=#{version};
 	</update> 
 	<update id="updateKnowledgeReject" parameterType="Knowledge">
-		UPDATE tblknowledge SET status="0" WHERE id=#{id};
+		UPDATE tblknowledge SET status="3" WHERE id=#{id};
 	</update> 
 	<update id="updateKnowledge_part" parameterType="Knowledge_part">
 		UPDATE tblknowledge_part SET status="1",part_code=#{part_code},part_name=#{part_name},descr=#{desc},version=#{version},fileUrl=#{file} WHERE id=#{id};

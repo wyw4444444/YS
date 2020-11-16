@@ -28,6 +28,8 @@ public interface IKnowledgeService {
 	
 	public Knowledge findKnowledgeById(Integer id);
 	
+	public boolean updatePartStatus(Knowledge_part Knowledge_part) throws Exception;
+	
 
 	public boolean updatePartPass(Knowledge_part Knowledge_part) throws Exception;
 	public boolean updatePartReject(Knowledge_part Knowledge_part) throws Exception;
