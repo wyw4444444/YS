@@ -32,7 +32,7 @@
 									<tr>
 										<td style="padding:0px;"><label class="control-label" for="mid">用户名：</label></td>
 										<td colspan="2"><input class="form-control input-sm"
-											type="text" name="mid" id="mid" placeholder="请输入用户名..." value="admin"/>
+											type="text" name="mid" id="mid" placeholder="请输入用户名..." />
 										</td>
 										<td style="padding:0px;">
 											<div id="midMsg" style="margin-left: 3px; color: red; font-size: 14px;">*</div>
@@ -43,7 +43,7 @@
 										</td>
 										<td colspan="2"><input class="form-control input-sm"
 											type="password" name="password" id="password"
-											placeholder="请输入密码..." value="111"/>
+											placeholder="请输入密码..." />
 										</td>
 										<td>
 											<div id="passwordMsg" style="margin-left: 3px; color: red; font-size: 14px;">*</div>

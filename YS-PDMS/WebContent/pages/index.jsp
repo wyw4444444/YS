@@ -14,7 +14,7 @@
 					<br>
 					<br>
 					<div id="welcomeDiv-1">欢迎进入</div>
-					<div id="welcomeDiv-2">产品开发及管理系统</div>
+					<div id="welcomeDiv-2">产品开发管理系统</div>
 				</shiro:user>
 			</div>
 			<jsp:include page="/pages/plugins/include_title_foot.jsp" />

@@ -15,7 +15,6 @@ public interface ITypeDAO extends IDAO<Integer, Type> {
 	 * @return Type
 	 * @throws Exception
 	 */
-	public Type findByChildAndParentAndUpper(Map<String, Object> params) throws Exception;
 
 	
 	public Type findByParentAndUpper(Map<String, Object> params) throws Exception;
@@ -23,11 +22,14 @@ public interface ITypeDAO extends IDAO<Integer, Type> {
 	
 	public Type findByParentAndSubAndUpper(Map<String, Object> params) throws Exception;
 	
-	public List<Type> findParentTypeFirst() throws Exception;
+	public List<Type> findFirstParentType() throws Exception;
 	
 	public List<Type> findParentTypeEcptFirst() throws Exception;
 	
-	public List<Type> findSubTypeByUpperID() throws Exception;
+	public List<Type> findSubTypeByFirstType(String parent_type) throws Exception;
 	
+	public List<Type> findSubTypeByUpperID(Integer upper_id) throws Exception;
+	
+	public Type findJointType(String joint_type) throws Exception;
 	
 }

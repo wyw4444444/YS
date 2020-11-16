@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.ICheckLogDAO">
+	<cache />
+	
+	
+	<insert id="doCreate" parameterType="CheckLog" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO tblchecklog(type_check,id_check,reg_time_apply,member_id,tips,check_status)
+		VALUES(#{type_check},#{id_check},#{reg_time_apply},#{member_id},#{tips},#{check_status});
+	</insert>
+	
+	
+	<select id="findById_CheckAndType" parameterType="java.util.Map" resultType="CheckLog">
+		SELECT * FROM (SELECT * FROM tblchecklog  group by  type_check,id_check ORDER BY no ASC)  as a
+		<where>
+			 <if test="id_check != null">
+				 id_check=#{id_check}
+			</if>
+			<if test="type_check != null">
+				AND type_check=#{type_check}
+			</if>
+			 <if test="member_id != null">
+				AND member_id=#{member_id}
+			</if>
+		</where>
+
+	</select>
+	
+	<select id="findById_CheckAndTypeAll" parameterType="java.util.Map" resultType="CheckLog">
+		SELECT * FROM tblchecklog
+		<where>
+			 <if test="id_check != null">
+				 id_check=#{id_check}
+			</if>
+			<if test="type_check != null">
+				AND type_check=#{type_check}
+			</if>
+			 <if test="member_id != null">
+				AND member_id=#{member_id}
+			</if>
+		</where>
+		ORDER BY no ASC;
+	</select>
+	
+	
+	<select id="getCountByTypeAndPartCodeInPartInfo" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM  (SELECT a.*,b.part_code From tblchecklog as a  inner join tblpartinfo as b on a.id_check=b.id) AS c
+		<where>
+			<if test="type_check != null">
+				type_check=#{type_check}
+			</if>
+				<if test="part_code != null">
+				AND part_code LIKE #{part_code}
+			</if>
+		</where>
+	</select>
+
+	<select id="findByPartCodeInPartInfo" parameterType="java.util.Map" resultType="CheckLog">
+		SELECT * FROM  (SELECT a.*,b.part_code From tblchecklog as a  inner join tblpartinfo as b on a.id_check=b.id) AS c
+		<where>
+			<if test="type_check != null">
+				type_check=#{type_check}
+			</if>
+			<if test="part_code != null">
+				AND part_code LIKE #{part_code}
+			</if>
+		</where>
+		ORDER BY part_code,no ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	
+	
+	<select id="getCountByTypeAndPartCodeInBom" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM  (SELECT a.*,b.part_code_up as part_code From tblchecklog as a  inner join tblbom as b on a.id_check=b.id) AS c
+		<where>
+			<if test="type_check != null">
+				type_check=#{type_check}
+			</if>
+				<if test="part_code != null">
+				AND part_code LIKE #{part_code}
+			</if>
+		</where>
+	</select>
+	<select id="findByPartCodeInBom" parameterType="java.util.Map" resultType="CheckLog">
+		SELECT * FROM  (SELECT a.*,b.part_code_up as part_code From tblchecklog as a  inner join tblbom as b on a.id_check=b.id) AS c
+		<where>
+			<if test="type_check != null">
+				type_check=#{type_check}
+			</if>
+			<if test="part_code != null">
+				AND part_code LIKE #{part_code}
+			</if>
+		</where>
+		ORDER BY part_code,no ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	
+	
+</mapper>

@@ -173,7 +173,65 @@ public class TypeAction extends AbstractAction {
 		return this.typeService.edit(type);
 	}
 
+	/**
+	 * 根据初代类型名查询器其子类型
+	 * @param request
+	 * @return  
+	 * @throws Exception
+	 */
+	@RequiresUser
+	@SuppressWarnings("unchecked")
+	@RequestMapping("listSubTypeByFirstType")
+	public JSONObject listSubTypeByFirstType(HttpServletRequest request) throws Exception {
+		String parent_type=request.getParameter("parent_type");
+		List<Type> result = new ArrayList<Type>();
+		result = this.typeService.getSubTypeByFirstType(parent_type);
+		
+
+		JSONArray json1 = JSONArray.fromObject(result);
+		JsonConfig jsonConfig = new JsonConfig();
+		jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
+		JSONArray jsonArray = JSONArray.fromObject(json1, jsonConfig);
+		for (int i = 0; i < jsonArray.size(); i++) {
+			JsonNullConvert.filterNull(jsonArray.getJSONObject(i));
+		}
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("list", jsonArray);
+		JSONObject json = JSONObject.fromObject(map);
+		return json;
+	}
+	/**
+	 * 根据上阶类型id查询器其子类型
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
 	
+	@RequiresUser
+	@SuppressWarnings("unchecked")
+	@RequestMapping("listSubTypeByUpperID")
+	public JSONObject listSubTypeByUpperID(HttpServletRequest request) throws Exception {
+	
+		Integer upper_id = Integer.parseInt(request.getParameter("upper_id"));
+		
+		List<Type> result = new ArrayList<Type>();
+		result = this.typeService.getSubTypeByUpperID(upper_id);
+		
+
+		JSONArray json1 = JSONArray.fromObject(result);
+		JsonConfig jsonConfig = new JsonConfig();
+		jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
+		JSONArray jsonArray = JSONArray.fromObject(json1, jsonConfig);
+		for (int i = 0; i < jsonArray.size(); i++) {
+			JsonNullConvert.filterNull(jsonArray.getJSONObject(i));
+		}
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("list", jsonArray);
+		JSONObject json = JSONObject.fromObject(map);
+		return json;
+	}
 	
 	@Override
 	public String getType() {

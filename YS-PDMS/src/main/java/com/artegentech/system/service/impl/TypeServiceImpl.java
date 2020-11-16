@@ -27,7 +27,7 @@ public class TypeServiceImpl extends AbstractService implements ITypeService {
 		map.put("parent_type", type.getParent_type());
 		map.put("sub_type", type.getSub_type());
 		map.put("upper_id", type.getUpper_id());
-		if (this.typedao.findByChildAndParentAndUpper(map) == null) {
+		if (this.typedao.findByParentAndSubAndUpper(map) == null) {
 			return this.typedao.doCreate(type);
 		}
 		return false;
@@ -57,7 +57,7 @@ public class TypeServiceImpl extends AbstractService implements ITypeService {
 
 		List<Type> result=new ArrayList<>();
 		
-		Iterator<Type> iter1=this.typedao.findParentTypeFirst().iterator();
+		Iterator<Type> iter1=this.typedao.findFirstParentType().iterator();
 		while(iter1.hasNext()) {
 			Type type1=iter1.next();
 			result.add(type1);
@@ -121,4 +121,14 @@ public class TypeServiceImpl extends AbstractService implements ITypeService {
 		}
 	}
 
+	
+	@Override
+	public List<Type> getSubTypeByFirstType(String parent_type) throws Exception {
+		return this.typedao.findSubTypeByFirstType(parent_type);
+	}
+	
+	@Override
+	public List<Type> getSubTypeByUpperID(Integer upper_id) throws Exception {
+		return this.typedao.findSubTypeByUpperID(upper_id);
+	}
 }

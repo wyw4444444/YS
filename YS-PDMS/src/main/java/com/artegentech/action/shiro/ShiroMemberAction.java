@@ -32,6 +32,7 @@ public class ShiroMemberAction extends AbstractAction {
 		//System.out.println("************************* successUrl.action *******************************");
 		//map = SystemRegister.isRegisterLinux();
 		map = SystemRegister.isRegister();
+		//注释可修改不需注册使用
 		if((Boolean) map.get("flag")==false) {
 			return new ModelAndView(super.getValue("noregister.page"));
 		}
@@ -43,9 +44,10 @@ public class ShiroMemberAction extends AbstractAction {
 		//System.out.println("************************* loginUrl.action *******************************");
 		//map = SystemRegister.isRegisterLinux();
 		map = SystemRegister.isRegister();
-		if((Boolean) map.get("flag")==false) {
-			return new ModelAndView(super.getValue("noregister.page"));
-		}
+		//注释可修改不需注册使用
+//		if((Boolean) map.get("flag")==false) {
+//			return new ModelAndView(super.getValue("noregister.page"));
+//		}
 		return new ModelAndView(super.getValue("shiro.loginUrl.page"));
 	}
 

@@ -22,9 +22,10 @@ public class IndexAction extends AbstractAction {
 		//System.out.println("************************* index.action *******************************");
 		//map = SystemRegister.isRegisterLinux();
 		map = SystemRegister.isRegister();
-		if((Boolean) map.get("flag")==false) {
-			return new ModelAndView(super.getValue("noregister.page"));
-		}
+		//注释可修改不需注册使用
+//		if((Boolean) map.get("flag")==false) {
+//			return new ModelAndView(super.getValue("noregister.page"));
+//		}
 		return new ModelAndView(super.getValue("index.page"));
 	}
 	

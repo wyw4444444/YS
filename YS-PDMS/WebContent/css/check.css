@@ -1,0 +1,44 @@
+
+#logo {
+	margin-top: -3px;
+	float: left;
+}
+
+ .main-footer {
+	height: 30px;
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	border-top: solid;
+	border-width: 1px;
+	padding-top: 5px;
+	width: 100%
+}
+
+
+/**********************************************************/
+
+#alertDiv {
+	margin-top: 10px;
+}
+
+#alertSmallDiv,#alertSmallDiv2,#alertSmallDiv3,#alertSmallDiv4,#alertSmallDiv5 {
+	float: left;
+	width: 50%;
+	padding: .5rem .5rem;
+	margin-bottom: -10px;
+	border: 1px solid transparent;
+	border-radius: .25rem
+}
+
+
+/***************SPARK增加********************/
+/* 修改bootstrap-select  selectpicker中邊框顏色(目前的style 邊框與背景顏色均相同) */
+.bootstrap-select .btn-default{
+border-color:#CED4DA;
+}
+/* 修改bootstrap-select  selectpicker中dropdown menu的寬度 */
+.bootstrap-select .dropdown-menu{
+min-width:100% !important;
+}
+
