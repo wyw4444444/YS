@@ -72,6 +72,31 @@ $('document').ready(function(){
 		var row = $(this).parents('tr');
 		row.remove()
 	})
+	//料號填寫時，1、判斷料號是否正確，在接入料號系統的時候需要補上。2、判斷料號是否已經存在，存在的話就提示應該去升版
+	$('.leftcontent #number').on('keyup',function(){
+		var value = $(this).val();
+		$.ajax({
+			type : "POST",
+			url : "knowledge/findOneKnowledge.action",
+			dataType : "json",
+			data : {
+				part_code : value,
+				version:"A"
+			},
+			traditional : true,
+			success : function(data) {
+				console.log(data)
+				$('.number-error-tip').show()
+				$('.number-error-tip').html("料號已存在，請進入升版界面操作")
+			},
+			error:function(data){
+				if(!data.responseText){
+					console.log("沒有數據")
+					$('.number-error-tip').hide()
+				}
+			}
+		})
+	})
 	$('.close').on('click', function () {
 	  	$(this).parents('.alert').hide()
 	})

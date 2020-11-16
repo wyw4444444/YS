@@ -10,6 +10,8 @@
 	<div id="toolbar" class="col-md-10 col-lg-10 partDetail">
 		<div class="content">
 			<div class="leftcontent">
+				<div class="title"><h4>分階詳情</h4>
+				</div>
 				<div class="number input-group mb-3">
 					<div class="input-group-prepend">
 						<span class="input-group-text">料號</span>
@@ -17,7 +19,7 @@
 					<input type="text" class="form-control" id="number" name="number" placeholder="" readonly/>
 				</div>
 				<div class="version input-group mb-3">
-					<div class="input-group-prepend">
+					<div class="input-group-prepend"> 
 						<span class="input-group-text">名稱</span>
 					</div>
 					<input type="text" class="form-control" id="name" name="name" placeholder="" readonly/>
@@ -46,7 +48,8 @@
 					<button style="display:none;" class="submit btn btn-primary">通過審核</button>
 					<button style="display:none;" class="cancel btn btn-primary">駁回</button> 
 					<button style="display:none;" class="update btn btn-primary">修改</button> 
-					<button style="display:none;" class="levelup btn btn-primary">升版</button> 
+					<button style="display:none;" class="levelup btn btn-primary">升版</button>
+					<button style="display:none;" class="print btn btn-primary">打印</button> 
 				</div>
 
 			</div>
@@ -56,7 +59,9 @@
 					<h5>附件展示</h5>
 				</div>
 				<div class="fileContent">
+					<!--startprint-->
 					<img src="" class="fileShow">
+					<!--endprint-->
 				</div>
 			</div>
 			

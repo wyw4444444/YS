@@ -55,9 +55,11 @@
 
 /* 分階詳情頁面 */
 .partDetail .leftcontent{
-	margin:30px;
+	margin:0px 30px;
 }
-
+.partDetail .leftcontent .title{
+	margin-bottom:30px;
+}
 
 /* 合併分階 */
 .knowledgeAdd>.title{

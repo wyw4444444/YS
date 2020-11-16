@@ -25,6 +25,7 @@ import com.artegentech.system.vo.Knowledge_part_knowledge;
 import com.artegentech.system.vo.Knowledge_total;
 import com.artegentech.util.JsonNullConvert;
 import com.artegentech.util.UploadFileUtil;
+import com.artegentech.util.PrintToPdfUtil;
 import com.artegentech.util.action.AbstractAction;
 
 import net.sf.json.JSONArray;
@@ -143,8 +144,8 @@ public class KnowledgeAction extends AbstractAction {
 		Integer currentPage = Integer.parseInt(request.getParameter("currentPage"));
 		Integer lineSize = Integer.parseInt(request.getParameter("lineSize"));
 		List<Knowledge_part> result = this.knowledgeService.findAllPart(part_code,currentPage,lineSize);
-		Integer count = 0;
-		count = result.size();
+		Long count = (long)0;
+		count = this.knowledgeService.getAllPartCount("", "2");
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("count", count);
 		map.put("list", result);
@@ -323,8 +324,8 @@ public class KnowledgeAction extends AbstractAction {
 		Integer lineSize = Integer.parseInt(request.getParameter("lineSize"));
 		String status = request.getParameter("status");
 		List<Knowledge_part> result = this.knowledgeService.findPartByCode(part_code,status,currentPage,lineSize);
-		Integer count = 0;
-		count = result.size();
+		Long count = (long)0;
+		count = this.knowledgeService.getAllPartCount(part_code,status);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("count", count);
 		map.put("list", result);
@@ -406,11 +407,25 @@ public class KnowledgeAction extends AbstractAction {
 	@RequiresUser
 	@RequestMapping("updateKnowledgePass")
 	public boolean updateKnowledgePass(HttpServletRequest request) throws Exception {
+		Integer id = Integer.parseInt(request.getParameter("id"));
 		String part_code = request.getParameter("part_code");
 		String version = request.getParameter("version");
+//		查詢所有分階數據
+		List<Knowledge_total> list = this.knowledgeService.findOneKnowledgePartList(id);
+
+		List<String> partList = new ArrayList<String>();
+		for(Knowledge_total v:list){
+			partList.add(v.getFileUrl());
+		}
+//		定義pdf地址，
+		String fileUrl = "E://part-images/knowledge/"+part_code+"_"+version+".pdf";
+//		將所有分階附件匯總成pdf
+		PrintToPdfUtil.toPdf(partList, fileUrl);
+//		最後把成品狀態改成2，並把pdf地址存入
 		Knowledge Knowledge = new Knowledge();
 		Knowledge.setPart_code(part_code);
 		Knowledge.setVersion(version);
+		Knowledge.setFileUrl(fileUrl);
 		boolean rs = this.knowledgeService.updateKnowledgePass(Knowledge);
 		return rs;
 	}
@@ -482,6 +497,15 @@ public class KnowledgeAction extends AbstractAction {
 	public String findNewPartByCode(HttpServletRequest request) throws Exception {
 		String part_code = request.getParameter("part_code");
 		return this.knowledgeService.findNewPartByCode(part_code);
+	}
+	@RequiresUser
+	@RequestMapping("test")
+	public boolean test(HttpServletRequest request) throws Exception {
+		List<String> list = new ArrayList<String>();
+		list.add("E://part-images/knowledge/RB2-P1100A0G_G/RB2-P1100A0G_G.jpg");
+		list.add("E://part-images/knowledge/RB2-P1100A0G_I/RB2-P1100A0G_I.jpg");
+		PrintToPdfUtil.toPdf(list, "E://part-images/test.pdf");
+		return false;
 	}
 
 	@Override

@@ -18,6 +18,14 @@ public class Knowledge_total implements Serializable {
 	private String part_version;
 	//	成品版本號
 	private String version;
+	//	成品版本號
+	private String fileUrl;
+	public String getFileUrl() {
+		return fileUrl;
+	}
+	public void setFileUrl(String fileUrl) {
+		this.fileUrl = fileUrl;
+	}
 	public Integer getId() {
 		return id;
 	}

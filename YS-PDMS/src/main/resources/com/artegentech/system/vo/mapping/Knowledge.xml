@@ -87,7 +87,7 @@
 		SELECT tblknowledge_part.id,part_code,part_name,descr,version,fileUrl,status FROM tblknowledge_part_knowledge,tblknowledge_part WHERE knowledge_id=#{knowledge_id} and tblknowledge_part.id=tblknowledge_part_knowledge.knowledge_part_id;
 	</select> 
 	<update id="updateKnowledgePass" parameterType="Knowledge">
-		UPDATE tblknowledge SET status="2" WHERE part_code=#{part_code} and version=#{version};
+		UPDATE tblknowledge SET status="2",fileUrl=#{fileUrl} WHERE part_code=#{part_code} and version=#{version};
 	</update> 
 	<update id="updateKnowledgeReject" parameterType="Knowledge">
 		UPDATE tblknowledge SET status="0" WHERE id=#{id};
@@ -122,6 +122,20 @@
 	</update> 
 	<select id="findNewPartByCode" resultType="String"> 
 		SELECT version FROM ys_pdms_db.tblknowledge_part where part_code=#{part_code} order by version desc limit 1;	
-	</select> 
-	  
+	</select>
+	<select id="findOneKnowledgePartList" resultType="Knowledge_total"> 
+		SELECT knowledge_id,kpk.id,knowledge_part_id,kp.part_code,k.part_code as code,kp.version as part_version,k.version,kp.fileUrl FROM tblknowledge_part_knowledge AS kpk
+		JOIN tblknowledge_part AS kp ON kpk.knowledge_part_id = kp.id
+		JOIN tblknowledge AS k ON kpk.knowledge_id = k.id
+		where kpk.knowledge_id=#{id}
+	</select>  
+	<select id="getAllPartCount" parameterType="java.util.Map" resultType="Long"> 
+		SELECT COUNT(*) FROM tblknowledge_part
+		<where>
+			status = #{status} 
+			<if test="part_code != null and part_code != ''">
+				and part_code LIKE #{part_code} 
+			</if>
+		</where>
+	</select>  
 </mapper>

@@ -64,5 +64,9 @@ public interface IKnowledgeService {
 	public boolean updateKnowledgePartRelation(Integer id,String kid,String kpid) throws Exception;
 	
 	public String findNewPartByCode(String part_code) throws Exception;
-
+	
+	public List<Knowledge_total> findOneKnowledgePartList(Integer id) throws Exception;
+	
+	public Long getAllPartCount(String part_code, String status) throws Exception;
+	
 }

@@ -17,6 +17,13 @@ public class Knowledge implements Serializable {
 	private String version;
 	private String part_type;
 	private String date;
+	private String fileUrl;
+	public String getFileUrl() {
+		return fileUrl;
+	}
+	public void setFileUrl(String fileUrl) {
+		this.fileUrl = fileUrl;
+	}
 	public String getDate() {
 		return date;
 	}

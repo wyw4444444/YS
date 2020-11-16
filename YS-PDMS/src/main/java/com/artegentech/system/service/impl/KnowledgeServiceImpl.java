@@ -231,4 +231,19 @@ public class KnowledgeServiceImpl extends AbstractService implements IKnowledgeS
 		// TODO Auto-generated method stub
 		return this.knowledgedao.findNewPartByCode(part_code);
 	}
+
+	@Override
+	public List<Knowledge_total> findOneKnowledgePartList(Integer id) throws Exception {
+		// TODO Auto-generated method stub
+		return this.knowledgedao.findOneKnowledgePartList(id);
+	}
+
+	@Override
+	public Long getAllPartCount(String part_code, String status) throws Exception {
+		// TODO Auto-generated method stub
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("part_code", part_code);
+		map.put("status", status);
+		return this.knowledgedao.getAllPartCount(map);
+	}
 }

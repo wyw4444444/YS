@@ -10,6 +10,8 @@
 	<div id="toolbar" class="col-md-10 col-lg-10 partDetail">
 		<div class="content">
 			<div class="leftcontent">
+				<div class="title"><h4>成品詳情</h4>
+				</div>
 				<div class="number input-group mb-3">
 					<div class="input-group-prepend">
 						<span class="input-group-text">料號</span>
@@ -63,7 +65,11 @@
 					<button style="display:none;" class="cancel btn btn-primary">駁回</button> 
 					<button style="display:none;" class="update btn btn-primary">修改</button> 
 					<button style="display:none;" class="levelup btn btn-primary">升版</button> 
+					<button style="display:none;" class="print btn btn-primary">打印</button> 
 				</div>
+				
+				<iframe style="display:none" id="printIframe" src=""></iframe>
+
 
 			</div>
 			
@@ -71,8 +77,11 @@
 				<div class="title">
 					<h5>附件展示</h5>
 				</div>
-				<div class="fileContent">
+				<div class="fileContent" style="display:none;">
 					<img src="" class="fileShow">
+				</div>
+				<div class="pdfContent" style="display:none;width:500px;height:90%;">
+					<embed style="width:100%;height:100%;" src="" type="">
 				</div>
 			</div>
 			

@@ -29,6 +29,7 @@ $('document').ready(function(){
 			}
 			if(data.status=="2"){
 				$('.levelup').show(); 
+				$('.print').show(); 
 			}
 		}
 	})
@@ -81,7 +82,7 @@ $('document').ready(function(){
 		localStorage.setItem("id",id)
 		change_page("knowledgePartAdd")
 	})
-	$('.levelup').click(function(){
+	$('body').on('click','.levelup',function(){
 		console.log("升版")
 //		要判斷是否可以升版
 //		找到當前料號的最新版本
@@ -116,6 +117,10 @@ $('document').ready(function(){
 				}
 			}
 		})
+	})
+	$('body').on('click','.print',function(){
+		console.log("打印")
+		doPrint()
 	})
 	$('#showUpdateKnowledge').on('click','#knowledgeUpdate',function(){
 		console.log("同步");
@@ -254,6 +259,17 @@ function showKnowledgeList(part_code){
 	});
 }
 
+function doPrint() {
+    bdhtml=window.document.body.innerHTML;
+    sprnstr="<!--startprint-->"; //开始打印标识字符串有17个字符
+    eprnstr="<!--endprint-->"; //结束打印标识字符串
+    prnhtml=bdhtml.substr(bdhtml.indexOf(sprnstr)+17); //从开始打印标识之后的内容
+    prnhtml=prnhtml.substring(0,prnhtml.indexOf(eprnstr)); //截取开始标识和结束标识之间的内容
+    window.document.body.innerHTML=prnhtml; //把需要打印的指定内容赋给body.innerHTML
+    window.print(); //调用浏览器的打印功能打印指定区域
+    window.document.body.innerHTML=bdhtml; // 最后还原页面
+    location.reload()
+}
 
 
 
