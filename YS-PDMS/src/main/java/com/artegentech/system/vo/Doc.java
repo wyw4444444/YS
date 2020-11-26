@@ -10,7 +10,7 @@ public class Doc implements Serializable {
 	// 料號
 	private String part_code;
 	// 版本号
-	private Integer version;
+	private String version;
 	// 設變原因
 	private String change_reason;
 	// 設變前
@@ -28,6 +28,8 @@ public class Doc implements Serializable {
 	private Date reg_time;
 //	屬性
 	private String spec;
+	private Integer status;
+	private String member_id;
 	
 	
 	public Integer getId() {
@@ -42,10 +44,10 @@ public class Doc implements Serializable {
 	public void setPart_code(String part_code) {
 		this.part_code = part_code;
 	}
-	public Integer getVersion() {
+	public String getVersion() {
 		return version;
 	}
-	public void setVersion(Integer version) {
+	public void setVersion(String version) {
 		this.version = version;
 	}
 	public String getChange_reason() {
@@ -95,6 +97,18 @@ public class Doc implements Serializable {
 	}
 	public void setSpec(String spec) {
 		this.spec = spec;
+	}
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	public String getMember_id() {
+		return member_id;
+	}
+	public void setMember_id(String member_id) {
+		this.member_id = member_id;
 	}
 	
 

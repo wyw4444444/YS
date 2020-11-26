@@ -11,7 +11,7 @@
 			<div class="form-group">
 				<div class="input-group">
 					<select class="form-control" id="knowledgePartStatus">
-						<option value="undefined">請選擇查詢狀態</option>
+						<option value="">請選擇查詢狀態</option>
 						<option value="1">待審核</option>
 						<option value="2">取回重辦</option>
 						<option value="3">退回重辦</option>

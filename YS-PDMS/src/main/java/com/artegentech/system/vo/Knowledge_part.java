@@ -1,6 +1,7 @@
 package com.artegentech.system.vo;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class Knowledge_part implements Serializable {
@@ -10,17 +11,18 @@ public class Knowledge_part implements Serializable {
 	private String part_code;
 	// 版本号
 	private String version;
-	// 版本号
+	// 描述
 	private String descr;
-	// 版本号
+	// 名稱
 	private String part_name;
-	// 版本号
-	private String date;
-	// 版本号
+	// 創建日期
+	private Date save_date;
+	// 創建人
+	private String reg_man;
+	// 附件地址
 	private String fileUrl;
-	// 版本号
+	// 分階狀態
 	private String status;
-	
 	public Integer getId() {
 		return id;
 	}
@@ -39,29 +41,35 @@ public class Knowledge_part implements Serializable {
 	public void setVersion(String version) {
 		this.version = version;
 	}
-	public String getDesc() {
+	public String getDescr() {
 		return descr;
 	}
-	public void setDesc(String desc) {
-		this.descr = desc;
+	public void setDescr(String descr) {
+		this.descr = descr;
 	}
-	public String getName() {
+	public String getPart_name() {
 		return part_name;
 	}
-	public void setName(String name) {
-		this.part_name = name;
+	public void setPart_name(String part_name) {
+		this.part_name = part_name;
 	}
-	public String getDate() {
-		return date;
+	public Date getSave_date() {
+		return save_date;
 	}
-	public void setDate(String date) {
-		this.date = date;
+	public void setSave_date(Date save_date) {
+		this.save_date = save_date;
 	}
-	public String getFile() {
+	public String getReg_man() {
+		return reg_man;
+	}
+	public void setReg_man(String reg_man) {
+		this.reg_man = reg_man;
+	}
+	public String getFileUrl() {
 		return fileUrl;
 	}
-	public void setFile(String file) {
-		this.fileUrl = file;
+	public void setFileUrl(String fileUrl) {
+		this.fileUrl = fileUrl;
 	}
 	public String getStatus() {
 		return status;
@@ -69,5 +77,6 @@ public class Knowledge_part implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	
 
 }

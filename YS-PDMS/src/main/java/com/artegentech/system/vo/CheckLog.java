@@ -18,6 +18,7 @@ public class CheckLog implements Serializable {
 	private PartInfo partInfo;
 	private Member member;
 	private Bom   bom;
+	private Doc doc;
 	
 	public Integer getNo() {
 		return no;
@@ -80,6 +81,13 @@ public class CheckLog implements Serializable {
 	}
 	public void setBom(Bom bom) {
 		this.bom = bom;
+	}
+	
+	public Doc getDoc() {
+		return doc;
+	}
+	public void setDoc(Doc doc) {
+		this.doc = doc;
 	}
 	@Override
 	public String toString() {

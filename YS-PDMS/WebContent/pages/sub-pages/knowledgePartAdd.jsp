@@ -4,7 +4,7 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="css/knowledge.css" />
-<script type="text/javascript" src="js/knowledgePartAdd.js"></script>
+<script type="text/javascript" src="js/knowledge.js"></script>
 </head>
 <body>
 	<div id="toolbar" class="col-md-10 col-lg-10 partAdd">
@@ -14,14 +14,14 @@
 			<div class="leftcontent">
 				<div class="number input-group mb-3">
 					<div class="input-group-prepend">
-						<span class="input-group-text">料號</span>
+						<span class="input-group-text"><span style="color:red">*</span>料號</span>
 					</div>
 					<input type="text" class="form-control" id="number" name="number" placeholder="請輸入料號" />
 				</div>
 				<p class="number-error-tip">料號已存在，版本號自動升一級</p>
 				<div class="version input-group mb-3">
 					<div class="input-group-prepend">
-						<span class="input-group-text">名稱</span>
+						<span class="input-group-text"><span style="color:red">*</span>名稱</span>
 					</div>
 					<input type="text" class="form-control" id="name" name="name" placeholder="請輸入名稱"/>
 				</div>
@@ -44,6 +44,13 @@
 					</div>
 					
 					<input type="text" class="form-control" id="date" name="date" placeholder="獲取當前日期" readonly/>
+				</div>
+				<div class="tips input-group mb-3" style="display:none;">
+					<div class="input-group-prepend">
+						<span class="input-group-text">升版原因</span>
+					</div>
+					
+					<input type="text" class="form-control" id="tips" name="tips" placeholder="請填寫升版原因" />
 				</div>
 				<div class="fileTitle">
 					<span class="input-group-text">上傳附件</span>

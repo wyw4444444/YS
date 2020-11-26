@@ -674,7 +674,299 @@ $(document).ready(function() {
 		});
 		
 	}
-	
+	else if (strPage.indexOf("docCheck.jsp")!=-1){
+
+		$("#modalFormBom").on('blur','.code',function(event){
+			 var part_code=event.target.value.trim();
+			checkPartCode2(part_code,"modalBomMsg");
+		});
+		
+		
+		//提取bom
+		$.ajax({
+			url : "../../bom/listBomById.action",
+			type : "post",
+			dataType : "json",
+			data : {
+				id_check : id_check
+			},
+			success : function(data) {
+				var data=data.list;
+		//		console.log(data);
+				var len=data.length;
+				if(data.length>0){
+					$("#modalPartCodeUp").val(data[0].part_code_up);
+					$("#modalBomId").val(data[0].id);
+					len--;
+					while(len){
+						var element="<div class='input-group mb-3 mygroup'>" +
+				 		"<div class='input-group-prepend'>"+
+				 		"<span class='input-group-text'>下阶料号</span>"+
+				 		"</div>" +
+				 		"<input type='text' class='form-control code' style='width:15%;'/>" +
+				 		"<div class='input-group-prepend'>" +
+				 		"<span class='input-group-text'>用量</span>" +
+				 		"</div>" +
+						"<input type='number' class='form-control' step='0.0001' min='0'/>" +
+						"<div class='input-group-prepend'>" +
+						"<span class='input-group-text'>底数</span>" +
+						"</div>" +
+						"<input type='number'  min=0 step=1 value=1 class='form-control' />" +
+						"<div class='input-group-prepend'>" +
+						"<span class='input-group-text'>单位</span>" +
+						"</div>" +
+						"<select class='form-control'></select>" +
+						"<span style='color:red;font-weight:bold;padding: 5px 0;'>&nbsp;*</span>" +
+						"</div>";
+						$("#modalPartCodeDown").parent().after(element);
+						len--;	
+					}
+					//提取单位
+					$.ajax({
+						type : "POST",
+						url : "../../type/listSubTypeByFirstType.action",
+						dataType : "json",
+						data : {
+							parent_type:"单位"
+						},
+						success : function(data1) {
+							var list = data1.list;
+							
+							var count=0;
+							$(".mygroup").each(function(index,element){
+								var select=$(element).find("select:first");
+								select.empty();
+								for (var i in list) {
+									var option = $("<option value=" + list[i].id
+											+ ">" + list[i].sub_type + "</option>");
+									option.appendTo(select);
+									if(list[i].sub_type==data[count].unit){
+										select.val(list[i].id);
+									}
+								}
+								var part_code_down=$(element).find("input:first");
+								var dosage=$(element).find("input:eq(1)");
+								var base=$(element).find("input:eq(2)");
+								part_code_down.val(data[count].part_code_down);
+								dosage.val(data[count].dosage);
+								base.val(data[count].base);
+								count++;
+								});
+							
+							}
+						});
+					
+					$("#modalPartCodeUp").attr("readOnly",true);
+					if(searchType==1){//审核  
+						
+						$("#modalFormBom").find('.form-control').each(function(index, item){
+							$(this).attr("disabled",true);
+						});
+						
+						$("#btnUpdateBom").fadeOut(10);
+						$("#btnApproveBom").fadeIn(10);
+						$("#btnSendBackBom").fadeIn(10);
+						$("#btnGetBackBom").fadeOut(10);
+					}
+					else if(searchType==2){//修改
+						
+						$("#modalFormBom").find('.form-control').each(function(index, item){
+							$(this).attr("disabled",false);
+						});
+						
+						$("#btnUpdateBom").fadeIn(10);
+						$("#btnApproveBom").fadeOut(10);
+						$("#btnSendBackBom").fadeOut(10);
+						$("#btnGetBackBom").fadeOut(10);
+					}
+					else if(searchType==3){//取回
+						
+						$("#modalFormBom").find('.form-control').each(function(index, item){
+							$(this).attr("disabled",true);
+						});
+						
+						$("#btnUpdateBom").fadeOut(10);
+						$("#btnApproveBom").fadeOut(10);
+						$("#btnSendBackBom").fadeOut(10);
+						$("#btnGetBackBom").fadeIn(10);
+					}
+					
+					
+					
+				}
+			}
+		});
+
+		
+		$("#modalFormBom").on('change','.code',function(event){
+			  var part_code_down=event.target.value.trim();
+			  if(part_code_down==""){
+					$(event.target).parent().nextAll(".mygroup").remove();
+				  return;
+			  }				
+			  var propId=$(event.target).parent().find("input:first").val();
+				 propId++;
+				 var select=$(event.target).parent().next().find("select:first");
+				 if(select.length==0){
+					 var element="<div class='input-group mb-3 mygroup'>" +
+			 		"<div class='input-group-prepend'>"+
+			 		"<span class='input-group-text'>下阶料号</span>" +
+			 		"</div>" +
+			 		"<input type='text' class='form-control code' style='width:15%;'/>" +
+			 		"<div class='input-group-prepend'>"+
+			 		"<span class='input-group-text'>用量</span>" +
+			 		"</div>" +
+			 		"<input type='number' class='form-control' step='0.0001' min='0'/>" +
+			 		"<div class='input-group-prepend'>"+
+			 		"<span class='input-group-text'>底数</span>" +
+			 		"</div>" +
+			 		"<input type='number' class='form-control'  value='1' step='1' min='0'/>" +
+			 		"<div class='input-group-prepend'>"+
+			 		"<span class='input-group-text'>单位</span>" +
+			 		"</div>" +
+					"<select class='form-control'></select>" +
+					"<span style='color:red;font-weight:bold;padding: 5px 0;'>&nbsp;*</span>" +
+					"</div>";
+					 $(event.target).parent().after(element);
+				 }
+				 var select= $(event.target).parent().next().find("select:first");
+				 select.empty();
+				 $.ajax({
+						type : "POST",
+						url : "../../type/listSubTypeByFirstType.action",
+						dataType : "json",
+						data : {
+							parent_type:"单位"
+						},
+						success : function(data) {
+							var list = data.list;
+							for (var i in list) {
+								var option = $("<option value=" + list[i].id
+										+ ">" + list[i].sub_type + "</option>");
+								option.appendTo(select);
+							}
+						}
+					});
+			 });
+
+		
+		
+		var table = $("#contentBomCheck");
+		table.bootstrapTable('destroy');
+		table.empty();
+		table.fadeIn(100);
+		table.bootstrapTable({
+			method: 'post',
+			contentType: "application/x-www-form-urlencoded",
+			url: "../../checklog/listById_checkAndType.action",
+			dataType: "json",
+			striped: true,
+			cache: false,
+			pagination: true,
+			height : 300,
+			totalField: "count",
+			dataField: "list", //后端 json 对应的表格数据 key
+			pageSize: 5, //单页记录数
+			pageList: [5,15,30,50,100],//分页步进值
+			sidePagination : "client",//指定前端分页
+			paginationLoop: false,
+			paginationHAlign : "left",
+			//queryParamsType:'',//查询参数组织方式
+			queryParams: function (params) {
+				//console.log(parseInt(params.offset/5)+1);
+				//console.log(params.limit);
+	            return {
+	            	id_check : id_check,
+	            	type_check:"BOM"
+	            }
+	        },
+	        showColumns: false,
+	        showRefresh: false,
+	        clickToSelect: true,//是否启用点击选中行
+			minimumCountColumns: 2,
+			theadClasses : "thead-dark", // 表頭顏色
+			showExport : false, // 是否显示导出按钮
+			buttonsAlign : "right", // 按钮位置
+			exportTypes : ['xlsx'], // 导出文件类型
+			exportDataType : "all",
+			exportOptions : {
+				// ignoreColumn: [0,0], //忽略某一列的索引
+				fileName : 'allPartInfoCheck', // 文件名称设置
+				worksheetName : 'Sheet1', // 表格工作区名称
+				tableName : 'DataTable'
+			},
+	        idField: 'no',//主键
+			columns : [{
+						title : '序號',
+						align: "center",
+						width: 40,
+						formatter: function (value, row, index) {
+							return index+1;
+						}
+					}, {
+						field : 'id_check',
+						valign : 'middle',
+						align : 'center',
+						visible:false
+					}, {
+						field : 'type_check',
+						title : '类型',
+						valign : 'middle',
+						align : 'center'
+					}, {
+						field : 'reg_time_apply',
+						title : '处理时间',
+						valign : 'middle',
+						align : 'center',
+						formatter: function (value, row, index) {
+							return new Date(value.time).format('yyyy-MM-dd hh:mm:ss');
+						}
+					}, {
+						field : 'member.member_name',
+						title : '处理人员',
+						valign : 'middle',
+						halign : 'center',
+						align : 'center'
+					}, {
+						field : 'tips',
+						title : '处理意见',
+						valign : 'middle',
+						halign : 'center',
+						align : 'center'
+					}, {
+						field : 'check_status',
+						title : '申请状态',
+						valign : 'middle',
+						halign : 'center',
+						align : 'center',
+						formatter: function (value, row, index) {
+							var check_status="";
+							switch (value){
+							case 1:
+								check_status="待审核";
+								break;
+							case 2:
+								check_status="取回重办";
+								break;
+							case 3:
+								check_status="退回重办";
+								break;
+							case 4:
+								check_status="已取消";
+								break;
+							case 5:
+								check_status="已发行";
+								break;
+							case 6:
+								check_status="已废止";
+								break;
+							}
+							return check_status;
+						}
+					}]
+		});
+		
+	}
 });
 
 function checkPartCode2(part_code,modalMsg){

@@ -1,6 +1,7 @@
 package com.artegentech.system.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,16 +10,21 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.artegentech.system.dao.ICheckLogDAO;
 import com.artegentech.system.dao.IDocDAO;
 import com.artegentech.system.service.IDocService;
 import com.artegentech.system.service.abs.AbstractService;
+import com.artegentech.system.vo.CheckLog;
 import com.artegentech.system.vo.Doc;
+import com.artegentech.system.vo.Part;
 
 @Service
 public class DocServiceImpl extends AbstractService implements IDocService {
 
 	@Resource
 	private IDocDAO docdao;
+	@Resource
+	private ICheckLogDAO checklogDao;
 
 	@Override
 	public boolean add(Doc doc) throws Exception {
@@ -30,17 +36,22 @@ public class DocServiceImpl extends AbstractService implements IDocService {
 	}
 
 	@Override
-	public Integer getMaxVersion(String code) throws Exception {
+	public boolean updateDoc(Doc Doc) throws Exception {
 		// TODO Auto-generated method stub
-		Integer count = 0;
-		List<Doc> result = this.docdao.getDocByCode(code);
-		for(int i=0;i<result.size();i++) {
-			System.out.println(i+"::"+result.get(i).getVersion());
-			if(count<result.get(i).getVersion()) {
-				count = result.get(i).getVersion();
-			}
+		return this.docdao.updateDoc(Doc);
+	}
+
+	@Override
+	public String getMaxVersion(String code) throws Exception {
+		// TODO Auto-generated method stub
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("part_code", code);
+		List<Doc> result = this.docdao.findNewByPartCode(map);
+		if(result.size()==0) {
+			return "0";
+		}else {
+			return result.get(0).getVersion();
 		}
-		return count+1;
 	}
 	@Override
 	public Long getAllCount(String column, String keyword) throws Exception {
@@ -78,6 +89,17 @@ public class DocServiceImpl extends AbstractService implements IDocService {
 		return this.docdao.findByPartCode(map);
 	}
 	@Override
+	public List<Doc> getDocByStatus(Integer status) throws Exception {
+		// TODO Auto-generated method stub
+		return this.docdao.getDocByStatus(status);
+	}
+
+	@Override
+	public CheckLog getCheckLogByDoc(Integer id) throws Exception {
+		// TODO Auto-generated method stub
+		return this.docdao.getCheckLogByDoc(id);
+	}
+	@Override
 	public List<Doc> findNewByPartCode(String part_code) {
 		// TODO Auto-generated method stub
 		if ("".equals(part_code) || part_code == null || "null".equalsIgnoreCase(part_code)) {
@@ -94,5 +116,54 @@ public class DocServiceImpl extends AbstractService implements IDocService {
 		// TODO Auto-generated method stub
 		return this.docdao.findAllNewDoc();
 	}
+	
+	
+	@Override
+	public Part checkPartCode(Part part) throws Exception {
+		System.out.println(part.getPart_code());
+//		if (this.partdao.checkPartCode(part.getPart_code()) == null) {
+//			return false;
+//		}
+		return this.docdao.checkPartCode(part.getPart_code());
+	}
+	@Override
+	public Part getPartinfo(Part part) throws Exception {
+		System.out.println(part.getPart_code());
+//		if (this.partdao.checkPartCode(part.getPart_code()) == null) {
+//			return false;
+//		}
+		return part;
+	}
 
+	@Override
+	public boolean updateStatus(Doc doc) throws Exception {
+		// TODO Auto-generated method stub
+		Integer status = doc.getStatus();
+		Integer id = doc.getId();
+		String member_id = doc.getMember_id();
+		String tips="";
+		if(status==3) {
+			tips="退回申请";
+		}else if(status==5) {
+			tips="批准申请";
+		}
+		
+		CheckLog checkLog=new CheckLog();
+		checkLog.setType_check("圖檔");
+		checkLog.setId_check(id);
+		checkLog.setReg_time_apply(new Date());
+		checkLog.setMember_id(member_id);
+		checkLog.setTips(tips);
+		checkLog.setCheck_status(status);
+		this.checklogDao.doCreate(checkLog);
+		return this.docdao.doUpdateStatus(doc);
+	}
+
+	@Override
+	public Doc findById(Integer id) throws Exception {
+		// TODO Auto-generated method stub
+		return this.docdao.findById(id);
+	}
+
+	
 }

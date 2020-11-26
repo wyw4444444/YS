@@ -3,38 +3,54 @@
 <mapper namespace="com.artegentech.system.dao.IDocDAO">
 	<cache />
 	<insert id="add" parameterType="Doc" useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO tbldocment(id,part_code,version,change_reason,changeimg_before,changeimg_after,doc_pdf,doc_dwg,doc_ppt)
-		VALUES(#{id},#{part_code},#{version},#{change_reason},#{changeimg_before},#{changeimg_after},#{doc_pdf},#{doc_dwg},#{doc_ppt});
+		INSERT INTO tbldocment(id,part_code,version,change_reason,changeimg_before,changeimg_after,doc_pdf,doc_dwg,doc_ppt,reg_time,member_id)
+		VALUES(#{id},#{part_code},#{version},#{change_reason},#{changeimg_before},#{changeimg_after},#{doc_pdf},#{doc_dwg},#{doc_ppt},#{reg_time},#{member_id});
 	</insert>
+	<update id="updateDoc" parameterType="Doc">
+		UPDATE tbldocment SET status=#{status},change_reason=#{change_reason}
+		<if test="changeimg_before != null and changeimg_before != ''">,changeimg_before=#{changeimg_before}</if>
+		<if test="changeimg_after != null and changeimg_after != ''">,changeimg_after=#{changeimg_after}</if>
+		<if test="doc_pdf != null and doc_pdf != ''">,doc_pdf=#{doc_pdf}</if>
+		<if test="doc_dwg != null and doc_dwg != ''">,doc_dwg=#{doc_dwg}</if>
+		<if test="doc_ppt != null and doc_ppt != ''">,doc_ppt=#{doc_ppt}</if>
+		WHERE id=#{id};
+	</update>  
 	<select id="getDocByCode" resultType="Doc" parameterType="String">
 		SELECT id,part_code,version FROM tbldocment WHERE part_code=#{code};
+	</select> 
+	<select id="getDocByStatus" resultType="Doc" parameterType="Integer">
+		SELECT * FROM tbldocment WHERE status=#{status};
 	</select>
+	<select id="getCheckLogByDoc" resultType="CheckLog" parameterType="Integer">
+		SELECT * FROM tblchecklog WHERE id_check=#{id};
+	</select> 
 	<select id="findAllSplit" parameterType="java.util.Map" resultType="Doc">
-		SELECT tbldocment.id,tbldocment.part_code,version,change_reason,changeimg_before,changeimg_after,doc_pdf,doc_dwg,doc_ppt,spec,reg_time FROM tbldocment,tblpartinfo
+		SELECT tbldocment.id,tbldocment.part_code,version,change_reason,changeimg_before,changeimg_after,doc_pdf,doc_dwg,doc_ppt,spec,tbldocment.reg_time FROM tbldocment,tblpartinfo
 		<where>
-			tbldocment.part_code=tblpartinfo.part_code
+			tbldocment.part_code=tblpartinfo.part_code and tbldocment.status = 5
 			<if test="column != null and keyword !=null">
 				and ${column} LIKE #{keyword}
 			</if>
 		</where>
 		ORDER BY tbldocment.id ASC
 		LIMIT #{start},#{lineSize};
-	</select>
+	</select>  
 	<select id="getAllCount" parameterType="java.util.Map" resultType="Long">
 		SELECT COUNT(*) FROM tbldocment
 		<where>
+			status = 5
 			<if test="column != null and keyword !=null">
-				${column} LIKE #{keyword}
+				and ${column} LIKE #{keyword}
 			</if>
 		</where>
-	</select>
+	</select>  
 	<select id="findOnedoc" parameterType="java.util.Map" resultType="Doc">
 		SELECT id,part_code,version,change_reason,changeimg_before,changeimg_after,doc_pdf,doc_dwg,doc_ppt FROM tbldocment WHERE part_code=#{part_code} and version=#{version};
 	</select>
 	<select id="findByPartCode" parameterType="java.util.Map" resultType="Doc">
-		SELECT tbldocment.id,tbldocment.part_code,version,change_reason,spec,reg_time FROM tbldocment,tblpartinfo
+		SELECT tbldocment.id,tbldocment.part_code,version,change_reason,spec,tbldocment.reg_time FROM tbldocment,tblpartinfo
 		<where>
-			tbldocment.part_code=tblpartinfo.part_code
+			tbldocment.part_code=tblpartinfo.part_code and tbldocment.status = 5
 			<if test="part_code != null and part_code != ''">
 				and tbldocment.part_code LIKE #{part_code}
 			</if>
@@ -44,13 +60,24 @@
 	<select id="findNewByPartCode" parameterType="java.util.Map" resultType="Doc">
 		select id,part_code,version,change_reason,spec,reg_time
 		from(select row_number() over(partition by tbldocment.part_code order by version desc) 'rn',
-        tbldocment.id,tbldocment.part_code,version,change_reason,spec,reg_time
+        tbldocment.id,tbldocment.part_code,version,change_reason,spec,tbldocment.reg_time
  		from tbldocment,tblpartinfo where tbldocment.part_code=tblpartinfo.part_code)t where t.rn=1 and part_code like #{part_code}
 	</select>
 	<select id="findAllNewDoc" resultType="Doc">
 		select id,part_code,version,change_reason,spec,reg_time
 		from(select row_number() over(partition by tbldocment.part_code order by version desc) 'rn',
-        tbldocment.id,tbldocment.part_code,version,change_reason,spec,reg_time
+        tbldocment.id,tbldocment.part_code,version,change_reason,spec,tbldocment.reg_time
  		from tbldocment,tblpartinfo where tbldocment.part_code=tblpartinfo.part_code)t where t.rn=1
 	</select>
+	
+	
+	<select id="checkPartCode" resultType="Part" parameterType="String">
+		SELECT id,part_code,tradename,spec,unit FROM tblpartinfo WHERE part_code=#{part_code} and status = "5";
+	</select> 
+	<update id="doUpdateStatus" parameterType="Doc">
+		UPDATE tbldocment SET status=#{status} WHERE id=#{id};
+	</update>
+	<select id="findById" resultType="Doc" parameterType="Integer">
+		SELECT * FROM tbldocment WHERE id=#{id};
+	</select>  
 </mapper>

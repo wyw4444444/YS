@@ -1,7 +1,9 @@
 package com.artegentech.system.action;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +23,10 @@ import com.artegentech.system.service.IKnowledgeService;
 import com.artegentech.system.vo.Doc;
 import com.artegentech.system.vo.Knowledge_part;
 import com.artegentech.system.vo.Knowledge;
+import com.artegentech.system.vo.Knowledge_levelupLog;
 import com.artegentech.system.vo.Knowledge_part_knowledge;
 import com.artegentech.system.vo.Knowledge_total;
+import com.artegentech.util.JsonDateValueProcessor;
 import com.artegentech.util.JsonNullConvert;
 import com.artegentech.util.UploadFileUtil;
 import com.artegentech.util.PrintToPdfUtil;
@@ -53,24 +57,24 @@ public class KnowledgeAction extends AbstractAction {
 		Knowledge_part Knowledge_part = new Knowledge_part();
 		String idStr = (request.getParameter("id"));
 		Integer id = 0;
-		System.out.println(idStr+"1112"+id);
 		if(idStr!=null&&!"".equals(idStr)) { 
 			id = Integer.parseInt(idStr);
 			Knowledge_part.setId(id);
 		}
-		System.out.println(idStr+"1112"+id);
 		String part_code = request.getParameter("part_code");
 		String version = request.getParameter("version");
 		String name = request.getParameter("name");
-		String desc = request.getParameter("desc");
-		String date = request.getParameter("date");
+		String descr = request.getParameter("desc");
 		String file = request.getParameter("file");
+		String reg_man = request.getParameter("member_id");
+		Date date = new Date(System.currentTimeMillis());
 		Knowledge_part.setPart_code(part_code);
-		Knowledge_part.setDesc(desc);
-		Knowledge_part.setDate(date);
-		Knowledge_part.setName(name);
-		Knowledge_part.setFile(file);
+		Knowledge_part.setDescr(descr);
+		Knowledge_part.setSave_date(date);
+		Knowledge_part.setPart_name(name);
+		Knowledge_part.setFileUrl(file);
 		Knowledge_part.setVersion(version);
+		Knowledge_part.setReg_man(reg_man);
 //		兩種情況：1、存在id時，代表是修改行為，做修改操作；2、不存在id時，代表添加或者升版，做新建操作
 		if(id!=0) {
 //			成為返回id
@@ -82,7 +86,20 @@ public class KnowledgeAction extends AbstractAction {
 		}else {
 //			成為返回id
 			if(this.knowledgeService.addPart(Knowledge_part)) {
-				return this.knowledgeService.findOnePart(part_code, version).getId();
+				Integer rsid = this.knowledgeService.findOnePart(part_code, version).getId();
+				System.out.println(version+"__"+String.valueOf('A')+"--"+String.valueOf(version.equals("A"))+"--"+String.valueOf(version==String.valueOf('A')));
+				if(version.equals("A")) {//如果是升版
+				}else {
+					String tips = request.getParameter("tips");
+					Knowledge_levelupLog Knowledge_levelupLog = new Knowledge_levelupLog();
+					Knowledge_levelupLog.setPart_id(rsid);
+					Knowledge_levelupLog.setMember_id(reg_man);
+					Knowledge_levelupLog.setReg_time(date);
+					Knowledge_levelupLog.setPart_type("part");
+					Knowledge_levelupLog.setTips(tips);
+					this.knowledgeService.addKnowledgeLevelupLog(Knowledge_levelupLog);
+				}
+				return rsid;
 			}else {
 				return 0;
 			}
@@ -145,7 +162,7 @@ public class KnowledgeAction extends AbstractAction {
 		Integer lineSize = Integer.parseInt(request.getParameter("lineSize"));
 		List<Knowledge_part> result = this.knowledgeService.findAllPart(part_code,currentPage,lineSize);
 		Long count = (long)0;
-		count = this.knowledgeService.getAllPartCount("", "2");
+		count = this.knowledgeService.getAllPartCount("", "5");
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("count", count);
 		map.put("list", result);
@@ -166,6 +183,21 @@ public class KnowledgeAction extends AbstractAction {
 		String part_code = request.getParameter("part_code");
 		String version = request.getParameter("version");
 		Knowledge_part Knowledge_part = this.knowledgeService.findOnePart(part_code, version);
+		return Knowledge_part;
+	}
+
+	/**
+	 * 查詢一條最新分階記錄
+	 * 
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@RequiresUser
+	@RequestMapping("findOneNewPart")
+	public Knowledge_part findOneNewPart(HttpServletRequest request) throws Exception {
+		String part_code = request.getParameter("part_code");
+		Knowledge_part Knowledge_part = this.knowledgeService.findOneNewPart(part_code);
 		return Knowledge_part;
 	}
 	/**
@@ -210,12 +242,14 @@ public class KnowledgeAction extends AbstractAction {
 	@RequiresUser
 	@RequestMapping("updatePartPass")
 	public boolean updatePartPass(HttpServletRequest request) throws Exception {
+		Integer id = Integer.parseInt(request.getParameter("id"));
 		String part_code = request.getParameter("part_code");
 		String version = request.getParameter("version");
 		Knowledge_part Knowledge_part = new Knowledge_part();
 		Knowledge_part.setPart_code(part_code);
 		Knowledge_part.setVersion(version);
 		boolean rs = this.knowledgeService.updatePartPass(Knowledge_part);
+		this.knowledgeService.updateKnowledgeLog(id);
 		return rs;
 	}
 	/**
@@ -235,6 +269,42 @@ public class KnowledgeAction extends AbstractAction {
 		Knowledge_part.setVersion(version);
 		boolean rs = this.knowledgeService.updatePartReject(Knowledge_part);
 		return rs;
+	}
+	/**
+	 * 查詢升版記錄
+	 * 將分階記錄的status改成0
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@RequiresUser
+	@RequestMapping("findKnowledgeLevelupLog")
+	public JSONObject findKnowledgeLevelupLog(HttpServletRequest request) throws Exception {
+		String part_code = request.getParameter("part_code");
+		String part_type = request.getParameter("part_type");
+		Integer currentPage = Integer.parseInt(request.getParameter("currentPage"));
+		Integer lineSize = Integer.parseInt(request.getParameter("lineSize"));
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("part_code", part_code);
+		map.put("part_type", part_type);
+		map.put("start", (currentPage - 1) * lineSize);
+		map.put("lineSize", lineSize);	
+		
+		Long count = (long)0;
+		count = this.knowledgeService.getKnowledgeLevelupLogCount(part_code, part_type);
+		List<Knowledge_levelupLog> result = this.knowledgeService.findKnowledgeLevelupLog(map);
+		JSONArray json1 = JSONArray.fromObject(result);
+		JsonConfig jsonConfig = new JsonConfig();
+		jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
+		JSONArray jsonArray = JSONArray.fromObject(json1, jsonConfig);
+		for (int i = 0; i < jsonArray.size(); i++) {
+			JsonNullConvert.filterNull(jsonArray.getJSONObject(i));
+		}
+		Map<String, Object> maprs = new HashMap<String, Object>();
+		maprs.put("count", count);
+		maprs.put("list", jsonArray);
+		JSONObject json = JSONObject.fromObject(maprs);
+		return json;
 	}
 	/**
 	 * 添加成品記錄
@@ -261,7 +331,8 @@ public class KnowledgeAction extends AbstractAction {
 		String version = request.getParameter("version");
 		String name = request.getParameter("part_name");
 		String desc = request.getParameter("desc");
-		String date = request.getParameter("date");
+		String reg_man = request.getParameter("reg_man");
+		Date date = new Date(System.currentTimeMillis());
 		String liststr = request.getParameter("partArr");
 		System.out.println(liststr);
 		JSONArray list=JSONArray.fromObject(liststr);
@@ -271,6 +342,7 @@ public class KnowledgeAction extends AbstractAction {
 		Knowledge.setDate(date);
 		Knowledge.setDescr(desc);
 		Knowledge.setVersion(version);
+		Knowledge.setReg_man(reg_man);
 		boolean rs=false;
 		if(id==0) {
 			if(this.knowledgeService.add(Knowledge)=="success") {
@@ -283,6 +355,17 @@ public class KnowledgeAction extends AbstractAction {
 					Knowledge2.setKnowledge_id(knowledge_id.toString());
 //				存入分階關係表
 					this.knowledgeService.addKnowledge_part_knowledge(Knowledge2);
+				}
+				if(version.equals("A")) {//如果是升版
+				}else {
+					String tips = request.getParameter("tips");
+					Knowledge_levelupLog Knowledge_levelupLog = new Knowledge_levelupLog();
+					Knowledge_levelupLog.setPart_id(knowledge_id);
+					Knowledge_levelupLog.setMember_id(reg_man);
+					Knowledge_levelupLog.setReg_time(date);
+					Knowledge_levelupLog.setPart_type("knowledge");
+					Knowledge_levelupLog.setTips(tips);
+					this.knowledgeService.addKnowledgeLevelupLog(Knowledge_levelupLog);
 				}
 				rs=true;
 			}
@@ -445,6 +528,7 @@ public class KnowledgeAction extends AbstractAction {
 		Knowledge.setVersion(version);
 		Knowledge.setFileUrl(fileUrl);
 		boolean rs = this.knowledgeService.updateKnowledgePass(Knowledge);
+		this.knowledgeService.updateKnowledgeLog(id);
 		return rs;
 	}
 	/**
@@ -486,6 +570,20 @@ public class KnowledgeAction extends AbstractAction {
 		return json;
 	}
 	/**
+	 * 修改成品狀態
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@RequiresUser
+	@RequestMapping("updateKnowledgeStatus")
+	public boolean updateKnowledgeStatus(HttpServletRequest request) throws Exception {
+		Integer id = Integer.parseInt(request.getParameter("id"));
+		String status = request.getParameter("status");
+//		修改成品的狀態
+		return this.knowledgeService.updateKnowledgeStatus(id,status);
+	}
+	/**
 	 * 分階升版時成品同步更新
 	 * 
 	 * @return
@@ -515,6 +613,20 @@ public class KnowledgeAction extends AbstractAction {
 	public String findNewPartByCode(HttpServletRequest request) throws Exception {
 		String part_code = request.getParameter("part_code");
 		return this.knowledgeService.findNewPartByCode(part_code);
+	}
+	/**
+	 * 查詢一條最新分階記錄
+	 * 
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	@RequiresUser
+	@RequestMapping("findOneNewKnowledge")
+	public Knowledge findOneNewKnowledge(HttpServletRequest request) throws Exception {
+		String part_code = request.getParameter("part_code");
+		Knowledge Knowledge = this.knowledgeService.findOneNewKnowledge(part_code);
+		return Knowledge;
 	}
 	@RequiresUser
 	@RequestMapping("test")

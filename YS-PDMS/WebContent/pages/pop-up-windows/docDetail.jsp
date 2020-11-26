@@ -3,14 +3,45 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="css/upload.css" />
+<script type="text/javascript" src="../../jquery/jquery-3.3.1.min.js"></script>
+<!-- <script type="text/javascript" src="js/artegen.js"></script> -->
+<script type="text/javascript" src="../../jquery/jquery.validate.min.js"></script>
+<script type="text/javascript" src="../../jquery/additional-methods.min.js"></script>
+<script type="text/javascript" src="../../jquery/Message_zh_TW.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/popper.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-select.min.js"></script>
+<!-- 引入圖標字體文件 -->
+<link type="text/css" rel="stylesheet" href="../../bootstrap/css/font-awesome.min.css">
+<!-- 引入bootstrap上傳控件插件 -->
+<script type="text/javascript" src="../../js/bs-custom-file-input.min.js"></script>
+<!-- 引入JExcel相關的文件 -->
+<script type="text/javascript" src="../../JExcel/js/jquery.csv.min.js"></script>
+<script type="text/javascript" src="../../JExcel/js/jquery.jexcel.js"></script>
+<script type="text/javascript" src="../../JExcel/js/jquery.jcalendar.js"></script>
+<link type="text/css" rel="stylesheet" href="../../JExcel/css/jquery.jexcel.css">
+<link type="text/css" rel="stylesheet" href="../../JExcel/css/jquery.jcalendar.css">
+<!-- 引入js-xlsx相關的文件 -->
+<script type="text/javascript" src="../../js/xlsx.full.min.js"></script>
+<!-- 引入laydate控件，日期時間選擇 -->
+<script type="text/javascript" src="../../laydate/laydate.js"></script>
+<!-- 引入bootstrap table組件 -->
+<script type="text/javascript" src="../../bootstrap-table/js/bootstrap-table.min.js"></script>
+<link type="text/css" rel="stylesheet" href="../../bootstrap-table/css/bootstrap-table.min.css">
+<script type="text/javascript" src="../../bootstrap-table/js/bootstrap-table-export.min.js"></script>
+<script type="text/javascript" src="../../bootstrap-table/tableExport/tableExport.js"></script>
+<script type="text/javascript" src="../../bootstrap-table/js/bootstrap-table-zh-CN.min.js"></script>
 
-<script type="text/javascript" src="js/archives.js"></script>
-<script type="text/javascript" src="js/archivesDetail.js"></script>
+<link rel="stylesheet" type="text/css" href="../../bootstrap/css/bootstrap.css" />
+<link type="text/css" rel="stylesheet" href="../../bootstrap/css/bootstrap-select.min.css">
+<link rel="stylesheet" type="text/css" href="../../css/upload.css" />
+
+<script type="text/javascript" src="../../js/archives.js"></script>
+<script type="text/javascript" src="../../js/docDetail.js"></script>
 <script src="//npmcdn.com/pdfjs-dist/build/pdf.js"></script>
 </head>
 <body>
-	<div id="toolbar" class="col-md-10 col-lg-10">
+	<div id="toolbar" class="docDetail col-md-12 col-lg-12">
 		<div class="title"><h4>圖檔詳情</h4>
 		</div>
 		<div class="content detailContent">
@@ -146,6 +177,16 @@
 					<button class="btn btn-primary" onclick="downloadimage('uploadPDF')">下載</button>
 				</div>
 			</div>
+		</div>
+		<div class="control">
+			<button id="btnClose" type="button" class="btn btn-secondary" onclick="closeWindow()">关闭</button>
+		<!-- 	<button id="btnUpdateBom" class="btn btn-info" onclick="updateBom()">发起重审</button> -->
+			<button id="btnApproveDoc" class="btn btn-info" onclick="approveDoc()">核准申请</button>
+			<button id="btnUpdateDoc" class="btn btn-info" onclick="updateDoc()">修改</button>
+			<button id="btnSendBackDoc" class="btn btn-danger" onclick="sendbackDoc()">退回申请</button>
+			<button id="btnGetBackDoc" class="btn btn-danger" onclick="getbackDoc()">取回申请</button>
+			<button id="btnCancelDoc" class="btn btn-warning" onclick="cancelDoc()">取消申请</button>
+			<button id="btnDeleteDoc" class="btn btn-warning" onclick="deleteDoc()">廢止</button>
 		</div>
 	</div>
 

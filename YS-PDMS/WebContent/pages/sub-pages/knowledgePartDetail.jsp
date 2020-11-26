@@ -4,6 +4,7 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="css/knowledge.css" />
+<script type="text/javascript" src="js/knowledge.js"></script>
 <script type="text/javascript" src="js/knowledgePartDetail.js"></script>
 </head>
 <body>

@@ -4,7 +4,7 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="css/knowledge.css" />
-<script type="text/javascript" src="js/knowledgeAdd.js"></script>
+<script type="text/javascript" src="js/knowledge.js"></script>
 </head>
 <body>
 	<div class="col-md-10 col-lg-10 knowledgeAdd">
@@ -29,7 +29,7 @@
 					</div>
 					<input type="text" class="form-control" id="number" name="number" placeholder="請輸入料號" />
 				</div>
-				<p class="number-error-tip">料號已存在，請進入升版界面操作</p>
+				<p class="number-error-tip">料號已存在，版本號自動升一級</p>
 				<div class="version input-group mb-3">
 					<div class="input-group-prepend">
 						<span class="input-group-text">名稱</span>
@@ -55,6 +55,13 @@
 					</div>
 					
 					<input type="text" class="form-control" id="date" name="date" placeholder="獲取當前日期" readonly/>
+				</div>
+				<div class="tips input-group mb-3" style="display:none;">
+					<div class="input-group-prepend">
+						<span class="input-group-text">升版原因</span>
+					</div>
+					
+					<input type="text" class="form-control" id="tips" name="tips" placeholder="請填寫升版原因" />
 				</div>
 				<div class="fileTitle">
 					<span class="input-group-text">請在右側選擇分階</span>
@@ -91,7 +98,7 @@
 						<div class="form-group">
 							<div class="input-group">
 								<input class="form-control" type="text" placeholder="输入料號" id="docSearchKeyWord" name="docSearchKeyWord"/>
-								<button class="btn btn-secondary form-control" onclick="loadProcessedPart('2')">查詢</button>
+								<button class="btn btn-secondary form-control" onclick="loadProcessedPart('5')">查詢</button>
 							</div>
 						</div>
 					</div>

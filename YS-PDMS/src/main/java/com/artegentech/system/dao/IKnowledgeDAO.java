@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.artegentech.system.vo.Doc;
 import com.artegentech.system.vo.Knowledge;
+import com.artegentech.system.vo.Knowledge_levelupLog;
 import com.artegentech.system.vo.Knowledge_part;
 import com.artegentech.system.vo.Knowledge_part_knowledge;
 import com.artegentech.system.vo.Knowledge_total;
@@ -30,6 +31,10 @@ public interface IKnowledgeDAO extends IDAO<Integer, Knowledge_part> {
 	public boolean updatePartPass(Knowledge_part Knowledge_part) throws Exception;
 	
 	public boolean updatePartReject(Knowledge_part Knowledge_part) throws Exception;
+	
+	public boolean addKnowledgeLevelupLog(Knowledge_levelupLog Knowledge_levelupLog) throws Exception;
+	
+	public List<Knowledge_levelupLog> findKnowledgeLevelupLog(Map<String,Object> params) throws Exception;
 
 	public boolean add(Knowledge Knowledge) throws Exception;
 	
@@ -67,5 +72,13 @@ public interface IKnowledgeDAO extends IDAO<Integer, Knowledge_part> {
 	
 	public Long getAllPartCount(Map<String,Object> params) throws Exception;
 	
+	public Long getKnowledgeLevelupLogCount(Map<String,Object> params) throws Exception;
+	
 	public boolean updatePartStatus(Knowledge_part Knowledge_part) throws Exception;
+	
+	public List<Knowledge_part> findNewPart(Map<String,Object> params) throws Exception;
+	
+	public List<Knowledge> findNewKnowledge(Map<String,Object> params) throws Exception;
+	
+	public boolean updateKnowledgeLog(Map<String,Object> params) throws Exception;
 }

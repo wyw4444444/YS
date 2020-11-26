@@ -11,7 +11,7 @@
 			<div class="form-group">
 				<div class="input-group">
 					<input class="form-control" type="text" placeholder="输入料號" id="docSearchKeyWord" name="docSearchKeyWord"/>
-					<button class="btn btn-secondary form-control" onclick="loadKnowledge('0')">查詢</button>
+					<button class="btn btn-secondary form-control" onclick="loadKnowledge('3')">查詢</button>
 				</div>
 			</div>
 		</div>

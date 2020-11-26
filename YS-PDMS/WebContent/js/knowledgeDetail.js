@@ -20,22 +20,29 @@ $('document').ready(function(){
 			$('#name').val(data.part_name);
 			$('#desc').val(data.descr);
 			$('#date').val(data.date);
-			$('.pdfContent embed').attr('src',localFormatUrl(data.fileUrl))
-			$('#printIframe').attr('src',localFormatUrl(data.fileUrl))
+			if(data.fileUrl){
+				$('.pdfContent embed').attr('src',localFormatUrl(data.fileUrl))
+				$('#printIframe').attr('src',localFormatUrl(data.fileUrl))
+			}
 //			$('.fileShow').attr('src',localFormatUrl(data.file))
 			var status = data.status
 			if(data.status=="1"){
 				$('.submit').show();
 				$('.cancel').show();
-				$('.fileContent').show();
+				$('.getback').show();
+				$('.reject').show();
 			}
-			if(data.status=="0"){
+			if(data.status=="3"||data.status=="2"||data.status=="4"){
 				$('.update').show();
 				$('.fileContent').show();
 			}
-			if(data.status=="2"){
+			if(data.status=="5"){
 				$('.levelup').show(); 
 				$('.print').show(); 
+				$('.delete').show(); 
+				$('.pdfContent').show();
+			}
+			if(data.status=="6"){
 				$('.pdfContent').show();
 			}
 //			查詢分階列表
@@ -50,15 +57,15 @@ $('document').ready(function(){
 				success : function(data) {
 					console.log(data)
 					for(var i=0;i<data.length;i++){
-						if(status!="2"){
+						if(status!="5"&&status!="6"){
 							var html = '<tr><td>'+data[i].part_code+'</td><td>'+data[i].version+'</td>'
 							+'<td><button class="choose_knowledgePartDetail btn btn-primary" title="查看">查看</button></td>'
-							+'<td class="fileUrl" style="display:none;">'+data[i].file+'</td>'
+							+'<td class="fileUrl" style="display:none;">'+data[i].fileUrl+'</td>'
 							+'</tr>';							
 						}else{
 							var html = '<tr><td>'+data[i].part_code+'</td><td>'+data[i].version+'</td>'
 							+'<td></td>'
-							+'<td class="fileUrl" style="display:none;">'+data[i].file+'</td>'
+							+'<td class="fileUrl" style="display:none;">'+data[i].fileUrl+'</td>'
 							+'</tr>';
 						}
 						$('.partList tbody').append(html)
@@ -96,11 +103,34 @@ $('document').ready(function(){
 		change_page('knowledgeUpdate')
 	})
 	$('.levelup').click(function(){
+//		升版前先判斷是否是最新版
 		console.log("升級")
-		localStorage.setItem("knowledgeDetailType","levelup")
-		change_page('knowledgeUpdate')
+		$.ajax({
+			type : "POST",
+			url : "knowledge/findOneNewKnowledge.action",
+			dataType : "json",
+			data : {
+				part_code : part_code,
+			},
+			traditional : true,
+			success : function(data) {
+				if(data.version&&data.version==version){
+					localStorage.setItem("knowledgeDetailType","levelup")
+					change_page('knowledgeUpdate')
+				}else{
+					alert("當前文檔不是最新版")
+				}
+			},
+			error:function(data){
+				if(!data.responseText){
+					console.log("沒有數據")
+					localStorage.setItem("knowledgeDetailType","levelup")
+					change_page('knowledgeUpdate')
+				}
+			}
+		})
 	})
-	$('.cancel').click(function(){
+	$('.reject').click(function(){
 		console.log("駁回")
 		$.ajax({
 			type : "POST",
@@ -119,13 +149,74 @@ $('document').ready(function(){
 			}
 		})
 	})
-	$('body').on('click','.print',function(){
-		console.log("打印")
-		doPrint()
+	$('.getback').click(function(){
+		console.log("取消")
+		$.ajax({
+			type : "POST",
+			url : "knowledge/updateKnowledgeStatus.action",
+			dataType : "json",
+			data : {
+				id:id,
+				status:"2"
+			},
+			traditional : true,
+			success : function(data) {
+				console.log(data)
+				if(data){
+					alert("取回成功")
+					window.close();
+				}
+			}
+		})
+	})
+	$('.cancel').click(function(){
+		console.log("取消")
+		$.ajax({
+			type : "POST",
+			url : "knowledge/updateKnowledgeStatus.action",
+			dataType : "json",
+			data : {
+				id:id,
+				status:"4"
+			},
+			traditional : true,
+			success : function(data) {
+				console.log(data)
+				if(data){
+					alert("取消成功")
+					window.close();
+				}
+			}
+		})
+	})
+	$('.delete').click(function(){
+		console.log("廢止")
+		$.ajax({
+			type : "POST",
+			url : "knowledge/updateKnowledgeStatus.action",
+			dataType : "json",
+			data : {
+				id:id,
+				status:"6"
+			},
+			traditional : true,
+			success : function(data) {
+				console.log(data)
+				if(data){
+					alert("廢止成功")
+					window.close();
+				}
+			}
+		})
 	})
 	$('body .partList').on("click",".choose_knowledgePartDetail",function(){
 		var fileUrl = $(this).parents("tr").find('.fileUrl').text();
 		$('.fileShow').attr('src',localFormatUrl(fileUrl))
+		$('.fileContent').show();
+	})
+	$('body').on('click','.print',function(){
+		console.log("打印")
+		doPrint()
 	})
 	$("#printIframe").load(function(){//等待iframe加载完成后再执行doPrint.每次iframe设置src之后都会重新执行这部分代码。
 //        doPrint();

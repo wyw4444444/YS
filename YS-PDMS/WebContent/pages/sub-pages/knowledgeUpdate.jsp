@@ -4,7 +4,7 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="css/knowledge.css" />
-<script type="text/javascript" src="js/knowledgeUpdate.js"></script>
+<script type="text/javascript" src="js/knowledge.js"></script>
 </head>
 <body>
 	<div class="col-md-10 col-lg-10 knowledgeAdd">

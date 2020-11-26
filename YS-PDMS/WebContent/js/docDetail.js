@@ -1,21 +1,46 @@
+var member_id;
+var sessionRoles;
+var id;
 $('document').ready(function(){
-	var part_code = localStorage.getItem("part_code")
-	var version = localStorage.getItem("archives_version")
-	console.log(part_code,version)
+	$.getUrlParam = function(name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		var r = decodeURIComponent(window.location.search).substr(1).match(reg);
+		if (r != null) return unescape(r[2]);
+		return null;
+	}
+	member_id = $.getUrlParam('member_id');
+	id = $.getUrlParam("doc_id")
 	
 	//需要後台查詢該料號和版本的數據
 	$.ajax({
 		type : "POST",
-		url : "doc/findOnedoc.action",
+		url : "../../doc/findById.action",
 		dataType : "json",
 		data : {
-			part_code : part_code,
-			version : version,
+			id : id,
 		},
 		traditional : true,
 		success : function(data) {
+			var member = data.member_id;
 			console.log(data)
 			$("#number").val(data.part_code);
+
+			//查詢該料號的一些基本屬性，並渲染出來
+			$.ajax({
+				type : "POST",
+				url : "../../doc/checkPartCode.action",
+				dataType : "json",
+				data : {
+					partcode : $("#number").val()
+				},
+				traditional : true,
+				success : function(data) {
+					console.log(data)
+					$("#name").val(data.tradename);
+					$("#speci").val(data.spec);
+				}
+			
+			})
 			$("#version").val(data.version);
 			$("#changereason").val(data.change_reason);
 			
@@ -74,23 +99,29 @@ $('document').ready(function(){
 				$("#docPPT").val("暫無PPT文檔")
 				$(".docPPT").attr("disabled",true)
 			}
-			
-		}
-	
-	})
-	//需要後台查詢該料號的數據
-	$.ajax({
-		type : "POST",
-		url : "part/checkPartCode.action",
-		dataType : "json",
-		data : {
-			partcode : part_code
-		},
-		traditional : true,
-		success : function(data) {
-			console.log(data)
-			$("#name").val(data.tradename);
-			$("#speci").val(data.spec);
+			getActiveUserRolesActions(function(){
+				console.log(sessionRoles)
+				//根據狀態決定顯示哪幾個操作按鈕
+				switch(data.status){
+				case 1:
+					if(sessionRoles=="super_admin"||sessionRoles=="admin"){
+						$('#btnApproveDoc').show();
+						$('#btnSendBackDoc').show();					
+					}
+					if(member_id==member){
+						$('#btnGetBackDoc').show();
+						$('#btnCancelDoc').show();
+					}
+					break;
+				case 2,3,4:
+					$('#btnUpdateDoc').show();
+				break;
+				case 5:
+					$('#btnDeleteDoc').show();
+					break;
+				}
+				$('#btnClose').show();
+			});
 		}
 	
 	})
@@ -129,6 +160,7 @@ function showimage(t,type){
 }
 function downloadimage(t){
 	var source = $('.'+t+' img')
+	console.log(source)
 	for(var i=0;i<source.length;i++){
 		var url = source.eq(i).attr('src');
 		let a = document.createElement('a') // 创建a标签
@@ -139,3 +171,138 @@ function downloadimage(t){
 		a.dispatchEvent(e)
 	}	
 }
+function closeWindow(){
+	window.close();
+}
+function approveDoc(){
+	$.ajax({
+		type : "POST",
+		url : "../../doc/doUpdateStatus.action",
+		dataType : "json",
+		data : {
+			id : id,
+			status:5,
+			member_id:member_id
+		},
+		traditional : true,
+		success : function(data) {
+			console.log(data)
+			if(data){
+				alert("審核成功")
+				opener.loadAwait('1');
+				window.close();
+			}
+		}
+	})
+}
+function sendbackDoc(){
+	$.ajax({
+		type : "POST",
+		url : "../../doc/doUpdateStatus.action",
+		dataType : "json",
+		data : {
+			id : id,
+			status:3,
+			member_id:member_id
+		},
+		traditional : true,
+		success : function(data) {
+			console.log(data)
+			if(data){
+				alert("退回成功")
+				opener.loadAwait('1');
+				window.close();
+			}
+		}
+	})
+}
+function getbackDoc(){
+	$.ajax({
+		type : "POST",
+		url : "../../doc/doUpdateStatus.action",
+		dataType : "json",
+		data : {
+			id : id,
+			status:2,
+			member_id:member_id
+		},
+		traditional : true,
+		success : function(data) {
+			console.log(data)
+			if(data){
+				alert("取回成功")
+				opener.loadAwait('1');
+				window.close();
+			}
+		}
+	})
+}
+function cancelDoc(){
+	$.ajax({
+		type : "POST",
+		url : "../../doc/doUpdateStatus.action",
+		dataType : "json",
+		data : {
+			id : id,
+			status:4,
+			member_id:member_id
+		},
+		traditional : true,
+		success : function(data) {
+			console.log(data)
+			if(data){
+				alert("取消成功")
+				opener.loadAwait('1');
+				window.close();
+			}
+		}
+	})
+}
+function deleteDoc(){
+	$.ajax({
+		type : "POST",
+		url : "../../doc/doUpdateStatus.action",
+		dataType : "json",
+		data : {
+			id : id,
+			status:6,
+			member_id:member_id
+		},
+		traditional : true,
+		success : function(data) {
+			console.log(data)
+			if(data){
+				alert("廢止成功")
+				window.close();
+			}
+		}
+	})
+}
+//獲得登錄的member_id對應的Roles，以便後面的js函數中調用
+function getActiveUserRolesActions(cb){
+	$.ajax({
+		url : "../../member/getActiveUserRolesActions.action",
+		type : "post",
+		dataType : "json",
+		data : {
+			member_id : member_id
+		},
+		success : function(data) {
+			console.log(22,data)
+			sessionRolesArray = data.allRoles;
+			// 將數組轉為字符串，以便用search函數查找
+			sessionRoles = sessionRolesArray.join(',');
+			cb()
+			//console.log(sessionRoles);
+			//console.log(sessionRoles.length);
+			//console.log(sessionRoles.search("super_admin"));
+		}
+	})
+}
+
+
+
+
+
+
+

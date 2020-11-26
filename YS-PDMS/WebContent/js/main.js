@@ -1,4 +1,6 @@
 var sessionRoles;
+var archives_partCode;
+var archives_version;
 $(document).ready(function() {
 	
 	getActiveUserRolesActions();
@@ -19,7 +21,7 @@ $(document).ready(function() {
 				window.location = "index.action";
 				return false;
 			}
-			/* 
+			/*
 			if (textStatus == "parsererror") {
 				alert("登錄超時！請重新登錄！");
 				//window.location.href = 'login';
@@ -71,6 +73,51 @@ $(document).ready(function() {
 	$("#btn_bom").on("click", function() {
 		change_page('bom');
 	});
+	$("#btn_archivesUpload").on("click", function() {
+		change_page('archivesUpload');
+	});
+	$("#btn_archivesProcessed").on("click", function() {
+		change_page('archivesProcessed');
+	});
+	$("#btn_archivesQuery").on("click", function() {
+		change_page('archivesQuery');
+	});
+	$("#btn_knowledgePartAdd").on("click", function() {
+		localStorage.setItem("knowledge_part_id",'')
+		localStorage.setItem("knowledgePartType",'add')
+		change_page('knowledgePartAdd');
+	});
+	$("#btn_knowledgeProcessed").on("click", function() {
+		change_page('knowledgeProcessed');
+	});
+	$("#btn_knowledgePartReject").on("click", function() {
+		change_page('knowledgePartReject');
+	});
+	$("#btn_knowledgePart").on("click", function() {
+		change_page('knowledgePart');
+	});
+	$("#btn_knowledgeAdd").on("click", function() {
+		localStorage.setItem("knowledge_id",'')
+		localStorage.setItem("knowledgeType",'add')
+		change_page('knowledgeAdd');
+	});
+	$("#btn_knowledgeQuery").on("click", function() {
+		change_page('knowledgeQuery');
+	});
+	$("#btn_knowledgePending").on("click", function() {
+		change_page('knowledgePending');
+	});
+	$("#btn_knowledgeReject").on("click", function() {
+		change_page('knowledgeReject');
+	});
+	$("#btn_knowledgeQueryByPart").on("click", function() {
+		change_page('knowledgeQueryByPart');
+	});
+	$("#btn_knowledgeLog").on("click", function() {
+		change_page('knowledgeLog');
+	});
+	
+	
 });
 
 // 獲得登錄的member_id對應的Roles，以便後面的js函數中調用
@@ -179,6 +226,65 @@ function loadPageSetting(name) {
 		case "bom" :
 			bomSetting();
 			break;
+		case "archivesUpload" :
+			uploadSetting();
+			loadArchivesAdd();
+			break;
+		case "archivesProcessed" :
+			processSetting();
+			loadArchivesProcessed("1");
+			break;
+		case "archivesQuery" :
+			processSetting();
+			loadArchive();
+			break;
+		case "archivesDetail" :
+			uploadSetting();
+			archivesDetail();
+			break;
+		case "knowledgePartAdd" :
+			knowledgeSetting();
+			loadKnowledgePartAdd();//加載
+			break;
+		case "knowledgeProcessed" :
+			knowledgeSetting();
+			knowledgeProcessed();
+			break;
+		case "knowledgePart" :
+			knowledgeSetting();
+			knowledgePart();
+			break;
+		case "knowledgeAdd" :
+			knowledgeSetting();
+			loadKnowledgeAdd();//加載
+			break;
+		case "knowledgeQuery" :
+			knowledgeSetting();
+			knowledgeQuery();
+			break;
+		case "knowledgePending" :
+			knowledgeSetting();
+			knowledgePending();
+			break;
+		case "knowledgePartReject" :
+			loadProcessedPart('3');
+			break;
+		case "knowledgeReject" :
+			knowledgeSetting();
+			loadKnowledge('3');
+			break;
+		case "knowledgeQueryByPart":
+			knowledgeSetting();
+			loadKnowledgeByPart('5');
+			break;
+		case "knowledgeLog":
+			knowledgeSetting();
+			loadKnowledgeLog();
+			break;
+		case "knowledgeUpdate":
+			knowledgeSetting();
+			loadKnowledgeUpdate();
+			break;
 	}
 }
 
@@ -210,6 +316,7 @@ function change_page(name) {
 		loadPageSetting(name)
 	});
 }
+
 
 // 顯示隱藏左側菜單控制函數
 function navbar_hide_visible() {
@@ -608,6 +715,11 @@ function actionSetting() {
 		});
 	});
 	
+	//設置showUpdateAction模態框關閉的更新列表事件
+	$('#showUpdateAction').on('hide.bs.modal', function(e) {
+		$("#contentAction").bootstrapTable("refresh");
+	});
+	
 	$("#toolbar").css({
 		'padding-top' : 10,
 		'padding-left' : 15
@@ -975,6 +1087,11 @@ function roleSetting(){
 	// 禁止新增權限的form提交刷新頁面
 	$("#modalFormRole").submit(function() {
 		return false;
+	});
+	
+	//設置showUpdateRole模態框關閉的更新列表事件
+	$('#showUpdateRole').on('hide.bs.modal', function(e) {
+		$("#contentRole").bootstrapTable("refresh");
 	});
 	
 	// 設置搜索選擇框控件的綁定事件
@@ -1539,6 +1656,11 @@ function memberSetting(){
 		return false;
 	});
 	
+	//設置showUpdateMember模態框關閉的更新列表事件
+	$('#showUpdateMember').on('hide.bs.modal', function(e) {
+		$("#contentMember").bootstrapTable("refresh");
+	});
+	
 	//設置更新人員模態框的垂直位置
 	$('#showUpdateMember').on('show.bs.modal', function(e) {
 		$(this).find('.modal-dialog').css({
@@ -1598,7 +1720,7 @@ function checkFirstParent(parent_type, modalTypeMsg){
 			url : "type/checkFirstParent.action",
 			dataType : "json",
 			data : {
-				parent_type : parent_type,
+				parent_type : parent_type
 			},
 			success : function(data) {
 				if (data == true) {
@@ -1700,7 +1822,7 @@ function addType() {
 			$("#modalTypeMsg").text("子类型不允许超过20个字符！");
 			return false;
 		}
-		if (selectedvalue == "new"&&parent_type.length > 20) {
+		if (parent_type.length > 20) {
 			$("#modalTypeMsg").text("父类型不允许超过20个字符！");
 			return false;
 		}
@@ -1714,7 +1836,7 @@ function addType() {
 				parent_type : parent_type,
 				sub_type : sub_type,
 				member_id : member_id,
-				upper_id:upper_id,
+				upper_id : upper_id
 			},
 			success : function(data) {
 				if (data == true) {
@@ -1946,6 +2068,11 @@ function typeSetting(){
 			$("#modalTypeParentTypeList").val(0);
 			showAllParentType();
 		}
+	});
+	
+	//設置showUpdateType模態框關閉的更新列表事件
+	$('#showUpdateType').on('hide.bs.modal', function(e) {
+		$("#contentType").bootstrapTable("refresh");
 	});
 	
 	// 给parent_type和sub_type输入框增加事件，判断两者结合的类型是否存在
@@ -2308,6 +2435,11 @@ function deptSetting() {
 		return false;
 	});
 
+	//設置showUpdateDept模態框關閉的更新列表事件
+	$('#showUpdateDept').on('hide.bs.modal', function(e) {
+		$("#contentDept").bootstrapTable("refresh");
+	});
+	
 	// 設置更新部門模態框的垂直位置
 	$('#showUpdateDept').on('show.bs.modal', function(e) {
 		$(this).find('.modal-dialog').css({
@@ -2323,6 +2455,18 @@ function deptSetting() {
 		'padding-left' : 15
 	})
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /****************************** 公共函數 *********************************/
@@ -2590,6 +2734,7 @@ window.operateEvents = {
 		//顯示模態框
 		$("#showUpdateAction").modal("show");
 	},
+	
 	
 	"click #lockOrUnlockRole" : function(e, value, row, index) {
 		var role_id = row.role_id;

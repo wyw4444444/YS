@@ -355,6 +355,8 @@ function loadAwait(searchType) {
 							return row.partInfo.part_code;
 						}else if(row.type_check=="BOM"){
 							return row.bom.part_code_up;
+						}else if(row.type_check=="圖檔"){
+							return row.doc.part_code;
 						}
 					}
 				}, {
@@ -371,6 +373,8 @@ function loadAwait(searchType) {
 							return "-";
 						}else if(row.type_check=="BOM"){
 							return row.bom.ver;
+						}else if(row.type_check=="圖檔"){
+							return row.doc.version;
 						}
 					}
 				}, {
@@ -402,6 +406,8 @@ function loadAwait(searchType) {
 							value=row.partInfo.status;
 						}else if(row.type_check=="BOM"){
 							value=row.bom.status;
+						}else if(row.type_check=="圖檔"){
+							value=row.doc.status;
 						}
 						var status="";
 					switch (value){
@@ -457,6 +463,11 @@ window.operateEventsAwait = {
 		else if(row.type_check=="BOM"){
 			page="pages/pop-up-windows/bomCheck.jsp?"
 		}
+		else if(row.type_check=="圖檔"){
+			page="pages/pop-up-windows/docDetail.jsp?"
+			window.open(page+"member_id="+member_id+"&doc_id="+id_check,"",'height=900, width=1400, top=40, left=450, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no'); 	
+			return;
+		}
 		window.open(page+"member_id="+member_id+"&member_id="+member_id+"&id_check="+id_check+"&searchType=1","",'height=900, width=1000, top=40, left=450, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no'); 	
 	},
 	"click #showWindowDealingUpdate" : function(e, value, row, index) {
@@ -467,6 +478,11 @@ window.operateEventsAwait = {
 		}
 		else if(row.type_check=="BOM"){
 			page="pages/pop-up-windows/bomCheck.jsp?"
+		}
+		else if(row.type_check=="圖檔"){
+			page="pages/pop-up-windows/docAdd.jsp?"
+			window.open(page+"member_id="+member_id+"&doc_id="+id_check+"&searchType=2","",'height=900, width=1400, top=40, left=450, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no'); 	
+			return;
 		}
 		window.open(page+"member_id="+member_id+"&id_check="+id_check+"&searchType=2","",'height=900, width=1000, top=40, left=450, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no'); 
 
@@ -479,6 +495,11 @@ window.operateEventsAwait = {
 		}
 		else if(row.type_check=="BOM"){
 			page="pages/pop-up-windows/bomCheck.jsp?"
+		}
+		else if(row.type_check=="圖檔"){
+			page="pages/pop-up-windows/docDetail.jsp?"
+			window.open(page+"member_id="+member_id+"&doc_id="+id_check+"&searchType=3","",'height=900, width=1400, top=40, left=450, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no'); 	
+			return;
 		}
 		window.open(page+"member_id="+member_id+"&id_check="+id_check+"&searchType=3","",'height=900, width=1000, top=40, left=450, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no'); 
 

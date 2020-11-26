@@ -3,12 +3,47 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="css/upload.css" />
-<script type="text/javascript" src="js/archives.js"></script>
+<script type="text/javascript" src="../../jquery/jquery-3.3.1.min.js"></script>
+<!-- <script type="text/javascript" src="js/artegen.js"></script> -->
+<script type="text/javascript" src="../../jquery/jquery.validate.min.js"></script>
+<script type="text/javascript" src="../../jquery/additional-methods.min.js"></script>
+<script type="text/javascript" src="../../jquery/Message_zh_TW.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/popper.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../bootstrap/js/bootstrap-select.min.js"></script>
+<!-- 引入圖標字體文件 -->
+<link type="text/css" rel="stylesheet" href="../../bootstrap/css/font-awesome.min.css">
+<!-- 引入bootstrap上傳控件插件 -->
+<script type="text/javascript" src="../../js/bs-custom-file-input.min.js"></script>
+<!-- 引入JExcel相關的文件 -->
+<script type="text/javascript" src="../../JExcel/js/jquery.csv.min.js"></script>
+<script type="text/javascript" src="../../JExcel/js/jquery.jexcel.js"></script>
+<script type="text/javascript" src="../../JExcel/js/jquery.jcalendar.js"></script>
+<link type="text/css" rel="stylesheet" href="../../JExcel/css/jquery.jexcel.css">
+<link type="text/css" rel="stylesheet" href="../../JExcel/css/jquery.jcalendar.css">
+<!-- 引入js-xlsx相關的文件 -->
+<script type="text/javascript" src="../../js/xlsx.full.min.js"></script>
+<!-- 引入laydate控件，日期時間選擇 -->
+<script type="text/javascript" src="../../laydate/laydate.js"></script>
+<!-- 引入bootstrap table組件 -->
+<script type="text/javascript" src="../../bootstrap-table/js/bootstrap-table.min.js"></script>
+<link type="text/css" rel="stylesheet" href="../../bootstrap-table/css/bootstrap-table.min.css">
+<script type="text/javascript" src="../../bootstrap-table/js/bootstrap-table-export.min.js"></script>
+<script type="text/javascript" src="../../bootstrap-table/tableExport/tableExport.js"></script>
+<script type="text/javascript" src="../../bootstrap-table/js/bootstrap-table-zh-CN.min.js"></script>
+<script type='text/javascript' src='../../js/date.format.js' charset='utf-8'></script>
+
+<link rel="stylesheet" type="text/css" href="../../bootstrap/css/bootstrap.css" />
+<link type="text/css" rel="stylesheet" href="../../bootstrap/css/bootstrap-select.min.css">
+<link rel="stylesheet" type="text/css" href="../../css/upload.css" />
+
+<script type="text/javascript" src="../../js/archives.js"></script>
+<script type="text/javascript" src="../../js/docAdd.js"></script>
+<script src="//npmcdn.com/pdfjs-dist/build/pdf.js"></script>
 </head>
 <body>
 	<div id="toolbar" class="col-md-10 col-lg-10">
-		<div class="title"><h4>上傳界面</h4>
+		<div class="title"><h4>修改圖檔</h4>
 		</div>
 		<div class="content">
 			<div class="leftcontent">
@@ -16,7 +51,7 @@
 					<div class="input-group-prepend">
 						<span class="input-group-text">料號</span>
 					</div>
-					<input type="text" class="form-control" id="number" name="number" placeholder="請輸入料號" />
+					<input type="text" class="form-control" id="number" name="number" placeholder="請輸入料號" readonly/>
 				</div>
 				<p class="number-error-tip">料號不存在或待審核，請重新輸入</p>
 				<div class="version input-group mb-3">
@@ -55,7 +90,7 @@
 					<div class="imgLeft">
 						<label><span style="color:red">*</span>請上傳改善前圖片</label>
 						<div class="improveImg imgBefore">
-							<label for="fileImproveImgBefore"><img class="uploadbefore img-fluid" src="images/upload.png"></label>
+							<label for="fileImproveImgBefore"><img class="uploadbefore img-fluid" src="../../images/upload.png"></label>
 							<input id="fileImproveImgBefore" type="file" style="display:none" accept=".jpg,.png" multiple>
 						</div>
 						<div class="btnContent">
@@ -66,7 +101,7 @@
 					<div class="imgRight">
 						<label><span style="color:red">*</span>請上傳改善後圖片</label>
 						<div class="improveImg imgAfter">
-							<label for="fileImproveImgAfter"><img class="uploadafter img-responsive" src="images/upload.png"></label>
+							<label for="fileImproveImgAfter"><img class="uploadafter img-responsive" src="../../images/upload.png"></label>
 							<input id="fileImproveImgAfter" type="file" style="display:none" accept=".jpg,.png" multiple> 
 						</div>
 						<div class="btnContent">
@@ -85,7 +120,7 @@
 						<input id="filePDF" type="file" style="display:none" accept=".pdf" multiple>
 					</div>
 					<div class="docContent">
-						<input type="text" class="form-control" id="docDWG" name="docDWG" placeholder="請選擇檔案DWG" readonly/>
+						<input type="text" class="form-control" id="docDWG" name="docDWG" placeholder="請選擇檔案DWG1" readonly/>
 						<label for="fileDWG" class="btn btn-info">上傳DWG文檔</label>
 						<input id="fileDWG" type="file" style="display:none" accept=".dwg" multiple>
 					</div>
@@ -95,7 +130,7 @@
 						<input id="filePPT" type="file" style="display:none" accept=".ppt,.pptx,.jpg" multiple>
 					</div>
 					<div class="submitContent">
-						<button class="submit btn btn-primary">提交</button>
+						<button class="update btn btn-primary">提交</button>
 						<div class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
 							  <button type="button" class="close"><span aria-hidden="true">&times;</span></button>
 							  <span class="text"></span>

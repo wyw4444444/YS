@@ -10,18 +10,23 @@
 		<div class="form-inline">
 			<div class="form-group">
 				<div class="input-group">
-					<input class="form-control" type="text" placeholder="输入分階料號" id="docSearchKeyWord" name="docSearchKeyWord"/>
-					<button class="btn btn-secondary form-control" onclick="loadKnowledgeByPart('5')">查詢</button>
+					<select class="form-control" id="knowledgeType">
+						<option value="">請選擇類型</option>
+						<option value="part">分階</option>
+						<option value="knowledge">成品</option>
+					</select>
+					<input class="form-control" type="text" placeholder="输入料號" id="docSearchKeyWord" name="docSearchKeyWord"/>
+					<button class="btn btn-secondary form-control" onclick="loadKnowledgeLog()">查詢</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-6 col-lg-6">
+	<div class="col-md-10 col-lg-10">
 		<table id="contentDept" class="table-sm table-striped">
 		</table>
 	</div>
 
 	<jsp:include page="/pages/plugins/include_alert.jsp" />
-
+	
 </body>
 </html>

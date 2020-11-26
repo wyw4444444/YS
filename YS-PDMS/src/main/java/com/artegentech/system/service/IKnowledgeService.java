@@ -1,12 +1,14 @@
 package com.artegentech.system.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.artegentech.system.vo.Doc;
 import com.artegentech.system.vo.Knowledge_part;
 import com.artegentech.system.vo.Knowledge_part_knowledge;
 import com.artegentech.system.vo.Knowledge_total;
 import com.artegentech.system.vo.Knowledge;
+import com.artegentech.system.vo.Knowledge_levelupLog;
 
 public interface IKnowledgeService {
 	/**
@@ -33,6 +35,9 @@ public interface IKnowledgeService {
 
 	public boolean updatePartPass(Knowledge_part Knowledge_part) throws Exception;
 	public boolean updatePartReject(Knowledge_part Knowledge_part) throws Exception;
+	
+	public boolean addKnowledgeLevelupLog(Knowledge_levelupLog Knowledge_levelupLog) throws Exception;
+	public List<Knowledge_levelupLog> findKnowledgeLevelupLog(Map<String,Object> params) throws Exception;
 
 
 	public List<Knowledge_part> findAllPart(String part_code, Integer currentPage, Integer lineSize);
@@ -70,5 +75,13 @@ public interface IKnowledgeService {
 	public List<Knowledge_total> findOneKnowledgePartList(Integer id) throws Exception;
 	
 	public Long getAllPartCount(String part_code, String status) throws Exception;
+	
+	public Long getKnowledgeLevelupLogCount(String part_code, String part_type) throws Exception;
+	
+	public Knowledge_part findOneNewPart(String part_code) throws Exception;
+	
+	public Knowledge findOneNewKnowledge(String part_code) throws Exception;
+	
+	public boolean updateKnowledgeLog(Integer id) throws Exception;
 	
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.artegentech.system.dao.IBomDAO;
 import com.artegentech.system.dao.ICheckLogDAO;
+import com.artegentech.system.dao.IDocDAO;
 import com.artegentech.system.dao.IMemberDAO;
 import com.artegentech.system.dao.IPartInfoDAO;
 import com.artegentech.system.service.ICheckLogService;
@@ -20,6 +21,7 @@ import com.artegentech.system.service.IPartInfoService;
 import com.artegentech.system.service.abs.AbstractService;
 import com.artegentech.system.vo.Bom;
 import com.artegentech.system.vo.CheckLog;
+import com.artegentech.system.vo.Doc;
 import com.artegentech.system.vo.Member;
 import com.artegentech.system.vo.PartInfo;
 
@@ -33,9 +35,11 @@ public class CheckLogServiceImpl extends AbstractService implements ICheckLogSer
 	private ICheckLogDAO checklogDao;
 	@Resource
 	private IPartInfoDAO partInfoDao;
-	
+
 	@Resource
 	private IBomDAO bomDao;
+	@Resource
+	private IDocDAO docDao;
 	
 	@Resource
 	private IMemberDAO memberDAO;
@@ -80,6 +84,24 @@ public class CheckLogServiceImpl extends AbstractService implements ICheckLogSer
 				Member member=this.memberDAO.findById(checklog.getMember_id());
 				
 				checklog.setBom(bom);
+				checklog.setMember(member);
+				
+				result.add(checklog);
+			}
+		}
+		//doc
+		Iterator<Doc> iterDoc=this.docDao.getDocByStatus(1).iterator();
+
+		while(iterDoc.hasNext()) {
+			Doc doc=iterDoc.next();
+			map.put("id_check",doc.getId());
+			map.put("type_check","圖檔");
+			CheckLog checklog=this.checklogDao.findById_CheckAndType(map);
+			
+			if (checklog!=null) {
+				Member member=this.memberDAO.findById(checklog.getMember_id());
+				
+				checklog.setDoc(doc);
 				checklog.setMember(member);
 				
 				result.add(checklog);
@@ -135,6 +157,24 @@ public class CheckLogServiceImpl extends AbstractService implements ICheckLogSer
 				result.add(checklog);
 			}
 		}
+		//doc
+		Iterator<Doc> iterDoc=this.docDao.getDocByStatus(3).iterator();
+
+		while(iterDoc.hasNext()) {
+			Doc doc=iterDoc.next();
+			map.put("id_check",doc.getId());
+			map.put("type_check","圖檔");
+			CheckLog checklog=this.checklogDao.findById_CheckAndType(map);
+			
+			if (checklog!=null) {
+				Member member=this.memberDAO.findById(checklog.getMember_id());
+				
+				checklog.setDoc(doc);
+				checklog.setMember(member);
+				
+				result.add(checklog);
+			}
+		}
 		
 		return result;
 	}
@@ -185,6 +225,24 @@ public class CheckLogServiceImpl extends AbstractService implements ICheckLogSer
 					result.add(checklog);
 				}
 			}
+			//doc
+			Iterator<Doc> iterDoc=this.docDao.getDocByStatus(1).iterator();
+
+			while(iterDoc.hasNext()) {
+				Doc doc=iterDoc.next();
+				map.put("id_check",doc.getId());
+				map.put("type_check","圖檔");
+				CheckLog checklog=this.checklogDao.findById_CheckAndType(map);
+				
+				if (checklog!=null) {
+					Member member=this.memberDAO.findById(checklog.getMember_id());
+					
+					checklog.setDoc(doc);
+					checklog.setMember(member);
+					
+					result.add(checklog);
+				}
+			}
 			
 			return result;
 		}
@@ -229,6 +287,15 @@ public class CheckLogServiceImpl extends AbstractService implements ICheckLogSer
 					if(bom!=null) {
 						bom.setStatus(check_status);
 						this.bomDao.doUpdateStatus(bom);
+					}
+				}
+				//更新圖檔 status
+				if(type_check.equals("圖檔")) {
+					
+					Doc doc=this.docDao.findById(id_check);
+					if(doc!=null) {
+						doc.setStatus(check_status);
+						this.docDao.doUpdateStatus(doc);
 					}
 				}
 				//更新checklog

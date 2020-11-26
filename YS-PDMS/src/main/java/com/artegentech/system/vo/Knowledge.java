@@ -1,6 +1,7 @@
 package com.artegentech.system.vo;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class Knowledge implements Serializable {
@@ -16,18 +17,19 @@ public class Knowledge implements Serializable {
 	private String status;
 	private String version;
 	private String part_type;
-	private String date;
+	private Date date;
 	private String fileUrl;
+	private String reg_man;
 	public String getFileUrl() {
 		return fileUrl;
 	}
 	public void setFileUrl(String fileUrl) {
 		this.fileUrl = fileUrl;
 	}
-	public String getDate() {
+	public Date getDate() {
 		return date;
 	}
-	public void setDate(String date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 	public String getPart_type() {
@@ -71,6 +73,12 @@ public class Knowledge implements Serializable {
 	}
 	public void setVersion(String version) {
 		this.version = version;
+	}
+	public String getReg_man() {
+		return reg_man;
+	}
+	public void setReg_man(String reg_man) {
+		this.reg_man = reg_man;
 	}
 
 

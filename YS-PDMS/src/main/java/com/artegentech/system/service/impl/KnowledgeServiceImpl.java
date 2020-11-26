@@ -1,6 +1,7 @@
 package com.artegentech.system.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import com.artegentech.system.dao.IKnowledgeDAO;
 import com.artegentech.system.service.IKnowledgeService;
 import com.artegentech.system.service.abs.AbstractService;
 import com.artegentech.system.vo.Knowledge;
+import com.artegentech.system.vo.Knowledge_levelupLog;
 import com.artegentech.system.vo.Knowledge_part;
 import com.artegentech.system.vo.Knowledge_part_knowledge;
 import com.artegentech.system.vo.Knowledge_total;
@@ -145,6 +147,34 @@ public class KnowledgeServiceImpl extends AbstractService implements IKnowledgeS
 	}
 
 	@Override
+	public boolean addKnowledgeLevelupLog(Knowledge_levelupLog Knowledge_levelupLog) throws Exception {
+		// TODO Auto-generated method stub
+		return this.knowledgedao.addKnowledgeLevelupLog(Knowledge_levelupLog);
+	}
+	@Override
+	public List<Knowledge_levelupLog> findKnowledgeLevelupLog(Map<String,Object> params) throws Exception {
+		// TODO Auto-generated method stub
+		List<Knowledge_levelupLog> list = this.knowledgedao.findKnowledgeLevelupLog(params);
+//		循環查詢具體詳情
+		for(Integer i=0;i<list.size();i++) {
+			Knowledge_levelupLog KL = list.get(i);
+			switch(KL.getPart_type()) {
+			case "part":
+				Knowledge_part KP = this.knowledgedao.findPartById(KL.getPart_id());
+				KL.setPart_code(KP.getPart_code());
+				KL.setVersion(KP.getVersion());
+				break;
+			case "knowledge":
+				Knowledge K = this.knowledgedao.findKnowledgeById(KL.getPart_id());
+				KL.setPart_code(K.getPart_code());
+				KL.setVersion(K.getVersion());
+				break;
+			}
+		}
+		return list;
+	}
+
+	@Override
 	public boolean addKnowledge_part_knowledge(Knowledge_part_knowledge Knowledge_part_knowledge) throws Exception {
 		// TODO Auto-generated method stub
 		return this.knowledgedao.addKnowledge_part_knowledge(Knowledge_part_knowledge);
@@ -252,4 +282,50 @@ public class KnowledgeServiceImpl extends AbstractService implements IKnowledgeS
 		// TODO Auto-generated method stub
 		return this.knowledgedao.updatePartStatus(Knowledge_part);
 	}
+
+	@Override
+	public Knowledge_part findOneNewPart(String part_code) throws Exception {
+		// TODO Auto-generated method stub
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("part_code", part_code);
+		List<Knowledge_part> list= this.knowledgedao.findNewPart(map);
+		if(list.size()==0) {
+			return new Knowledge_part();
+		}else {
+			return list.get(0);			
+		}
+	}
+
+	@Override
+	public Knowledge findOneNewKnowledge(String part_code) throws Exception {
+		// TODO Auto-generated method stub
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("part_code", part_code);
+		List<Knowledge> list= this.knowledgedao.findNewKnowledge(map);
+		if(list.size()==0) {
+			return new Knowledge();
+		}else {
+			return list.get(0);			
+		}
+	}
+
+	@Override
+	public Long getKnowledgeLevelupLogCount(String part_code, String part_type) throws Exception {
+		// TODO Auto-generated method stub
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("part_code", part_code);
+		map.put("part_type", part_type);
+		System.out.println(this.knowledgedao.getKnowledgeLevelupLogCount(map));
+		return this.knowledgedao.getKnowledgeLevelupLogCount(map);
+	}
+
+	@Override
+	public boolean updateKnowledgeLog(Integer id) throws Exception {
+		// TODO Auto-generated method stub
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("id", id);
+		map.put("approve_time", new Date());
+		return this.knowledgedao.updateKnowledgeLog(map);
+	}
+
 }

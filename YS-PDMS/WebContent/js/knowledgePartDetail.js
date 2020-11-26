@@ -17,9 +17,9 @@ $('document').ready(function(){
 			console.log(data)
 			$('#number').val(data.part_code);
 			$('#version').val(data.version);
-			$('#name').val(data.name);
-			$('#desc').val(data.desc);
-			$('.fileShow').attr('src',localFormatUrl(data.file))
+			$('#name').val(data.part_name);
+			$('#desc').val(data.descr);
+			$('.fileShow').attr('src',localFormatUrl(data.fileUrl))
 			if(data.status=="1"){
 				$('.submit').show();
 				$('.cancel').show();
@@ -45,6 +45,7 @@ $('document').ready(function(){
 			url : "knowledge/updatePartPass.action",
 			dataType : "json",
 			data : {
+				id:id,
 				part_code : part_code,
 				version : version,
 			},

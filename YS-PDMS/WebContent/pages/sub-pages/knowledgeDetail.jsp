@@ -4,6 +4,7 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="css/knowledge.css" />
+<script type="text/javascript" src="js/knowledge.js"></script>
 <script type="text/javascript" src="js/knowledgeDetail.js"></script>
 </head>
 <body>
@@ -62,10 +63,13 @@
 				</div>
 				<div class="submitContent">
 					<button style="display:none;" class="submit btn btn-primary">通過審核</button>
-					<button style="display:none;" class="cancel btn btn-primary">駁回</button> 
+					<button style="display:none;" class="getback btn btn-primary">取回</button>
+					<button style="display:none;" class="reject btn btn-primary">駁回</button> 
+					<button style="display:none;" class="cancel btn btn-primary">取消</button>
 					<button style="display:none;" class="update btn btn-primary">修改</button> 
-					<button style="display:none;" class="levelup btn btn-primary">升版</button> 
+					<button style="display:none;" class="levelup btn btn-primary">升版</button>
 					<button style="display:none;" class="print btn btn-primary">打印</button> 
+					<button style="display:none;" class="delete btn btn-primary">廢止</button> 
 				</div>
 				
 				<iframe style="display:none" id="printIframe" src=""></iframe>

@@ -34,3 +34,4 @@
 <!-- 引入主要js控制文件 -->
 <script type="text/javascript" src="js/main.js"></script>
 <script type="text/javascript" src="js/spark.js"></script>
+<script type="text/javascript" src="js/knowledge.js"></script>

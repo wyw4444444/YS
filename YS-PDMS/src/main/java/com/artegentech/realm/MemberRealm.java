@@ -68,7 +68,7 @@ public class MemberRealm extends AuthorizingRealm {
 		Member vo;
 		try {
 			vo = this.memberService.getById(username);
-			// log.info("vo : " + vo);
+			 log.info("vo : " + vo);
 			if (vo == null) {
 				log.info("vo : " + vo);
 				throw new UnknownAccountException("該用戶名不存在!");
@@ -79,9 +79,9 @@ public class MemberRealm extends AuthorizingRealm {
 				 String password = vo.getPassword();
 				 
 				 
-//				 log.info("password_login : " +password_login); //用戶輸入密碼
-//				 log.info("password_login_enc : " +password_login_enc); //用戶輸入加密後密碼
-//				 log.info("password : " + password);   //正確加密後密碼
+				 log.info("password_login : " +password_login); //用戶輸入密碼
+				 log.info("password_login_enc : " +password_login_enc); //用戶輸入加密後密碼
+				 log.info("password : " + password);   //正確加密後密碼
 
 				if (!password_login_enc.equals(password)) {
 					throw new IncorrectCredentialsException("密碼錯誤！");

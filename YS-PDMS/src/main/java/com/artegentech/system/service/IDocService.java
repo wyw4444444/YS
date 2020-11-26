@@ -2,8 +2,10 @@ package com.artegentech.system.service;
 
 import java.util.List;
 
+import com.artegentech.system.vo.CheckLog;
 import com.artegentech.system.vo.Dept;
 import com.artegentech.system.vo.Doc;
+import com.artegentech.system.vo.Part;
 
 public interface IDocService {
 	/**
@@ -21,7 +23,15 @@ public interface IDocService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Integer getMaxVersion(String code) throws Exception;
+	public boolean updateDoc(Doc Doc) throws Exception;
+	/**
+	 * 根據料號查詢對應文檔數據
+	 * 
+	 * @param code
+	 * @return
+	 * @throws Exception
+	 */
+	public String getMaxVersion(String code) throws Exception;
 	/**
 	 * 查詢所有文檔信息
 	 * 
@@ -51,8 +61,19 @@ public interface IDocService {
 	 * @throws Exception
 	 */
 	public List<Doc> findByPartCode(String part_code,Integer currentPage, Integer lineSize);
+	public List<Doc> getDocByStatus(Integer status) throws Exception;
+	public CheckLog getCheckLogByDoc(Integer id) throws Exception;
 
 	public List<Doc> findNewByPartCode(String part_code);
 	
 	public List<Doc> findAllNewDoc();
+	
+
+	public Part checkPartCode(Part Part) throws Exception;
+
+	public Part getPartinfo(Part part) throws Exception;
+
+	public boolean updateStatus(Doc doc) throws Exception;
+
+	public Doc findById(Integer id) throws Exception;
 }
