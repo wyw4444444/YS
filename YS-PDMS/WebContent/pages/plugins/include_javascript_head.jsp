@@ -11,6 +11,8 @@
 <script type="text/javascript" src="bootstrap/js/popper.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="jquery/jqueryEasyUI/jquery.easyui.min.js"></script>
+<link type="text/css" rel="stylesheet" href="jquery/jqueryEasyUI/easyui.css">
 <!-- 引入圖標字體文件 -->
 <link type="text/css" rel="stylesheet" href="bootstrap/css/font-awesome.min.css">
 <!-- 引入bootstrap上傳控件插件 -->
@@ -35,3 +37,16 @@
 <script type="text/javascript" src="js/main.js"></script>
 <script type="text/javascript" src="js/spark.js"></script>
 <script type="text/javascript" src="js/knowledge.js"></script>
+
+<link type="text/css" rel="stylesheet" href="jquery-treegrid-master/css/jquery.treegrid.css">
+<script type="text/javascript" src="jquery-treegrid-master/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="bootstrap-table/js/bootstrap-table-treegrid.js"></script>
+<script type="text/javascript" src="jquery-treegrid-master/js/jquery.treegrid.min.js"></script>
+
+
+<script type="text/javascript" src="vue/vue.js"></script>
+<!-- <link type="text/css" rel="stylesheet" href="gantt/dhtmlxgantt.css"> -->
+<link type="text/css" rel="stylesheet" href="gantt/dhtmlxgantt_broadway.css">
+<script type="text/javascript" src="gantt/dhtmlxgantt.js"></script>
+<link type="text/css" rel="stylesheet" href="css/stephen.css"> 
+<script type="text/javascript" src="js/stephen_DYP-Project.js"></script>

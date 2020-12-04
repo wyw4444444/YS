@@ -113,4 +113,6 @@ public interface IMemberService {
 	public Long getAllUnlockedCount(String column, String keyword) throws Exception;
 	
 	public List<Member> getAllUnlockedByRoleFlag(String flag) throws Exception;
+	
+	public List<Member> getAllByRole(Map map) throws Exception;
 }

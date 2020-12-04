@@ -2,7 +2,7 @@
 <%@ include file="include_static_head.jsp"%>
 <header class="main-header">
 	<nav class="navbar navbar-expand navbar-dark bg-primary fixed-top">
-		<a class="navbar-brand" href="index.html"><img id="logo" alt="YS Logo" src="images/Logo-YS(Border).png" />&nbsp;&nbsp;<span class="systemName">产品开发及管理系统</span></a>
+		<a class="navbar-brand" href="index.html"><img id="logo" alt="YS Logo" src="images/Logo-YS(Border).png" />&nbsp;&nbsp;<span class="systemName">产品开发管理系统</span></a>
 		<a class='navbar-btn btn pull-left' onclick="navbar_hide_visible()"><i class="fa fa-bars fa-1x"></i></a>
 
 		<div class="collapse navbar-collapse justify-content-end" id="navbarTogglerMain">
@@ -34,21 +34,23 @@
 						<shiro:hasAnyRoles name="super_admin,admin,PM,staff">
 							<li><a id="btn_dept"><i class="fa fa-university fa-fw"></i> 部门管理</a></li>
 							<li><a id="btn_customer"><i class="fa fa-fighter-jet fa-fw"></i> 客户管理</a></li>
-							<li><a id="btn_partInfo"><i class="fa fa-file-text fa-fw"></i> 料号资讯</a></li>
+							<li><a id="btn_partinfo"><i class="fa fa-file-text fa-fw"></i> 料号资讯</a></li>
 							<li><a id="btn_bom"><i class="fa fa-sort-amount-asc fa-fw"></i> BOM资讯</a></li>
-							<li><a id="btn_repalce"><i class="fa fa-random fa-fw"></i> 替代物料</a></li>
+<!-- 							<li><a id="btn_repalce"><i class="fa fa-random fa-fw"></i> 替代物料</a></li> -->
 							<li><a id="btn_checkLog"><i class="fa fa-list-alt fa-fw"></i> 审核记录</a></li>
 						</shiro:hasAnyRoles>
 					</ul>
 				</li>
 			</shiro:hasAnyRoles>
-			<li><a class="inactive active"><i class="fa fa-bar-chart fa-fw fa-lg"></i> BOM管理</a>
+			<li><a class="inactive active"><i class="fa fa-bar-chart fa-fw fa-lg"></i> 項目管理</a>
 				<ul>
-					<shiro:hasAnyRoles name="super_admin,admin,PM,rd_manager,sales,sales_manager">
-						<li><a id="btn_PER"><i class="fa fa-tasks fa-fw"></i> PER</a></li>
+					<shiro:hasAnyRoles name="super_admin,admin,PM,rd_manager,sales,sales_manager,ME,pm,DY999">
+						<li><a id="btn_PDR"><i class="fa fa-tasks fa-fw fa-lg"></i>PDR</a></li>
+						<li><a id="btn_PDRDetail_Check"><i class="fa fa-calendar fa-fw fa-lg"></i>任务查询</a></li>
+						<li><a id="btn_PDRLog"><i class="fa fa-comment-o fa-fw fa-lg"></i>记录查询</a></li>
+						<li><a id="btn_PDRCost_Check"><i class="fa fa-usd fa-fw fa-lg"></i>费用查询</a></li>
+						<li><a id="btn_recordmember"><i class="fa fa-sign-in fa-fw fa-lg"></i>登錄記錄</a></li>
 					</shiro:hasAnyRoles>
-					<li><a id="btn_PDR"><i class="fa fa-tasks fa-fw"></i> PDR</a></li>
-					<li><a id="btn_PAR"><i class="fa fa-tasks fa-fw"></i> PAR</a></li>
 				</ul>
 			</li>
 			<li><a class="inactive active"><i class="fa fa-cubes fa-fw fa-lg"></i> 库存管理</a>
@@ -58,7 +60,9 @@
 						<li><a id="btn_warehouseIn"><i class="fa fa-indent fa-fw"></i> 入库作业</a></li>
 					</shiro:hasAnyRoles>
 					<li><a id="btn_warehouseOut"><i class="fa fa-outdent fa-fw"></i> 出库作业</a></li>
-					<li><a id="btn_inventoryQuery"><i class="fa fa-search fa-fw"></i> 库存查询</a></li>
+					<li><a id="btn_batchInOut"><i class="fa fa-list fa-fw"></i> 批量作业</a></li>
+					<li><a id="btn_storage"><i class="fa fa-search fa-fw"></i> 库存查询</a></li>
+					<li><a id="btn_closingAccount"><i class="fa fa-hourglass-end fa-fw"></i> 库存整理</a></li>
 					
 				</ul>
 			</li>
@@ -73,25 +77,29 @@
 			<li><a class="inactive active"><i class="fa fa-cubes fa-fw fa-lg"></i> 知識庫管理</a>
 				<ul>
 					<li><a id="btn_knowledgePartAdd"><i class="fa fa-outdent fa-fw"></i> 添加分階</a></li>
-<!-- 					<li><a id="btn_knowledgeProcessed"><i class="fa fa-search fa-fw"></i> 待处理分階</a></li> -->
-<!-- 					<li><a id="btn_knowledgePartReject"><i class="fa fa-search fa-fw"></i> 被駁回分階</a></li> -->
+					<shiro:hasAnyRoles name="super_admin,admin">
+						<li><a id="btn_knowledgeProcessed"><i class="fa fa-search fa-fw"></i> 待处理分階</a></li>
+					</shiro:hasAnyRoles>
+					<li><a id="btn_knowledgePartReject"><i class="fa fa-search fa-fw"></i> 被駁回分階</a></li>
 					<li><a id="btn_knowledgePart"><i class="fa fa-search fa-fw"></i> 查询分階</a></li>
 					<li><a id="btn_knowledgeAdd"><i class="fa fa-outdent fa-fw"></i> 合併分階</a></li>
 					<li><a id="btn_knowledgeQuery"><i class="fa fa-search fa-fw"></i> 查詢成品</a></li>
-<!-- 					<li><a id="btn_knowledgePending"><i class="fa fa-search fa-fw"></i> 待審核成品</a></li> -->
-<!-- 					<li><a id="btn_knowledgeReject"><i class="fa fa-search fa-fw"></i> 被駁回成品</a></li> -->
+					<shiro:hasAnyRoles name="super_admin,admin">
+						<li><a id="btn_knowledgePending"><i class="fa fa-search fa-fw"></i> 待審核成品</a></li>
+					</shiro:hasAnyRoles>
+					<li><a id="btn_knowledgeReject"><i class="fa fa-search fa-fw"></i> 被駁回成品</a></li>
 					<li><a id="btn_knowledgeQueryByPart"><i class="fa fa-search fa-fw"></i> 上階查詢</a></li>
 					<li><a id="btn_knowledgeLog"><i class="fa fa-search fa-fw"></i> 升版記錄</a></li>
 					
 				</ul>
 			</li>
-			<shiro:hasAnyRoles name="super_admin,admin,sales_manager,problem_confirm,PM">
-				<li><a class="inactive active"><i class="fa fa-database fa-fw fa-lg"></i> 数据导出 </a>
-					<ul>
-						<li><a id="btn_dataload"><i class="fa fa-download fa-fw"></i> 数据导出</a></li>
-					</ul>
-				</li>
-			</shiro:hasAnyRoles>
+<%-- 			<shiro:hasAnyRoles name="super_admin,admin,sales_manager,problem_confirm,PM"> --%>
+<!-- 				<li><a class="inactive active"><i class="fa fa-database fa-fw fa-lg"></i> 数据导出 </a> -->
+<!-- 					<ul> -->
+<!-- 						<li><a id="btn_dataload"><i class="fa fa-download fa-fw"></i> 数据导出</a></li> -->
+<!-- 					</ul> -->
+<!-- 				</li> -->
+<%-- 			</shiro:hasAnyRoles> --%>
 		</ul>
 	</div>
 </div>

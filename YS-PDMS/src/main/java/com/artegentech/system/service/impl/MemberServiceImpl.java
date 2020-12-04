@@ -335,6 +335,23 @@ public class MemberServiceImpl extends AbstractService implements IMemberService
 	public List<Member> getAllUnlockedByRoleFlag(String flag) throws Exception {
 		return this.memberDAO.findAllUnlockedByRoleFlag(flag);
 	}
-	
+	@Override
+	public List<Member> getAllByRole(Map map) throws Exception {
+		return this.memberDAO.findAllByRole(map);
+		/*Iterator<Member> P = this.memberDAO.findAllByRole(map).iterator();
+		if (P!= null) {
+			List<Member> result = new ArrayList<Member>();
+			while (P.hasNext()) {
+				Member vo = P.next();	
+				Set<Role> roles = this.memberDAO.findAllRoleByMid(vo.getMember_id());
+				if (roles != null && roles.size()!=0) {
+					vo.setRoles(roles);
+				}
+				result.add(vo);
+			}
+			return result;
+		}
+		return null;*/
+	}
 	
 }

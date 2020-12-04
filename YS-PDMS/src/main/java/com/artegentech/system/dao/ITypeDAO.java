@@ -32,4 +32,6 @@ public interface ITypeDAO extends IDAO<Integer, Type> {
 	
 	public Type findJointType(String joint_type) throws Exception;
 	
+	public List<Type> findByParentType(String parent_type) throws Exception;
+	
 }

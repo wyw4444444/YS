@@ -70,7 +70,7 @@ body, html {
 	margin: 20px auto;
 	font-size: 80px;
 	color: rgb(114,147,201);
-	font-family: 楷体, Arial;
+	font-family: 璆瑚��, Arial;
 	font-weight: bold;
 	text-align: center;
 	text-shadow: 0px 1px 1px;
@@ -107,7 +107,7 @@ body, html {
 .navabarBg .navbar-side {
 	margin-left: -40px;
 	font-size: 16px;
-	font-family: 微软雅黑, Arial;
+	font-family: 敺株蔓����, Arial;
 	height: 95%;
 	overflow:auto;
 }
@@ -192,7 +192,7 @@ body, html {
 }
 
 
-/*調整權限checkbox格式*/
+/*隤踵甈�heckbox�撘�*/
 .my_protocol .input_agreement_protocol {
 	appearance: none;
 	-webkit-appearance: none;
@@ -215,6 +215,40 @@ body, html {
 
 .my_protocol .input_agreement_protocol:checked+span {
 	background-position: 0 0px;
+}
+
+
+/***************Gavin增加********************/
+#warehouseInSearchTypeList, #warehouseOutSearchTypeList, #storageSearchTypeList {
+	width: 150px;
+}
+
+#warehouseInSearchKeyWord, #warehouseOutSearchKeyWord {
+	width: 150px;
+}
+
+#OtherColumnSearchWarehouseInList, #OtherColumnSearchWarehouseOutList, 
+#OtherColumnSearchStorageList, #OtherColumnSearchWarehouseInList2, 
+#OtherColumnSearchWarehouseOutList2 {
+	width: 150px;
+}
+
+#searchDateType {
+	width: 150px;
+	text-align: center;
+}
+
+#headStartDate,#headEndDate {
+	width: 100px;
+	text-align: center;
+}
+
+#startDate,#endDate {
+	width: 120px;
+}
+
+#btn-search-warehouseIn, #btn-search-warehouseIn2, #btn-search-warehouseOut, #btn-search-storage {
+	width: 140px;
 }
 
 /***************SPARK增加********************/

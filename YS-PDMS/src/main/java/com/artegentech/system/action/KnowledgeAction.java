@@ -460,9 +460,10 @@ public class KnowledgeAction extends AbstractAction {
 	public JSONObject findKnowledgeByCode(HttpServletRequest request) throws Exception {
 		String part_code = request.getParameter("part_code");
 		Integer currentPage = Integer.parseInt(request.getParameter("currentPage"));
+		String member_id = request.getParameter("member_id");
 		Integer lineSize = Integer.parseInt(request.getParameter("lineSize"));
 		String status = request.getParameter("status");
-		List<Knowledge> result = this.knowledgeService.findKnowledgeByCode(part_code,status,currentPage,lineSize);
+		List<Knowledge> result = this.knowledgeService.findKnowledgeByCode(part_code,status,currentPage,lineSize,member_id);
 		Integer count = 0;
 		count = result.size();
 		Map<String, Object> map = new HashMap<String, Object>();

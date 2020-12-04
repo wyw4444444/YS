@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.IPDRCostDAO">
+	<cache />
+	<select id="findByPDR_id" resultType="PDRCost" parameterType="String" flushCache="true">
+		SELECT * FROM tblcost WHERE PDR_id=#{PDR_id};
+	</select>
+	
+	<insert id="doCreate" parameterType="PDRDetail">
+		INSERT INTO tblcost(PDR_id,name,PAR,type,description,estimate_cost,actual_cost,remark) 
+		VALUES(#{PDR_id},#{name},#{PAR},#{type},#{description},#{estimate_cost},#{actual_cost},#{remark});
+	</insert>
+	
+	<delete id="removeByPDR_id" parameterType="String">
+		DELETE FROM tblcost WHERE  PDR_id=#{PDR_id} ;
+	</delete>
+	
+</mapper>

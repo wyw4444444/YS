@@ -131,4 +131,14 @@ public class TypeServiceImpl extends AbstractService implements ITypeService {
 	public List<Type> getSubTypeByUpperID(Integer upper_id) throws Exception {
 		return this.typedao.findSubTypeByUpperID(upper_id);
 	}
+
+	@Override
+	public List<Type> getByParentType(String parent_type) throws Exception {
+		return this.typedao.findByParentType(parent_type);
+	}
+	
+	@Override
+	public Type getById(Integer id) throws Exception {
+		return this.typedao.findById(id);
+	}
 }

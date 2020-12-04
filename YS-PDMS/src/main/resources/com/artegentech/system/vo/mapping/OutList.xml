@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.IOutListDAO">
+	<cache />
+	<insert id="doCreate" parameterType="OutList" useGeneratedKeys="true" keyProperty="outlist_id">
+		INSERT INTO tbloutlist(outlist_id,out_id,in_id,quantity,pur_price)
+		VALUES(#{outlist_id},#{out_id},#{in_id},#{quantity},#{pur_price});
+	</insert>
+	<update id="doUpdate" parameterType="OutList">
+		UPDATE tbloutlist SET out_id=#{out_id},in_id=#{in_id},quantity=#{quantity},pur_price=#{pur_price} WHERE outlist_id=#{outlist_id};
+	</update>
+	<update id="doUpdatePurPriceByInId" parameterType="java.util.Map">
+		UPDATE tbloutlist SET pur_price=#{pur_price} WHERE in_id=#{in_id};
+	</update>
+	<select id="findById" resultType="OutList" parameterType="Integer">
+		SELECT outlist_id,out_id,in_id,quantity,pur_price FROM tbloutlist WHERE outlist_id=#{outlist_id};
+	</select>
+	<select id="findAll" resultType="OutList">
+		SELECT outlist_id,out_id,in_id,quantity,pur_price FROM tbloutlist;
+	</select>
+	<select id="findAllByOutId" resultType="OutList" parameterType="String">
+		SELECT outlist_id,out_id,in_id,quantity,pur_price FROM tbloutlist WHERE out_id=#{out_id} ORDER BY outlist_id ASC;
+	</select>
+	<select id="findAllByInId" resultType="OutList" parameterType="String">
+		SELECT outlist_id,out_id,in_id,quantity,pur_price FROM tbloutlist WHERE in_id=#{in_id} ORDER BY outlist_id ASC;
+	</select>
+	<select id="findAllSplit" parameterType="java.util.Map" resultType="OutList">
+		SELECT outlist_id,out_id,in_id,quantity,pur_price FROM tbloutlist
+		<where>
+			<if test="column != null and keyword !=null">
+				${column} LIKE #{keyword}
+			</if>
+		</where>
+		ORDER BY outlist_id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="getAllCount" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM tbloutlist 
+		<where>
+			<if test="column != null and keyword !=null">
+				${column} LIKE #{keyword}
+			</if>
+		</where>
+	</select>
+	<delete id="doRemove" parameterType="Integer">
+		DELETE FROM tbloutlist WHERE outlist_id=#{outlist_id};
+	</delete>
+	<delete id="doRemoveByOutId" parameterType="String">
+		DELETE FROM tbloutlist WHERE out_id=#{out_id};
+	</delete>
+	<select id="findAllByOutIdDESC" resultType="OutList" parameterType="String">
+		SELECT outlist_id,out_id,in_id,quantity,pur_price FROM tbloutlist WHERE out_id=#{out_id} ORDER BY outlist_id DESC;
+	</select>
+</mapper>

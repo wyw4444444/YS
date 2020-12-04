@@ -32,6 +32,6 @@ public interface IPartInfoService {
 
 	public boolean editLock(PartInfo partinfo) throws Exception;
 	
-	
+	public List<PartInfo> getAllUnlocked() throws Exception;
 
 }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.IPDRDAO">
+	<cache />
+	<insert id="doCreate" parameterType="PDR" useGeneratedKeys="true" keyProperty="PDR_id">
+		INSERT INTO tblpdr(PDR_id,PM,description,customer_no,start_date,end_date,type_id_status,PER_id,man) 
+		VALUES(#{PDR_id},#{PM},#{description},#{customer_no},#{start_date},#{end_date},#{type_id_status},#{PER_id},#{man});
+	</insert>
+	<update id="doUpdate" parameterType="PDR">
+		UPDATE tblpdr SET PM=#{PM},man=#{man},description=#{description},customer_no=#{customer_no} 
+		,start_date=#{start_date},end_date=#{end_date},type_id_status=#{type_id_status}
+		WHERE PDR_id=#{PDR_id};
+	</update>
+	
+	<delete id="removeRoleAndAction" parameterType="java.util.Map">
+		DELETE FROM tblrole_action WHERE role_id=#{role_id};
+	</delete>
+	 
+	
+	
+	<select id="getByPDR_id" parameterType="String" resultType="PDR">
+		SELECT * FROM tblPDR WHERE PDR_id = #{PDR_id}
+	</select>
+	
+	<select id="getLast" parameterType="String" resultType="PDR" flushCache="true">
+		SELECT * FROM tblPDR 
+		ORDER BY no DESC
+		LIMIT 1;
+	</select>
+	
+	<select id="getAllCount" parameterType="java.util.Map" resultType="Long" flushCache="true">
+		SELECT COUNT(*) FROM tblPDR
+		<where>
+			<if test="column != null and keyword !=null">
+				and ${column} LIKE #{keyword}
+			</if>
+			<if test="orderstatusArray!=null">
+                AND type_id_status in
+                <foreach collection="orderstatusArray" item="type_id_status"
+                    index="index" open="(" close=")" separator=",">
+                    #{type_id_status}
+                </foreach>
+            </if>
+		</where>
+	</select>
+	
+	<select id="findAllSplit" parameterType="java.util.Map" resultType="PDR" flushCache="true">
+		SELECT * FROM tblPDR
+		<where>
+			<if test="column != null and keyword !=null">
+				and ${column} LIKE #{keyword}
+			</if>
+			<if test="type_id_status != null">
+				and type_id_status = #{type_id_status}
+			</if>
+			<if test="orderstatusArray!=null">
+                AND type_id_status in
+                <foreach collection="orderstatusArray" item="type_id_status"
+                    index="index" open="(" close=")" separator=",">
+                    #{type_id_status}
+                </foreach>
+            </if>
+		</where>
+		ORDER BY PDR_id,no ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+</mapper>

@@ -8,7 +8,7 @@
 	<div id="toolbar">
 		<div class="form-inline">
 			<div class="form-group">
-				<button class="btn btn-info" onclick="showModalType()">新增类型</button>&nbsp;
+				<button class="btn btn-primary" onclick="showModalType()">新增类型</button>&nbsp;
 				<button class="btn btn-secondary" onclick="loadType('1')">有效类型</button>&nbsp;
 				<button class="btn btn-secondary" onclick="loadType('2')">所有类型</button>&nbsp;
 			</div>

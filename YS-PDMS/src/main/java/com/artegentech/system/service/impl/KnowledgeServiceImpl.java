@@ -124,7 +124,7 @@ public class KnowledgeServiceImpl extends AbstractService implements IKnowledgeS
 	}
 
 	@Override
-	public List<Knowledge> findKnowledgeByCode(String part_code, String status, Integer currentPage, Integer lineSize) {
+	public List<Knowledge> findKnowledgeByCode(String part_code, String status, Integer currentPage, Integer lineSize,String member_id) {
 		// TODO Auto-generated method stub
 		if ("".equals(part_code) || part_code == null || "null".equalsIgnoreCase(part_code)) {
 		}else {
@@ -133,8 +133,9 @@ public class KnowledgeServiceImpl extends AbstractService implements IKnowledgeS
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("part_code", part_code);
 		map.put("status", status);
+		map.put("member_id", member_id);
 		map.put("start", (currentPage - 1) * lineSize);
-		map.put("lineSize", lineSize);		
+		map.put("lineSize", lineSize);
 		return this.knowledgedao.findKnowledgeByCode(map);
 	}
 	@Override

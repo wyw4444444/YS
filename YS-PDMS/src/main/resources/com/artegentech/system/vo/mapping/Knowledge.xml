@@ -118,18 +118,21 @@
 			</if>
 		</where>
 		ORDER BY id ASC LIMIT #{start},#{lineSize};
-	</select>  
+	</select>   
 	<select id="findPartById" parameterType="java.util.Map" resultType="Knowledge_part">
 		SELECT id,part_code,version,descr,part_name,fileUrl,status FROM tblknowledge_part WHERE id=#{id}
-	</select>
+	</select>  
 	<select id="findKnowledgeById" parameterType="java.util.Map" resultType="Knowledge">
 		SELECT * FROM tblknowledge WHERE id=#{id}
-	</select>
+	</select>  
 	<select id="findKnowledgeByCode" parameterType="java.util.Map" resultType="Knowledge">
 		SELECT * FROM tblknowledge
 		<where>
 			<if test="status != null and status != ''">
 				status = #{status} 
+			</if>
+			<if test="member_id != null and member_id != ''">
+				and reg_man = #{member_id}
 			</if>
 			<if test="part_code != null and part_code != ''">
 				and part_code LIKE #{part_code} 

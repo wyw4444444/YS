@@ -19,8 +19,10 @@ import com.artegentech.system.dao.ITypeDAO;
 import com.artegentech.system.service.ICheckLogService;
 import com.artegentech.system.service.IPartInfoService;
 import com.artegentech.system.vo.CheckLog;
+import com.artegentech.system.vo.Member;
 import com.artegentech.system.vo.PartInfo;
 import com.artegentech.system.vo.Type;
+import com.artegentech.util.JsonDateValueProcessor;
 import com.artegentech.util.JsonNullConvert;
 import com.artegentech.util.action.AbstractAction;
 
@@ -118,6 +120,19 @@ public class PartInfoAction extends AbstractAction {
 
 		PartInfo result = new PartInfo();
 		result = this.partInfoService.getPartInfoById(id);
+		map.put("list", result);
+		JSONObject json = JSONObject.fromObject(map);
+		return json;
+	}
+	@RequiresUser
+	@RequestMapping("listPartInfoByCode")
+	public JSONObject listPartInfoByCode(HttpServletRequest request) throws Exception {
+		String part_code = request.getParameter("part_code");
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		PartInfo result = new PartInfo();
+		result = this.partInfoService.getByCode(part_code);
 		map.put("list", result);
 		JSONObject json = JSONObject.fromObject(map);
 		return json;
@@ -302,6 +317,17 @@ public class PartInfoAction extends AbstractAction {
 		map.put("list", result);
 		JSONObject json = JSONObject.fromObject(map);
 		return json;
+	}
+	@RequiresUser
+	@RequestMapping("listUnlocked")
+	public List<PartInfo> listUnlocked(HttpServletRequest request) throws Exception {
+		List<PartInfo> result = new ArrayList<PartInfo>();
+		result = this.partInfoService.getAllUnlocked();
+
+		JsonConfig jsonConfig = new JsonConfig();
+		jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
+		JSONArray jsonArray = JSONArray.fromObject(result, jsonConfig);
+		return jsonArray;
 	}
 	
 	

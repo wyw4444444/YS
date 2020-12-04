@@ -21,6 +21,8 @@ public interface IMemberDAO extends IDAO<String, Member> {
 	public List<Member> findAllUnlockedByRoleFlag(String flag) throws Exception;
 
 	public List<Member> findAllSplitByRole(Map<String, Object> map) throws Exception;
+	
+	public List<Member> findAllByRole(Map<String, Object> map) throws Exception;
 
 	public List<Member> findAllSplitByDept(Map<String, Object> map) throws Exception;
 

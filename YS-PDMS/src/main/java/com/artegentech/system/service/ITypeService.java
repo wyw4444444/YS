@@ -90,5 +90,8 @@ public interface ITypeService {
 
 	public List<Type> getSubTypeByUpperID(Integer upper_id) throws Exception;
 
+	public List<Type> getByParentType(String parent_type) throws Exception;
+	
+	public Type getById(Integer id) throws Exception;
 
 }

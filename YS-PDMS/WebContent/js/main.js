@@ -60,7 +60,26 @@ $(document).ready(function() {
 	$("#btn_dept").on("click", function() {
 		change_page('dept');
 	});
-	$("#btn_partInfo").on("click", function() {
+
+	$("#btn_safetyStorage").on("click", function() {
+		change_page('safetyStorage');
+	});
+	$("#btn_warehouseIn").on("click", function() {
+		change_page('warehouseIn');
+	});
+	$("#btn_warehouseOut").on("click", function() {
+		change_page('warehouseOut');
+	});
+	$("#btn_storage").on("click", function() {
+		change_page('storage');
+	});
+	$("#btn_closingAccount").on("click", function() {
+		change_page('closingAccount');
+	});
+	$("#btn_batchInOut").on("click", function() {
+		change_page('batchInOut');
+	});
+	$("#btn_partinfo").on("click", function() {
 		change_page('partinfo');
 	});
 	
@@ -117,6 +136,9 @@ $(document).ready(function() {
 		change_page('knowledgeLog');
 	});
 	
+	$("#btn_customer").on("click", function() {
+		change_page('customer');
+	});
 	
 });
 
@@ -212,6 +234,25 @@ function loadPageSetting(name) {
 			deptSetting();
 			loadDept('1');
 			break;
+		case "safetyStorage" :
+			safetyStorageSetting();
+			loadSafetyStorage('1');
+			break;
+		case "warehouseIn" :
+			warehouseInSetting();
+			break;
+		case "warehouseOut" :
+			warehouseOutSetting();
+			break;
+		case "storage" :
+			storageSetting();
+			break;
+		case "closingAccount" :
+			closingAccountSetting();
+			break;
+		case "batchInOut" :
+			batchInOutSetting();
+			break;
 		case "partinfo" :
 			partInfoSetting();
 			loadPartInfo('1');
@@ -271,7 +312,7 @@ function loadPageSetting(name) {
 			break;
 		case "knowledgeReject" :
 			knowledgeSetting();
-			loadKnowledge('3');
+			loadKnowledgeMember('3');
 			break;
 		case "knowledgeQueryByPart":
 			knowledgeSetting();
@@ -284,6 +325,34 @@ function loadPageSetting(name) {
 		case "knowledgeUpdate":
 			knowledgeSetting();
 			loadKnowledgeUpdate();
+			break;
+
+		case "PDR" :
+			PDRSetting();
+			break;
+		case "customer" :
+			customerSetting();
+			break;
+		case "taskCheck" :
+			taskCheckSetting();
+			break;
+		case "PDRDetail_Check" :
+			PDRDetail_CheckSetting();
+			break;
+		case "PDRLog" :
+			PDRLogSetting();
+			break;
+		case "PDRCost" :
+			PDRCostSetting();
+			break;
+		case "PDRCost_Check" :
+			PDRCost_CheckSetting();
+			break;
+		case "PDRDisplay" :
+			PDRDisplaySetting();
+			break;
+		case "recordmember" :
+			recordmemberSetting();
 			break;
 	}
 }
@@ -2134,6 +2203,1814 @@ function typeSetting(){
 	})
 }
 
+/****************************** 安全库存操作 *********************************/
+
+//新增安全库存资料
+function addSafetyStorage() {
+	var part_code = $("#modalSafetyStoragePartCode").val();
+	var safety_stock = $("#modalSafetyStorageSafetyStock").val();
+	if (part_code == "" || safety_stock == "") {
+		$("#modalSafetyStorageMsg").text("安全库存资料未填写完整！");
+		return false;
+	}
+	if (isNaN(safety_stock)) {
+		$("#modalSafetyStorageMsg").text("安全库存数必须是数字！");
+		return false;
+	}
+	
+	// 此处需加入判断料号是否存在的ajax部分，success中加入add部分
+	
+	$("#modalSafetyStorageMsg").text("");
+	$.ajax({
+		type : "POST",
+		url : "safetyStorage/add.action",
+		dataType : "json",
+		data : {
+			part_code : part_code,
+			safety_stock : safety_stock,
+			member_id : member_id
+		},
+		success : function(data) {
+			if (data == true) {
+				$("#modalSafetyStoragePartCode").val("");
+				$("#modalSafetyStorageSpec").val("");
+				$("#modalSafetyStorageUnit").val("");
+				$("#modalSafetyStorageSafetyStock").val("");
+				$("#modalSafetyStorageMsg").val("");
+				operateAlertSmall(true, "新增安全库存信息成功！", "");
+			} else {
+				operateAlertSmall(false, "", "新增安全库存信息失败！");
+			}
+		}
+	});
+}
+
+function loadSafetyStorage(searchType) {
+	$("#toolbar").css("padding-top","");
+	$("#toolbar").css("padding-left","");
+	var url;
+	var column;
+	var keyword;
+	switch(searchType){
+		case "1":
+			url= "safetyStorage/listLatestSplit.action";
+			column="undefined";
+			keyword="undefined";
+			break;
+		case "2":
+			url= "safetyStorage/listSplit.action";
+			column="undefined";
+			keyword="undefined";
+			break;
+		case "3":
+			url= "safetyStorage/listSplit.action";
+			column=$("#safetyStorageSearchTypeList").val();
+			keyword=$("#safetyStorageSearchKeyWord").val();
+			break;
+	}
+	//console.log(url);
+	var table = $("#contentSafetyStorage");
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: url,
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,10,15,20,50,100],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			//console.log(parseInt(params.offset/5)+1);
+			//console.log(params.limit);
+         return {
+         	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit,
+				column : column,
+				keyword : keyword
+         }
+     },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+     showColumns: true,
+     showRefresh: true,
+     clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表頭顏色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['excel','xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allSafetyStorage', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+         //console.log(data);
+     },
+     idField: 'data_id',//主键
+		columns : [{
+					title : '序号',
+					align : "center",
+					width : 50,
+					formatter: function (value, row, index) {
+					    // 获取每页显示的数量
+						var pageSize = table.bootstrapTable('getOptions').pageSize;
+						//console.log("pageSize : " + pageSize);
+						// 获取当前是第几页
+						var pageNumber = table.bootstrapTable('getOptions').pageNumber;
+						//console.log("pageNumber : " + pageNumber);
+						// 返回序号，注意index是从0开始的，所以要加上1
+						return pageSize * (pageNumber - 1) + index + 1;
+					}
+				}, {
+					field : 'data_id',
+					title : 'ID',
+					valign : 'middle',
+					align : 'center',
+					width : 50,
+					visible : false
+
+				}, {
+					field : 'part_code',
+					title : '料号',
+					valign : 'middle',
+					align : 'center',
+					width : 120
+				}, {
+					title : '品名',
+					valign : 'middle',
+					halign : 'center',
+					align : 'left',
+					width : 200,
+					formatter:function(value,row,index){
+				        return row.partInfo.tradename;
+				    }
+				}, {
+					title : '规格',
+					valign : 'middle',
+					halign : 'center',
+					align : 'left',
+					formatter:function(value,row,index){
+				        return row.partInfo.spec;
+				    }
+				}, {
+					title : '单位',
+					valign : 'middle',
+					align : 'center',
+					width : 80,
+					formatter:function(value,row,index){
+				        return row.partInfo.unit;
+				    }
+				}, {
+					field : 'safety_stock',
+					title : '安全库存数',
+					valign : 'middle',
+					align : 'center',
+					width : 100
+				}, {
+					field : 'member_id',
+					title : '建立人',
+					valign : 'middle',
+					align : 'center',
+					width : 100,
+					formatter:function(value,row,index){
+				        return row.member.member_name;
+				    }
+				}, {
+					field : 'data_date',
+					title : '建立时间',
+					valign : 'middle',
+					align : 'center',
+					width : 120,
+					formatter: function (value, row, index) {
+						return new Date(value).format('yyyy-MM-dd');
+					}
+				}]
+	});
+}
+
+//显示新增安全库存信息模态框
+function showModalSafetyStorage() {
+	$("#modalSafetyStoragePartCode").val("");
+	$("#modalSafetyStorageTradeName").val("");
+	$("#modalSafetyStorageSpec").val("");
+	$("#modalSafetyStorageUnit").val("");
+	$("#modalSafetyStorageSafetyStock").val("");
+	$("#modalSafetyStorageMsg").val("");
+	getAllUnlockedListMulti("partinfo", "modalSafetyStoragePartCode", "part_code", "part_code", 0);
+	// 显示模态框
+	$("#showUpdateSafetyStorage").modal("show");
+}
+
+function safetyStorageSetting() {
+	// 禁止新增安全库存的form提交刷新頁面
+	$("#modalFormSafetyStorage").submit(function() {
+		return false;
+	});
+
+	//設置showUpdateSafetyStorage模態框關閉的更新列表事件
+	$('#showUpdateSafetyStorage').on('hide.bs.modal', function(e) {
+		$("#contentSafetyStorage").bootstrapTable("refresh");
+	});
+	
+	// 设置模态框中料号变化时抓取对应的单位、品名、规格
+	$('#modalSafetyStoragePartCode').on('change', function(e) {
+		var part_code = $("#modalSafetyStoragePartCode").val();
+//		checkPartCode(part_code,"modalSafetyStorageMsg");
+		$.ajax({
+			type : "POST",
+			url : "partinfo/listPartInfoByCode.action",
+			dataType : "json",
+			data : {
+				part_code : part_code
+			},
+			success : function(data) {
+				console.log(data)
+//				渲染參數
+				$('#modalSafetyStorageTradeName').val(data.list.tradename)
+				$('#modalSafetyStorageSpec').val(data.list.spec)
+				$('#modalSafetyStorageUnit').val(data.list.unit)
+				
+				
+			}
+		});
+		
+	});
+	
+	// 設置更新部門模態框的垂直位置
+	$('#showUpdateSafetyStorage').on('show.bs.modal', function(e) {
+		$(this).find('.modal-dialog').css({
+			'margin-top' : function() {
+				var modalHeight = $('#showUpdateSafetyStorage').find('.modal-dialog').height();
+				return ($(window).height() / 2 - (modalHeight / 2) - 250);
+			}
+		});
+	});
+	
+	$("#toolbar").css({
+		'padding-top' : 10,
+		'padding-left' : 15
+	})
+}
+/****************************** 入库操作 *********************************/
+
+//显示新增模态框
+function showModalWarehouseIn() {
+	$("#btnUpdateWarehouseIn").fadeOut(10);
+	$("#btnAddWarehouseIn").fadeIn(10);
+	
+	$("#modalWarehouseInInDate").val(new Date().format("yyyy-MM-dd"));
+	laydate.render({
+		elem: '#modalWarehouseInInDate' //指定元素
+	});
+	getAllUnlockedListMulti("partinfo", "modalWarehouseInPartCode", "part_code", "part_code", 0);
+	$("#modalWarehouseInTradeName").val("");
+	$("#modalWarehouseInSpec").val("");
+	$("#modalWarehouseInPartUnit").val("");
+	$("#modalWarehouseInQuantity").val("");
+	listByParentType("modalWarehouseInInReason", "id", "sub_type", "in_reason", 0);
+	$("#modalWarehouseInPdrNo").val("");
+	$("#modalWarehouseInPdrNo").attr("disabled",true);
+	$("#modalWarehouseInPurSheetId").val("");
+	$("#modalWarehouseInPrice").val("");
+	$("#modalWarehouseInNote").val("");
+	
+	$("#showUpdateWarehouseIn .modal-dialog .modal-content .modal-header .modal-title").text("新增入库记录")
+	//清空异常提示文字
+	$("#modalWarehouseInMsg").text("");
+	//显示模态框
+	$("#showUpdateWarehouseIn").modal("show");
+}
+
+//新增入库记录
+function addWarehouseIn() {
+	var in_date = $("#modalWarehouseInInDate").val();
+	var part_code = $("#modalWarehouseInPartCode").val();
+	var quantity = $("#modalWarehouseInQuantity").val();
+	var pur_sheet_id = $("#modalWarehouseInPurSheetId").val();
+	var price = $("#modalWarehouseInPrice").val();
+	var note = $("#modalWarehouseInNote").val();
+	var in_reason = $("#modalWarehouseInInReason").val();
+	var pdr_no = $("#modalWarehouseInPdrNo").val();
+	
+	var msgDiv = $("#modalWarehouseInMsg");
+	var in_reason_text = $('#modalWarehouseInInReason').find("option:selected").text();
+	if (in_reason_text == "退库") {
+		if (pdr_no=="") {
+			msgDiv.text("退库必须填写PDR号！");
+			return false;
+		}
+	}
+	
+	if (in_date=="") {
+		msgDiv.text("入库日期不允许为空！");
+		return false;
+	}
+	if (part_code=="0" || part_code==0 || part_code=="") {
+		msgDiv.text("料号未选择！");
+		return false;
+	}
+	if(isNaN(quantity) || (!isNaN(quantity) && parseFloat(quantity)<0)){
+		msgDiv.text("入库数量必须大于0！");
+		return false;
+	}
+	if(isNaN(price) || (!isNaN(price) && parseFloat(price)<0)){
+		msgDiv.text("采购单价必须大于等于0！");
+		return false;
+	}
+	if (in_reason=="0" || in_reason==0) {
+		msgDiv.text("入库原因未选择！");
+		return false;
+	}
+	msgDiv.text("");
+	$.ajax({
+		type : "POST",
+		url : "warehouseIn/add.action",
+		dataType : "json",
+		data : {
+			in_date : in_date,
+			part_code : part_code,
+			quantity : quantity,
+			pur_sheet_id : pur_sheet_id,
+			price : price,
+			member_id : member_id,
+			note : note,
+			in_reason : in_reason,
+			pdr_no : pdr_no
+		},
+		success : function(data) {
+			if (data == true) {
+				$("#modalWarehouseInInDate").val(new Date().format("yyyy-MM-dd"));
+				$("#modalWarehouseInPartCode").val(0);
+				$("#modalWarehouseInTradeName").val("");
+				$("#modalWarehouseInSpec").val("");
+				$("#modalWarehouseInPartUnit").val("");
+				$("#modalWarehouseInQuantity").val("");
+				$("#modalWarehouseInPurSheetId").val("");
+				$("#modalWarehouseInPrice").val("");
+				$("#modalWarehouseInNote").val("");
+				$("#modalWarehouseInInReason").val(0);
+				$("#modalWarehouseInPdrNo").val("");
+				operateAlertSmall(true, "新增入库记录成功！", "");
+			} else {
+				operateAlertSmall(false, "", "新增入库记录失败！");
+			}
+		}
+	});
+}
+
+//更新入库记录信息
+function updateWarehouseIn() {
+	var in_id = $("#modalWarehouseInId").val();
+	var in_date = $("#modalWarehouseInInDate").val();
+	var part_code = $("#modalWarehouseInPartCode").val();
+	var quantity = $("#modalWarehouseInQuantity").val();
+	var pur_sheet_id = $("#modalWarehouseInPurSheetId").val();
+	var price = $("#modalWarehouseInPrice").val();
+	var note = $("#modalWarehouseInNote").val();
+	var in_reason = $("#modalWarehouseInInReason").val();
+	var pdr_no = $("#modalWarehouseInPdrNo").val();
+	
+	var msgDiv = $("#modalWarehouseInMsg");
+	var in_reason_text = $('#modalWarehouseInInReason').find("option:selected").text();
+	if (in_reason_text == "退库") {
+		if (pdr_no=="") {
+			msgDiv.text("退库必须填写PDR号！");
+			return false;
+		}
+	}
+	
+	if (in_date=="") {
+		msgDiv.text("入库日期不允许为空！");
+		return false;
+	}
+	if (part_code=="0" || part_code==0 || part_code=="") {
+		msgDiv.text("料号未选择！");
+		return false;
+	}
+	if(isNaN(quantity) || (!isNaN(quantity) && parseFloat(quantity)<0)){
+		msgDiv.text("入库数量必须大于0！");
+		return false;
+	}
+	if(isNaN(price) || (!isNaN(price) && parseFloat(price)<0)){
+		msgDiv.text("采购单价必须大于等于0！");
+		return false;
+	}
+	if (in_reason=="0" || in_reason==0) {
+		msgDiv.text("入库原因未选择！");
+		return false;
+	}
+	msgDiv.text("");
+	$.ajax({
+		type : "POST",
+		url : "warehouseIn/update.action",
+		dataType : "json",
+		data : {
+			in_id : in_id,
+			in_date : in_date,
+			part_code : part_code,
+			quantity : quantity,
+			pur_sheet_id : pur_sheet_id,
+			price : price,
+			member_id : member_id,
+			note : note,
+			in_reason : in_reason,
+			pdr_no : pdr_no
+		},
+		success : function(data) {
+			if (data.result == true || data.result == "true") {
+				operateAlert(true, data.msg, "");
+			} else {
+				operateAlert(false, "", data.msg);
+			}
+			$("#showUpdateWarehouseIn").modal("hide");
+			$("#contentWarehouseIn").bootstrapTable("refresh");
+		}
+	})
+}
+
+function loadWarehouseIn(searchType) {
+	$("#toolbar").css("padding-top","");
+	$("#toolbar").css("padding-left","");
+	var url;
+	var column;
+	var keyword;
+	var dateType;
+	var start_date;
+	var end_date;
+	switch(searchType){
+		case "1":
+			url="warehouseIn/listUnlockedSplit.action";
+			break;
+		case "2":
+			url="warehouseIn/listSplit2.action";
+			break;
+	}
+	
+	dateType = $("#searchDateType").val();
+	if(dateType == "1" || dateType == 1){
+		start_date = null;
+		end_date = null;
+	}else if(dateType == "2" || dateType == 2) {
+		start_date = $("#startDate").val();
+		end_date = $("#endDate").val();
+		if(start_date == "" || end_date == ""){
+			alert("查询时必须选择开始日期与结束日期！");
+			return false;
+		}
+	}
+	
+	var searchValue = $('#warehouseInSearchTypeList').val();
+	column = searchValue;
+	if(searchValue == "in_date"){
+		keyword = null;
+	}else if(searchValue == "part_code" || searchValue == "in_reason") {
+		if(searchValue == "part_code"){
+			keyword = $('#OtherColumnSearchWarehouseInList2').val();
+		}else if(searchValue == "in_reason"){
+			keyword = $('#OtherColumnSearchWarehouseInList').val();
+		}else{
+			keyword = $('#OtherColumnSearchWarehouseInList').val();
+		}
+	} else {
+		keyword = $("#warehouseInSearchKeyWord").val();
+	}
+	
+	var table = $("#contentWarehouseIn");
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: url,
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,15,30,50,100,200,300,500],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			//console.log(parseInt(params.offset/5)+1);
+			//console.log(params.limit);
+          return {
+          	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit,
+				column : column,
+				keyword : keyword,
+				dateType: dateType,
+				start_date : start_date,
+				end_date : end_date
+          }
+      },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+      showColumns: true,
+      showRefresh: true,
+      clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表头颜色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allWarehouseIn', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+          //console.log(data);
+      },
+      onClickCell: function(field, value, row, $element) {
+			/*console.log("filed : " + field + " ; value : " + value + " ; row : ");
+			console.log(row);
+			console.log($element.html());*/
+      },
+      idField: 'in_id',//主键
+		columns : [{
+					title : '序号',
+					align: "center",
+					width: 40,
+					formatter: function (value, row, index) {
+					    // 获取每页显示的数量
+						var pageSize = table.bootstrapTable('getOptions').pageSize;
+						//console.log("pageSize : " + pageSize);
+						// 获取当前是第几页
+						var pageNumber = table.bootstrapTable('getOptions').pageNumber;
+						//console.log("pageNumber : " + pageNumber);
+						// 返回序号，注意index是从0开始的，所以要加上1
+						return pageSize * (pageNumber - 1) + index + 1;
+					}
+				}, {
+					field : 'in_id',
+					title : '入库编号',
+					valign : 'middle',
+					align : 'center',
+					width: 140
+
+				}, {
+					field : 'in_date',
+					title : '入库日期',
+					valign : 'middle',
+					align : 'center',
+					width: 100,
+					formatter: function (value, row, index) {
+						return new Date(value.time).format('yyyy-MM-dd');
+					}
+				}, {
+					field : 'part_code',
+					title : '料号',
+					valign : 'middle',
+					align : 'center',
+					width: 130
+				}, {
+					title : '品名',
+					valign : 'middle',
+					align : 'center',
+					width: 150,
+					formatter: function (value, row, index) {
+						return row.partInfo.tradename;
+					}
+				}, {
+					title : '规格',
+					valign : 'middle',
+					align : 'center',
+					width: 250,
+					formatter: function (value, row, index) {
+						return row.partInfo.spec;
+					}
+				}, {
+					field : 'quantity',
+					title : '入库数量',
+					valign : 'middle',
+					halign : 'center',
+					align : 'right',
+					width: 100,
+					formatter : function (value, row, index) {
+						return value.toLocaleString();
+					}
+				}, {
+					title : '单位',
+					valign : 'middle',
+					align : 'center',
+					width: 60,
+					formatter : function (value, row, index) {
+						return row.partInfo.unit;
+					}
+				}, {
+					field : 'in_reason',
+					title : '入库原因',
+					valign : 'middle',
+					align : 'center',
+					width: 110,
+					formatter: function (value, row, index) {
+						return row.type_in_reason.sub_type;
+					}
+				}, {
+					field : 'pur_sheet_id',
+					title : '采购单号',
+					visible : false,
+					valign : 'middle',
+					align : 'center',
+					width: 110
+				}, {
+					field : 'price',
+					title : '采购单价',
+					visible : false,
+					valign : 'middle',
+					halign : 'center',
+					align : 'right',
+					width: 90,
+					formatter : function (value, row, index) {
+						return value.toFixed(2);
+					}
+				}, {
+					field : 'pdr_no',
+					title : 'PDR号',
+					valign : 'middle',
+					align : 'center',
+					width: 80
+				}, {
+					field : 'member_id',
+					title : '处理人员',
+					valign : 'middle',
+					align : 'center',
+					width: 80
+				}, {
+					field : 'note',
+					title : '备注信息',
+					valign : 'middle',
+					halign : 'center',
+					align : 'left'
+				}, {
+					field : 'history_in_id',
+					title : '历史入库编号',
+					valign : 'middle',
+					align : 'center',
+					width: 140
+				}, {
+					field : 'locked',
+					title : '操作',
+					valign : 'middle',
+					align : 'center',
+					width: 60,
+					events : operateEvents,
+					formatter:function(value,row,index){
+						if(value==1 || row.history_in_id!=""){
+				            return "";
+				        }else if(value==0){
+				            return [
+				            	"<a id='editWarehouseIn' href='#' title='编辑入库记录'><i class='fa fa-pencil'></i></a>"
+				            ].join("");
+				        }
+				    }
+				}]
+	});
+}
+
+//载入入库页面前先进行的设置处理函数
+function warehouseInSetting(){
+	
+	// 设置搜索框控件的绑定事件
+	$('#warehouseInSearchTypeList').on('change', function(e) {
+		var searchValue = $('#warehouseInSearchTypeList').val();
+		$("#headStartDate").fadeOut(10);
+		$("#startDate").fadeOut(10);
+		$("#headEndDate").fadeOut(10);
+		$("#endDate").fadeOut(10);
+		if(searchValue == "in_date"){
+			$("#warehouseInSearchKeyWord").fadeOut(10);
+			$("#OtherColumnSearchWarehouseInList").fadeOut(10);
+			$("#OtherColumnSearchWarehouseInList2Div").fadeOut(10);
+		}else if(searchValue == "part_code" || searchValue == "in_reason") {
+			$("#warehouseInSearchKeyWord").fadeOut(10);
+			if(searchValue == "part_code"){
+				$("#OtherColumnSearchWarehouseInList").fadeOut(10);
+				$("#OtherColumnSearchWarehouseInList2Div").fadeIn(10);
+				getAllUnlockedListMulti("partinfo", "OtherColumnSearchWarehouseInList2", "part_code", "part_code", 0);
+			}else if(searchValue == "in_reason"){
+				$("#OtherColumnSearchWarehouseInList").fadeIn(10);
+				$("#OtherColumnSearchWarehouseInList2Div").fadeOut(10);
+				listByParentType("OtherColumnSearchWarehouseInList", "id", "sub_type", "in_reason", 0);
+			}
+		} else {
+			$("#warehouseInSearchKeyWord").fadeIn(10);
+			$("#OtherColumnSearchWarehouseInList").fadeOut(10);
+			$("#OtherColumnSearchWarehouseInList2Div").fadeOut(10);
+		}
+	});
+	
+	// 设置时间范围类型搜索框控件的绑定事件
+	$('#searchDateType').on('change', function(e) {
+		var searchValue = $('#searchDateType').val();
+		if(searchValue == "1" || searchValue == 1){
+			$("#headStartDate").fadeOut(10);
+			$("#startDate").fadeOut(10);
+			$("#headEndDate").fadeOut(10);
+			$("#endDate").fadeOut(10);
+		}else if(searchValue == "2" || searchValue == 2) {
+			$("#headStartDate").fadeIn(10);
+			$("#startDate").fadeIn(10);
+			$("#headEndDate").fadeIn(10);
+			$("#endDate").fadeIn(10);
+		}
+	});
+	
+	// 设置模态框中产品品号变化时的绑定函数，自动带出单位和品名、规格
+	$('#modalWarehouseInPartCode').on('change', function(e) {
+		var id = $('#modalWarehouseInPartCode').val();
+		if(id != "0" && id != 0){
+			$.ajax({
+				url : "partinfo/listPartInfoByCode.action",
+				type : "post",
+				dataType : "json",
+				data : {
+					part_code : id
+				},
+				scriptCharset : "utf-8",
+				success : function(data) {
+					$("#modalWarehouseInTradeName").val(data.list.tradename);
+					$("#modalWarehouseInSpec").val(data.list.spec);
+					$("#modalWarehouseInPartUnit").val(data.list.unit);
+				}
+			})
+		}
+	});
+	
+	// 设置模态框中入库原因变化时PDR号输入框的失效与激活
+	$('#modalWarehouseInInReason').on('change', function(e) {
+		var in_reason = $('#modalWarehouseInInReason').find("option:selected").text();
+		if (in_reason=="正常采购入库" || in_reason=="其它入库") {
+			$('#modalWarehouseInPdrNo').attr("disabled",true);
+			$("#modalWarehouseInPdrNo").val("");
+		} else if (in_reason == "退库") {
+			$('#modalWarehouseInPdrNo').attr("disabled",false);
+		}
+	});
+	
+	// 给PDR号输入框增加事件，判断PDR号是否存在
+	document.getElementById("modalWarehouseInPdrNo").addEventListener("blur",function(){
+		var pdr_no = $("#modalWarehouseInPdrNo").val();
+		checkPdrNoById(pdr_no,"modalWarehouseInMsg");
+	});
+	
+	// 给采购单号输入框增加事件，判断采购单号是否存在，如果存在的话，抓取其单价
+	document.getElementById("modalWarehouseInPurSheetId").addEventListener("blur",function(){
+		var pur_sheet_id = $("#modalWarehouseInPurSheetId").val();
+		var part_code = $("#modalWarehouseInPartCode").val();
+		getPurPriceByPartCode(pur_sheet_id,part_code,"modalWarehouseInMsg");
+	});
+	
+	// 给入库数量输入框增加事件，如果数量改为0，则自动将备注信息变为“不良退货”
+	document.getElementById("modalWarehouseInQuantity").addEventListener("blur",function(){
+		var quantity = $("#modalWarehouseInQuantity").val();
+		if(quantity==0 || quantity=='0'){
+			$.messager.confirm('请确认！', '入库数量为0，备注信息确定改为“不良退货”吗？', function(r) {
+				if (r) {
+					$("#modalWarehouseInNote").val("不良退货");
+				}
+			});
+			
+		}
+	});
+
+	
+	laydate.render({
+		elem: '#startDate' //指定元素
+	});
+	
+	laydate.render({
+		elem: '#endDate' //指定元素
+	});
+	
+	// 禁止模态框中的form提交刷新页面
+	$('#modalFormWarehouseIn').submit(function() {
+		return false;
+	});
+	//設置showUpdateDept模態框關閉的更新列表事件
+	$('#showUpdateWarehouseIn').on('hide.bs.modal', function(e) {
+		$("#contentWarehouseIn").bootstrapTable("refresh");
+	});
+	// 设置模态框的垂直位置
+	$('#showUpdateWarehouseIn').on('show.bs.modal', function(e) {
+		$(this).find('.modal-dialog').css({
+			'margin-top' : function() {
+				var modalHeight = $('#showUpdateWarehouseIn').find('.modal-dialog').height();
+				// console.log(modalHeight);
+				return ($(window).height() / 2 - (modalHeight / 2) - 350);
+			}
+		});
+	});
+	
+	$("#toolbar").css({
+		'padding-top' : 10,
+		'padding-left' : 15
+	})
+}
+/****************************** 出库操作 *********************************/
+
+//显示新增模态框
+function showModalWarehouseOut() {
+	$("#btnUpdateWarehouseOut").fadeOut(10);
+	$("#btnAddWarehouseOut").fadeIn(10);
+	
+	$("#modalWarehouseOutOutDate").val(new Date().format("yyyy-MM-dd"));
+	laydate.render({
+		elem: '#modalWarehouseOutOutDate' //指定元素
+	});
+	getAllUnlockedListMulti("partinfo", "modalWarehouseOutPartCode", "part_code", "part_code", 0);
+	$("#modalWarehouseOutTradeName").val("");
+	$("#modalWarehouseOutSpec").val("");
+	$("#modalWarehouseOutPartUnit").val("");
+	$("#modalWarehouseOutTotalQuantity").val("");
+	listByParentType("modalWarehouseOutOutReason", "id", "sub_type", "out_reason", 0);
+	$("#modalWarehouseOutPdrNo").val("");
+	$("#modalWarehouseOutPdrNo").attr("disabled",true);
+	$("#modalWarehouseOutNote").val("");
+	
+	$("#showUpdateWarehouseOut .modal-dialog .modal-content .modal-header .modal-title").text("新增出库记录")
+	//清空异常提示文字
+	$("#modalWarehouseOutMsg").text("");
+	//显示模态框
+	$("#showUpdateWarehouseOut").modal("show");
+}
+
+//新增出库记录
+function addWarehouseOut() {
+	var out_date = $("#modalWarehouseOutOutDate").val();
+	var part_code = $("#modalWarehouseOutPartCode").val();
+	var total_quantity = $("#modalWarehouseOutTotalQuantity").val();
+	var out_reason = $("#modalWarehouseOutOutReason").val();
+	var pdr_no = $("#modalWarehouseOutPdrNo").val();
+	var note = $("#modalWarehouseOutNote").val();
+	
+	var msgDiv = $("#modalWarehouseOutMsg");
+	var out_reason_text = $('#modalWarehouseOutOutReason').find("option:selected").text();
+	if (out_reason_text == "正常订单出库") {
+		if (pdr_no=="") {
+			msgDiv.text("正常出库必须填写PDR号！");
+			return false;
+		}
+	}
+	
+	if (out_date=="") {
+		msgDiv.text("出库日期不允许为空！");
+		return false;
+	}
+	if (part_code=="0" || part_code==0 || part_code=="") {
+		msgDiv.text("料号未选择！");
+		return false;
+	}
+	if(isNaN(total_quantity) || (!isNaN(total_quantity) && parseFloat(total_quantity)<0)){
+		msgDiv.text("出库数量必须大于0！");
+		return false;
+	}
+	if (out_reason=="0" || out_reason==0) {
+		msgDiv.text("出库原因未选择！");
+		return false;
+	}
+	msgDiv.text("");
+	$.ajax({
+		type : "POST",
+		url : "warehouseOut/add.action",
+		dataType : "json",
+		data : {
+			out_date : out_date,
+			part_code : part_code,
+			total_quantity : total_quantity,
+			out_reason : out_reason,
+			pdr_no : pdr_no,
+			member_id : member_id,
+			note : note
+		},
+		success : function(data) {
+			if (data.result == true) {
+				$("#modalWarehouseOutOutDate").val(new Date().format("yyyy-MM-dd"));
+				$("#modalWarehouseOutPartCode").val(0);
+				$("#modalWarehouseOutTradeName").val("");
+				$("#modalWarehouseOutSpec").val("");
+				$("#modalWarehouseOutPartUnit").val("");
+				$("#modalWarehouseOutTotalQuantity").val("");
+				$("#modalWarehouseOutOutReason").val(0);
+				$("#modalWarehouseOutPdrNo").val("");
+				$("#modalWarehouseOutNote").val("");
+				
+				operateAlertSmall(true, "新增出库记录成功！", "");
+			} else {
+				operateAlertSmall(false, "", "新增出库记录失败！");
+			}
+		}
+	});
+}
+
+//更新出库记录信息
+function updateWarehouseOut() {
+	var out_id = $("#modalWarehouseOutId").val();
+	var out_date = $("#modalWarehouseOutOutDate").val();
+	var part_code = $("#modalWarehouseOutPartCode").val();
+	var total_quantity = $("#modalWarehouseOutTotalQuantity").val();
+	var out_reason = $("#modalWarehouseOutOutReason").val();
+	var pdr_no = $("#modalWarehouseOutPdrNo").val();
+	var note = $("#modalWarehouseOutNote").val();
+	
+	var msgDiv = $("#modalWarehouseOutMsg");
+	var out_reason_text = $('#modalWarehouseOutOutReason').find("option:selected").text();
+	if (out_reason_text == "正常订单出库") {
+		if (pdr_no=="") {
+			msgDiv.text("正常出库必须填写PDR号！");
+			return false;
+		}
+	}
+	
+	if (out_date=="") {
+		msgDiv.text("出库日期不允许为空！");
+		return false;
+	}
+	if (part_code=="0" || part_code==0 || part_code=="") {
+		msgDiv.text("料号未选择！");
+		return false;
+	}
+	if(isNaN(total_quantity) || (!isNaN(total_quantity) && parseFloat(total_quantity)<0)){
+		msgDiv.text("出库数量必须大于0！");
+		return false;
+	}
+	if (out_reason=="0" || out_reason==0) {
+		msgDiv.text("出库原因未选择！");
+		return false;
+	}
+	msgDiv.text("");
+	$.ajax({
+		type : "POST",
+		url : "warehouseOut/update.action",
+		dataType : "json",
+		data : {
+			out_id : out_id,
+			out_date : out_date,
+			part_code : part_code,
+			total_quantity : total_quantity,
+			out_reason : out_reason,
+			pdr_no : pdr_no,
+			member_id : member_id,
+			note : note
+		},
+		success : function(data) {
+			if (data.result == true || data.result == "true") {
+				operateAlert(true, data.msg, "");
+			} else {
+				operateAlert(false, "", data.msg);
+			}
+			$("#showUpdateWarehouseOut").modal("hide");
+			$("#contentWarehouseOut").bootstrapTable("refresh");
+		}
+	})
+}
+
+function loadWarehouseOut() {
+	$("#toolbar").css("padding-top","");
+	$("#toolbar").css("padding-left","");
+	var url;
+	var column;
+	var keyword;
+	var dateType;
+	var start_date;
+	var end_date;
+	url="warehouseOut/listSplit.action";
+	dateType = $("#searchDateType").val();
+	if(dateType == "1" || dateType == 1){
+		start_date = null;
+		end_date = null;
+	}else if(dateType == "2" || dateType == 2) {
+		start_date = $("#startDate").val();
+		end_date = $("#endDate").val();
+		if(start_date == "" || end_date == ""){
+			alert("查询时必须选择开始日期与结束日期！");
+			return false;
+		}
+	}
+	
+	var searchValue = $('#warehouseOutSearchTypeList').val();
+	column = searchValue;
+	if(searchValue == "out_date"){
+		keyword = null;
+	}else if(searchValue == "part_code" || searchValue == "out_reason") {
+		if(searchValue == "part_code"){
+			keyword = $('#OtherColumnSearchWarehouseOutList2').val();
+		}else if(searchValue == "out_reason"){
+			keyword = $('#OtherColumnSearchWarehouseOutList').val();
+		}else{
+			keyword = $('#OtherColumnSearchWarehouseOutList').val();
+		}
+	} else {
+		keyword = $("#warehouseOutSearchKeyWord").val();
+	}
+	
+	var table = $("#contentWarehouseOut");
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: url,
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,15,30,50,100,200,300,500],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			//console.log(parseInt(params.offset/5)+1);
+			//console.log(params.limit);
+          return {
+          	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit,
+				column : column,
+				keyword : keyword,
+				dateType: dateType,
+				start_date : start_date,
+				end_date : end_date
+          }
+      },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+      showColumns: true,
+      showRefresh: true,
+      clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表头颜色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allWarehouseOut', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+          //console.log(data);
+      },
+      idField: 'out_id',//主键
+		columns : [{
+					title : '序号',
+					align: "center",
+					width: 40,
+					formatter: function (value, row, index) {
+					    // 获取每页显示的数量
+						var pageSize = table.bootstrapTable('getOptions').pageSize;
+						//console.log("pageSize : " + pageSize);
+						// 获取当前是第几页
+						var pageNumber = table.bootstrapTable('getOptions').pageNumber;
+						//console.log("pageNumber : " + pageNumber);
+						// 返回序号，注意index是从0开始的，所以要加上1
+						return pageSize * (pageNumber - 1) + index + 1;
+					}
+				}, {
+					field : 'out_id',
+					title : '出库编号',
+					valign : 'middle',
+					align : 'center',
+					visible : false,
+					width: 140
+
+				}, {
+					field : 'out_date',
+					title : '出库日期',
+					valign : 'middle',
+					align : 'center',
+					width: 100,
+					formatter: function (value, row, index) {
+						return new Date(value.time).format('yyyy-MM-dd');
+					}
+				}, {
+					field : 'part_code',
+					title : '料号',
+					valign : 'middle',
+					align : 'center',
+					width: 130
+				}, {
+					title : '品名',
+					valign : 'middle',
+					align : 'center',
+					width: 150,
+					formatter: function (value, row, index) {
+						return row.partInfo.tradename;
+					}
+				}, {
+					title : '规格',
+					valign : 'middle',
+					align : 'center',
+					width: 250,
+					formatter: function (value, row, index) {
+						return row.partInfo.spec;
+					}
+				}, {
+					field : 'total_quantity',
+					title : '出库数量',
+					valign : 'middle',
+					halign : 'center',
+					align : 'right',
+					width: 100,
+					formatter : function (value, row, index) {
+						return value.toLocaleString();
+					}
+				}, {
+					title : '单位',
+					valign : 'middle',
+					align : 'center',
+					width: 60,
+					formatter : function (value, row, index) {
+						return row.partInfo.unit;
+					}
+				}, {
+					field : 'out_reason',
+					title : '出库原因',
+					valign : 'middle',
+					align : 'center',
+					width: 110,
+					formatter: function (value, row, index) {
+						return row.type_out_reason.sub_type;
+					}
+				}, {
+					field : 'pdr_no',
+					title : 'PDR号',
+					valign : 'middle',
+					align : 'center',
+					width: 80
+				}, {
+					field : 'member_id',
+					title : '处理人员',
+					valign : 'middle',
+					align : 'center',
+					width: 80
+				}, {
+					field : 'note',
+					title : '备注信息',
+					valign : 'middle',
+					halign : 'center',
+					align : 'left'
+				}, {
+					field : 'locked',
+					title : '操作',
+					valign : 'middle',
+					align : 'center',
+					width: 60,
+					events : operateEvents,
+					formatter:function(value,row,index){
+						if(value==1){
+				            return "";
+				        }else if(value==0){
+				            return [
+				            	"<a id='editWarehouseOut' href='#' title='编辑出库记录'><i class='fa fa-pencil'></i></a>"
+				            ].join("");
+				        }
+				    }
+				}]
+	});
+}
+
+//载入出库页面前先进行的设置处理函数
+function warehouseOutSetting(){
+	
+	// 设置搜索框控件的绑定事件
+	$('#warehouseOutSearchTypeList').on('change', function(e) {
+		var searchValue = $('#warehouseOutSearchTypeList').val();
+		$("#headStartDate").fadeOut(10);
+		$("#startDate").fadeOut(10);
+		$("#headEndDate").fadeOut(10);
+		$("#endDate").fadeOut(10);
+		if(searchValue == "out_date"){
+			$("#warehouseOutSearchKeyWord").fadeOut(10);
+			$("#OtherColumnSearchWarehouseOutList").fadeOut(10);
+			$("#OtherColumnSearchWarehouseOutList2").fadeOut(10);
+		}else if(searchValue == "part_code" || searchValue == "out_reason") {
+			$("#warehouseOutSearchKeyWord").fadeOut(10);
+			if(searchValue == "part_code"){
+				$("#OtherColumnSearchWarehouseOutList").fadeOut(10);
+				$("#OtherColumnSearchWarehouseOutList2").fadeIn(10);
+				getAllUnlockedListMulti("partinfo", "OtherColumnSearchWarehouseOutList2", "part_code", "part_code", 0);
+			}else if(searchValue == "out_reason"){
+				$("#OtherColumnSearchWarehouseOutList").fadeIn(10);
+				$("#OtherColumnSearchWarehouseOutList2").fadeOut(10);
+				listByParentType("OtherColumnSearchWarehouseOutList", "id", "sub_type", "out_reason", 0);
+			}
+		} else {
+			$("#warehouseOutSearchKeyWord").fadeIn(10);
+			$("#OtherColumnSearchWarehouseOutList").fadeOut(10);
+			$("#OtherColumnSearchWarehouseOutList2").fadeOut(10);
+		}
+	});
+	
+	// 设置时间范围类型搜索框控件的绑定事件
+	$('#searchDateType').on('change', function(e) {
+		var searchValue = $('#searchDateType').val();
+		if(searchValue == "1" || searchValue == 1){
+			$("#headStartDate").fadeOut(10);
+			$("#startDate").fadeOut(10);
+			$("#headEndDate").fadeOut(10);
+			$("#endDate").fadeOut(10);
+		}else if(searchValue == "2" || searchValue == 2) {
+			$("#headStartDate").fadeIn(10);
+			$("#startDate").fadeIn(10);
+			$("#headEndDate").fadeIn(10);
+			$("#endDate").fadeIn(10);
+		}
+	});
+	
+	// 设置模态框中产品品号变化时的绑定函数，自动带出单位和品名、规格
+	$('#modalWarehouseOutPartCode').on('change', function(e) {
+		var id = $('#modalWarehouseOutPartCode').val();
+		if(id != "0" && id != 0){
+			$.ajax({
+				url : "partinfo/listPartInfoByCode.action",
+				type : "post",
+				dataType : "json",
+				data : {
+					part_code : id
+				},
+				scriptCharset : "utf-8",
+				success : function(data) {
+					$("#modalWarehouseOutTradeName").val(data.list.tradename);
+					$("#modalWarehouseOutSpec").val(data.list.spec);
+					$("#modalWarehouseOutPartUnit").val(data.list.unit);
+				}
+			})
+		}
+	});
+	
+	// 设置模态框中出库原因变化时PDR号输入框的失效与激活
+	$('#modalWarehouseOutOutReason').on('change', function(e) {
+		var out_reason = $('#modalWarehouseOutOutReason').find("option:selected").text();
+		if (out_reason=="正常订单出库") {
+			$('#modalWarehouseOutPdrNo').attr("disabled",false);
+		} else if (out_reason == "其它出库") {
+			$('#modalWarehouseOutPdrNo').attr("disabled",true);
+			$("#modalWarehouseOutPdrNo").val("");
+		}
+	});
+	
+	// 给PDR号输入框增加事件，判断PDR号是否存在
+	document.getElementById("modalWarehouseOutPdrNo").addEventListener("blur",function(){
+		var pdr_no = $("#modalWarehouseOutPdrNo").val();
+		checkPdrNoById(pdr_no,"modalWarehouseOutMsg");
+	});
+	
+	laydate.render({
+		elem: '#startDate' //指定元素
+	});
+	
+	laydate.render({
+		elem: '#endDate' //指定元素
+	});
+	
+	// 禁止模态框中的form提交刷新页面
+	$('#modalFormWarehouseOut').submit(function() {
+		return false;
+	});
+	
+	// 设置模态框的垂直位置
+	$('#modalFormWarehouseOut').on('show.bs.modal', function(e) {
+		$(this).find('.modal-dialog').css({
+			'margin-top' : function() {
+				var modalHeight = $('#modalFormWarehouseOut').find('.modal-dialog').height();
+				// console.log(modalHeight);
+				return ($(window).height() / 2 - (modalHeight / 2) - 350);
+			}
+		});
+	});
+	
+	$("#toolbar").css({
+		'padding-top' : 10,
+		'padding-left' : 15
+	})
+}
+/****************************** 库存操作 *********************************/
+
+function loadStorage(searchType) {
+	$("#toolbar").css("padding-top","");
+	$("#toolbar").css("padding-left","");
+	var url;
+	var column;
+	var keyword;
+	url = "warehouseIn/listStorageSplit.action";
+	switch(searchType){
+		case "1":
+			// 当前所有库存明细
+			column = null;
+			keyword = null;
+			break;
+		case "2":
+			var searchValue = $('#storageSearchTypeList').val();
+			column = searchValue;
+			if(searchValue == "part_code") {
+				keyword = $('#OtherColumnSearchStorageList').val();
+			} else {
+				keyword = $("#OtherColumnSearchStorageList").val();
+			}
+			break;
+	}
+	
+	var table = $("#contentStorage");
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: url,
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,15,30,50,100,200,300,500],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			//console.log(parseInt(params.offset/5)+1);
+			//console.log(params.limit);
+            return {
+            	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit,
+				column : column,
+				keyword : keyword
+            }
+        },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+        showColumns: true,
+        showRefresh: true,
+        clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表头颜色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allStorage', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+            //console.log(data);
+			$("#storageAmount").val(parseFloat(parseFloat(data.amount).toFixed(0)).toLocaleString());
+        },
+        idField: 'in_id',//主键
+		columns : [{
+					title : '序号',
+					align: "center",
+					width: 40,
+					formatter: function (value, row, index) {
+					    // 获取每页显示的数量
+						var pageSize = table.bootstrapTable('getOptions').pageSize;
+						//console.log("pageSize : " + pageSize);
+						// 获取当前是第几页
+						var pageNumber = table.bootstrapTable('getOptions').pageNumber;
+						//console.log("pageNumber : " + pageNumber);
+						// 返回序号，注意index是从0开始的，所以要加上1
+						return pageSize * (pageNumber - 1) + index + 1;
+					}
+				}, {
+					field : 'in_id',
+					title : '入库编号',
+					valign : 'middle',
+					align : 'center',
+					visible : false,
+					width: 140
+				}, {
+					field : 'in_date',
+					title : '入库日期',
+					valign : 'middle',
+					align : 'center',
+					width: 100,
+					formatter: function (value, row, index) {
+						return new Date(value.time).format('yyyy-MM-dd');
+					}
+				}, {
+					field : 'part_code',
+					title : '料号',
+					valign : 'middle',
+					align : 'center',
+					width: 130
+				}, {
+					title : '品名',
+					valign : 'middle',
+					align : 'center',
+					width: 150,
+					formatter: function (value, row, index) {
+						return row.partInfo.tradename;
+					}
+				}, {
+					title : '规格',
+					valign : 'middle',
+					align : 'center',
+					width: 250,
+					formatter: function (value, row, index) {
+						return row.partInfo.spec;
+					}
+				}, {
+					field : 'surplus_quantity',
+					title : '库存数量',
+					valign : 'middle',
+					halign : 'center',
+					align : 'right',
+					width: 100,
+					formatter : function (value, row, index) {
+						return value.toLocaleString();
+					}
+				}, {
+					title : '单位',
+					valign : 'middle',
+					align : 'center',
+					width: 60,
+					formatter : function (value, row, index) {
+						//return row.partInfo.type_unit_type.sub_type;
+						return row.partInfo.unit;
+					}
+				}, {
+					field : 'in_reason',
+					title : '入库原因',
+					valign : 'middle',
+					align : 'center',
+					width: 110,
+					formatter: function (value, row, index) {
+						return row.type_in_reason.sub_type;
+					}
+				}, {
+					field : 'storage_amount',
+					title : '库存金额',
+					valign : 'middle',
+					halign : 'center',
+					align : 'right',
+					width: 100,
+					formatter : function (value, row, index) {
+						return value.toLocaleString();
+					}
+				}, {
+					field : 'note',
+					title : '备注信息',
+					valign : 'middle',
+					halign : 'center',
+					align : 'left'
+				}]
+	});
+}
+
+function loadStorageByPartCode() {
+	$("#toolbar").css("padding-top","");
+	$("#toolbar").css("padding-left","");
+	var url = "warehouseIn/listStorageByPartCodeSplit.action"
+	var table = $("#contentStorage");
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: url,
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,15,30,50,100,200,300,500],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			//console.log(parseInt(params.offset/5)+1);
+			//console.log(params.limit);
+            return {
+            	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit
+            }
+        },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+        showColumns: true,
+        showRefresh: true,
+        clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表头颜色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allStorageByPartCode', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+            //console.log(data);
+			$("#storageAmount").val(parseFloat(parseFloat(data.amount).toFixed(0)).toLocaleString());
+        },
+        idField: 'in_id',//主键
+		columns : [{
+					title : '序号',
+					align: "center",
+					width: 40,
+					formatter: function (value, row, index) {
+					    // 获取每页显示的数量
+						var pageSize = table.bootstrapTable('getOptions').pageSize;
+						//console.log("pageSize : " + pageSize);
+						// 获取当前是第几页
+						var pageNumber = table.bootstrapTable('getOptions').pageNumber;
+						//console.log("pageNumber : " + pageNumber);
+						// 返回序号，注意index是从0开始的，所以要加上1
+						return pageSize * (pageNumber - 1) + index + 1;
+					}
+				}, {
+					field : 'part_code',
+					title : '料号',
+					valign : 'middle',
+					align : 'center',
+					width: 130
+				}, {
+					title : '品名',
+					valign : 'middle',
+					align : 'center',
+					width: 150,
+					formatter: function (value, row, index) {
+						return row.partInfo.tradename;
+					}
+				}, {
+					title : '规格',
+					valign : 'middle',
+					align : 'center',
+					formatter: function (value, row, index) {
+						return row.partInfo.spec;
+					}
+				}, {
+					field : 'surplus_quantity',
+					title : '库存数量',
+					valign : 'middle',
+					halign : 'center',
+					align : 'right',
+					width: 100,
+					formatter : function (value, row, index) {
+						return value.toLocaleString();
+					}
+				}, {
+					title : '单位',
+					valign : 'middle',
+					align : 'center',
+					width: 60,
+					formatter : function (value, row, index) {
+						//return row.partInfo.type_unit_type.sub_type;
+						return row.partInfo.unit;
+					}
+				}, {
+					field : 'storage_amount',
+					title : '库存金额',
+					valign : 'middle',
+					halign : 'center',
+					align : 'right',
+					width: 100,
+					formatter : function (value, row, index) {
+						return value.toLocaleString();
+					}
+				}]
+	});
+}
+
+function loadStorageByPartCodeSafety() {
+	$("#toolbar").css("padding-top","");
+	$("#toolbar").css("padding-left","");
+	var url = "warehouseIn/listStorageByPartCodeSplit.action"
+	var table = $("#contentStorage");
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: url,
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,15,30,50,100,200,300,500],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			//console.log(parseInt(params.offset/5)+1);
+			//console.log(params.limit);
+            return {
+            	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit
+            }
+        },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+        showColumns: true,
+        showRefresh: true,
+        clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表头颜色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allStorageByPartCode', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+            console.log(data);
+			$("#storageAmount").val(parseFloat(parseFloat(data.amount).toFixed(0)).toLocaleString());
+        },
+        idField: 'in_id',//主键
+		columns : [{
+					title : '序号',
+					align: "center",
+					width: 40,
+					formatter: function (value, row, index) {
+					    // 获取每页显示的数量
+						var pageSize = table.bootstrapTable('getOptions').pageSize;
+						//console.log("pageSize : " + pageSize);
+						// 获取当前是第几页
+						var pageNumber = table.bootstrapTable('getOptions').pageNumber;
+						//console.log("pageNumber : " + pageNumber);
+						// 返回序号，注意index是从0开始的，所以要加上1
+						return pageSize * (pageNumber - 1) + index + 1;
+					}
+				}, {
+					field : 'part_code',
+					title : '料号',
+					valign : 'middle',
+					align : 'center',
+					width: 130
+				}, {
+					title : '品名',
+					valign : 'middle',
+					align : 'center',
+					width: 150,
+					formatter: function (value, row, index) {
+						return row.partInfo.tradename;
+					}
+				}, {
+					title : '规格',
+					valign : 'middle',
+					align : 'center',
+					formatter: function (value, row, index) {
+						return row.partInfo.spec;
+					}
+				}, {
+					field : 'surplus_quantity',
+					title : '库存数量',
+					valign : 'middle',
+					halign : 'center',
+					align : 'right',
+					width: 100,
+					formatter : function (value, row, index) {
+						return value.toLocaleString();
+					}
+				}, {
+					title : '单位',
+					valign : 'middle',
+					align : 'center',
+					width: 60,
+					formatter : function (value, row, index) {
+						//return row.partInfo.type_unit_type.sub_type;
+						return row.partInfo.unit;
+					}
+				}, {
+					title : '安全库存',
+					valign : 'middle',
+					halign : 'center',
+					align : 'right',
+					width: 100,
+					formatter : function (value, row, index) {
+						if (row.safetyStorage!="" && row.safetyStorage!="undefined"){
+							return parseFloat(row.safetyStorage.safety_stock).toLocaleString();
+						}else{
+							return "";
+						}
+						
+					}
+				}, {
+					title : '确认结果',
+					valign : 'middle',
+					halign : 'center',
+					align : 'center',
+					width: 200,
+					formatter : function (value, row, index) {
+						if (row.safetyStorage!="" && row.safetyStorage!="undefined"){
+							if(row.surplus_quantity < row.safetyStorage.safety_stock){
+								return "低于安全库存" + (row.safetyStorage.safety_stock-row.surplus_quantity);
+							}else if(row.surplus_quantity == row.safetyStorage.safety_stock){
+								return "等于安全库存";
+							}else{
+								return "";
+							}
+						}else{
+							return "";
+						}
+					},
+					cellStyle : function(value, row, index) {
+						if (row.safetyStorage!="" && row.safetyStorage!="undefined"){
+							if(row.surplus_quantity < row.safetyStorage.safety_stock){
+								return {css:{"background-color":"#dd9bbe"}};
+							}else if(row.surplus_quantity == row.safetyStorage.safety_stock){
+								return {css:{"background-color":"#f3ea8f"}};
+							}else{
+								return {css:{"background-color":""}}
+							}
+						}else{
+							return {css:{"background-color":""}}
+						}
+					}
+				}]
+	});
+}
+
+// 载入库存页面前先进行的设置处理函数
+function storageSetting(){
+	
+	// 设置搜索框控件的绑定事件
+	$('#storageSearchTypeList').on('change', function(e) {
+		var searchValue = $('#storageSearchTypeList').val();
+		if(searchValue == "part_code"){
+			getAllUnlockedListMulti("partinfo", "OtherColumnSearchStorageList", "part_code", "part_code", 0);
+		}
+	});
+	
+	$("#toolbar").css({
+		'padding-top' : 10,
+		'padding-left' : 15
+	})
+}
+
+/****************************** 批量入出库操作 *********************************/
+
+
+
+
+
+
 /****************************** 部門操作 *********************************/
 
 //驗證dept_code對應的部門是否存在
@@ -2456,6 +4333,468 @@ function deptSetting() {
 	})
 }
 
+/****************************** 批量导入操作 *********************************/
+
+// 批量导入时标题下面第一行数据必须全部字段都填写内容，否则会有字段不显示出来，造成导入数据出错！
+function contentDataImportDivInit(name) {
+	bsCustomFileInput.init();
+	$('#contentDataImportDiv').empty();
+	var selectedvalue = name;
+	var height = $(window).height()-274;
+	console.log("height : " + height);
+	var width = $(window).width()-180;
+	//console.log("width : " + width);
+	if (selectedvalue == "warehouseIn") {
+		$('#contentDataImportDiv').jexcel({
+			colHeaders : ["入库日期","料号","入库数量","采购单号","采购单价","处理人员","备注信息","入库原因","PDR号","历史入库ID"],
+			tableOverflow : true,
+			editable : false,
+			allowInsertRow : false,
+			allowInsertColumn : false,
+			allowDeleteRow : false,
+			allowDeleteColumn : false,
+			allowComments : false,
+			allowRenameColumn : false,
+			allowManualInsertColumn : false,
+			tableHeight : height,
+			tableWidth : width,
+			colWidths : [ 250, 150, 100, 150, 100, 120, 300, 100, 100, 150],
+		    columns: [
+		        { type: 'calendar', options: { format:'YYYY/MM/DD' } },
+		        { type: 'text' },
+		        { type: 'numeric' },
+		        { type: 'text' },
+		        { type: 'numeric' },
+		        { type: 'text' },
+		        { type: 'text' },
+		        { type: 'numeric' },
+		        { type: 'text' },
+		        { type: 'text' }
+		    ]
+		});
+	} else if (selectedvalue == "warehouseOut") {
+		$('#contentDataImportDiv').jexcel({
+			colHeaders : ["出库日期","料号","出库数量","出库原因","PDR号","处理人员","备注信息"],
+			tableOverflow : true,
+			editable : false,
+			allowInsertRow : false,
+			allowInsertColumn : false,
+			allowDeleteRow : false,
+			allowDeleteColumn : false,
+			allowComments : false,
+			allowRenameColumn : false,
+			allowManualInsertColumn : false,
+			tableHeight : height,
+			tableWidth : width,
+			colWidths : [ 250, 150, 100, 100, 100, 100, 300 ],
+		    columns: [
+		        { type: 'calendar', options: { format:'YYYY/MM/DD' } },
+		        { type: 'text' },
+		        { type: 'numeric' },
+		        { type: 'numeric' },
+		        { type: 'text' },
+		        { type: 'text' },
+		        { type: 'text' }
+		    ]
+		});
+	}
+}
+
+function importDataToExcel(){
+	console.log(1)
+	if (importDataType == "warehouseIn") {
+		var dataColumn = [0];
+		var colWidths = [ 250, 150, 100, 150, 100, 120, 300, 100, 100, 150];
+		var columnsType = [
+		        { type: 'calendar', options: { format:'YYYY/MM/DD' } },
+		        { type: 'text' },
+		        { type: 'numeric' },
+		        { type: 'text' },
+		        { type: 'numeric' },
+		        { type: 'text' },
+		        { type: 'text' },
+		        { type: 'numeric' },
+		        { type: 'text' },
+		        { type: 'text' }
+		    ]
+		importExcel_batchInOut('importDataFile','contentDataImportDiv','importDataExcelMsg',dataColumn,colWidths,columnsType);
+	} else if (importDataType == "warehouseOut") {
+		var dataColumn = [0];
+		var colWidths = [ 250, 150, 100, 100, 100, 100, 300 ];
+		var columnsType = [
+		        { type: 'calendar', options: { format:'YYYY/MM/DD' } },
+		        { type: 'text' },
+		        { type: 'numeric' },
+		        { type: 'numeric' },
+		        { type: 'text' },
+		        { type: 'text' },
+		        { type: 'text' }
+		    ]
+		importExcel_batchInOut('importDataFile','contentDataImportDiv','importDataExcelMsg',dataColumn,colWidths,columnsType);
+	}
+}
+
+function importToSystem() {
+	var value = new Array();
+	value = $('#contentDataImportDiv').jexcel('getData', false);
+	var flag = false;
+	
+	if (importDataType == "warehouseIn") {
+		flag = validateTableNull(value, [0, 1, 2, 5, 7]);
+		if (flag) {
+			$("#importDataExcelMsg").text("");
+			for (var i = 0; i < value.length; i++) {
+				value[i][0] = new Date(value[i][0]).format('yyyy/MM/dd');
+			}
+			var dataString = JSON.stringify(value);
+			//console.log("dataString : " + dataString);
+			$.ajax({
+				type : "POST",
+				url : "warehouseIn/addBatch.action",
+				dataType : "json",
+				data : {
+					data : dataString
+				},
+				success : function(data) {
+					if (data == true) {
+						$("#contentDataImportDiv").empty();
+						contentDataImportDivInit(importDataType);
+						operateAlert(true, "入库记录导入成功！", "");
+					} else {
+						operateAlert(false, "", "入库记录导入失败！");
+					}
+				}
+			});
+		} else {
+			$("#importDataExcelMsg").text("");
+			$("#importDataExcelMsg").text("数据没有填写完整，红色单元格是有问题的数值！");
+		}
+	} else if (importDataType == "warehouseOut") {
+		flag = validateTableNull(value, [0, 1, 2, 3, 5]);
+		if (flag) {
+			$("#importDataExcelMsg").text("");
+			for (var i = 0; i < value.length; i++) {
+				value[i][0] = new Date(value[i][0]).format('yyyy/MM/dd');
+			}
+			var dataString = JSON.stringify(value);
+			//console.log("dataString : " + dataString);
+			$.ajax({
+				type : "POST",
+				url : "warehouseOut/addBatch.action",
+				dataType : "json",
+				data : {
+					data : dataString
+				},
+				success : function(data) {
+					if (data.result == true) {
+						$("#contentDataImportDiv").empty();
+						contentDataImportDivInit(importDataType);
+						operateAlert(true, "出库记录导入成功！", "");
+					} else {
+						$("#importDataExcelMsg").text("");
+						$("#importDataExcelMsg").text("系统只处理完成" + data.num + "笔数据！");
+						operateAlert(false, "", "出库记录导入失败！");
+					}
+				}
+			});
+		} else {
+			$("#importDataExcelMsg").text("");
+			$("#importDataExcelMsg").text("数据没有填写完整，红色单元格是有问题的数值！");
+		}
+	}
+}
+
+// 判断列表中给定的必须为非空的字段中是否有空值的状况，如果有的话，单元格背景变红色，并提示错误
+function validateTableNull(arr, unNullColumn) {
+	var length = arr.length;
+	var lengthUnNull = unNullColumn.length;
+	var z = true;
+	for (var i = 0; i < length; i++) {
+		for (var j = 0; j < lengthUnNull; j++) {
+			if (arr[i][unNullColumn[j]] == "undefined" || arr[i][unNullColumn[j]] == "") {
+				$("#contentDataImportDiv").jexcel("setStyle", String.fromCharCode(unNullColumn[j] + 65) + (i + 1), "background-color", "red");
+				z = false;
+			} else {
+				$("#contentDataImportDiv").jexcel("setStyle", String.fromCharCode(unNullColumn[j] + 65) + (i + 1), "background-white", "red");
+			}
+		}
+	}
+	return z;
+	
+}
+
+function importExcel_batchInOut(fileId,tableDiv,msgDiv,dataColumn,colWidths,columnsType){
+	// 首先清空表格区域
+	$('#' + tableDiv).empty();
+	$('#' + msgDiv).text("");
+	
+	// 读取完整的Excel数据进入wb对象
+	var wb;
+	// rABS标记是否将文件读取为二进制字符串
+    var rABS = false;
+    // 存储Json字符串
+    var jsonStr;
+    // 存储Json对象
+	var jsonObj;
+    // 判断是否存在文件
+    var files = document.getElementById(fileId).files;
+    
+	console.log(files.length);
+	if (files.length == 0) {
+		$('#' + msgDiv).text("没有选择文件！");
+		// $("#" + fileId + "Label").text("选择文件");
+		return;
+	}
+	// 判断选择的文件是否为Excel文件，如果不是则停止执行程序
+	var fileDir = $("#" + fileId).val();
+	var suffix = fileDir.substr(fileDir.lastIndexOf("."));
+	if (".xls" != suffix && ".xlsx" != suffix) {
+		// $("#" + fileId).val("");
+		// $("#" + fileId + "Label").text("选择文件");
+		$('#' + msgDiv).text("没有选择Excel文件！");
+		return;
+	}    
+	// console.log(files[0]);
+	// $("#" + fileId + "Label").text("选择文件");
+	var file = files[0];
+	var reader = new FileReader();
+	reader.onload = function(e) {
+		var data = e.target.result;
+		if (rABS) {
+			wb = XLSX.read(btoa(fixdata(data)), { // 手动转换
+				type : 'base64'
+			});
+		} else {
+			wb = XLSX.read(data, {
+				type : 'binary'
+			});
+		}
+		// wb.SheetNames[0]是获取Sheets中第一个Sheet的名字
+		// wb.Sheets[Sheet名]获取Sheet的数据
+		// 获取Json字符串
+		jsonStr = JSON.stringify(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
+		//console.log(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
+		//批量导入时标题下面第一行数据必须全部字段都填写内容，否则会有字段不显示出来，造成导入数据出错！
+		//console.log(jsonStr);
+		// 转换为Json对象
+		jsonObj = JSON.parse(jsonStr);
+		//console.log(jsonObj);
+		var jsonKey = new Array();
+		var keyItem = 0;
+		for(var key in jsonObj[0]){  
+            jsonKey[keyItem] = key;
+            keyItem = keyItem + 1;
+        }
+        
+		// 拼接JS数组
+		var arr = new Array();
+		var z;
+		for (var i = 0; i < jsonObj.length; i++) {
+			arr[i] = new Array();
+			// arr[i][3]=formatExcelDate(jsonObj[i]["需求日期"],"/");
+			for (var j = 0; j < jsonKey.length; j++) {
+				z = 0;
+				for (var k = 0; k < dataColumn.length; k++) {
+					if (j == dataColumn[k]) {
+						arr[i][j] = formatExcelDate(jsonObj[i][jsonKey[j]], "/");
+						z = 1;
+						break;
+					}
+				}
+				if (z == 0) {
+					arr[i][j] = jsonObj[i][jsonKey[j]];
+				}
+			}
+		}
+		//console.log("arr : " + arr);
+		
+		// 下面是生成表格
+		var height = $(window).height()-274;
+		//console.log("height : " + height);
+		var width = $(window).width()-180;
+		//console.log("width : " + width);
+		$('#' + tableDiv).jexcel({
+		    data : arr,
+			colHeaders : jsonKey,
+			tableOverflow : true,
+			editable : false,
+			allowInsertRow : false,
+			allowInsertColumn : false,
+			allowDeleteRow : false,
+			allowDeleteColumn : false,
+			allowComments : false,
+			allowRenameColumn : false,
+			allowManualInsertColumn : false,
+			tableHeight : height,
+			tableWidth : width,
+			colWidths : colWidths,
+		    columns: columnsType
+		});
+	};
+	if (rABS) {
+		reader.readAsArrayBuffer(file);
+	} else {
+		reader.readAsBinaryString(file);
+	}
+}
+
+// 文件流转二进制字符串BinaryString
+function fixdata(data) {
+	var o = "", l = 0, w = 10240;
+	for (; l < data.byteLength / w; ++l)
+		o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)));
+	o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
+	return o;
+}
+
+function batchInOutSetting() {
+	// 选择文件并显示在控件中的功能初始化
+	bsCustomFileInput.init();
+	
+	// 给radio控件绑定函数，初始化表格
+	$("input[name='importTableName']").bind("click", function() {
+		//console.log($(this).val());
+		var selectedvalue = $(this).val();
+		importDataType = selectedvalue;
+		contentDataImportDivInit(selectedvalue);
+	});
+	$("input[name='importTableName']").eq(0).click();
+	
+	$("#toolbar").css({
+		'padding-top' : 10,
+		'padding-left' : 15
+	})
+}
+
+/****************************** 结账操作 *********************************/
+
+// 结账作业
+function closingAccount(){
+	$.messager.confirm('请确认！', '确定以今天为结账日期进行结账作业吗？操作后历史资料不允许变更！！', function(r) {
+		if (r) {
+			$.messager.progress('close');
+			$.ajax({
+				url : "closingAccount/closing.action",
+				type : "post",
+				dataType : "json",
+				data : {
+					member_id : member_id
+				},
+				scriptCharset : "utf-8",
+				success : function(data) {
+					//console.log(data);
+					if (data.result == true || data.result == "true") {
+						operateAlert(true, data.msg, "");
+					} else {
+						operateAlert(false, "", data.msg);
+					}
+				}
+			})
+		}
+	});
+}
+
+function loadClosingAccount() {
+	$("#toolbar").css("padding-top","");
+	$("#toolbar").css("padding-left","");
+	var url;
+	url="closingAccount/listSplit.action";
+	var table = $("#contentClosingAccount");
+	table.bootstrapTable('destroy');
+	table.empty();
+	table.fadeIn(100);
+	table.bootstrapTable({
+		method: 'post',
+		contentType: "application/x-www-form-urlencoded",
+		url: url,
+		dataType: "json",
+		height : tableHeight(),
+		striped: true,
+		cache: false,
+		sortable: true,
+		totalField: "count",
+		dataField: "list", //后端 json 对应的表格数据 key
+		pageNumber: 1,
+		pagination: true,
+		pageSize: 15, //单页记录数
+		pageList: [5,15,30,50,100,200,300,500],//分页步进值
+		sidePagination : "server",//指定服务器端分页
+		//queryParamsType:'',//查询参数组织方式
+		queryParams: function (params) {
+			//console.log(parseInt(params.offset/5)+1);
+			//console.log(params.limit);
+            return {
+            	currentPage : parseInt(params.offset/params.limit)+1,
+				lineSize : params.limit
+            }
+        },
+		paginationLoop: false,
+		paginationHAlign : "left",
+		//buttonsPrefix: 'btn btn-sm',
+		toolbar: "#toolbar",
+        showColumns: true,
+        showRefresh: true,
+        clickToSelect: true,//是否启用点击选中行
+		minimumCountColumns: 2,
+		theadClasses : "thead-dark", // 表头颜色
+		showExport : true, // 是否显示导出按钮
+		buttonsAlign : "right", // 按钮位置
+		exportTypes : ['xlsx'], // 导出文件类型
+		exportDataType : "limit",
+		exportOptions : {
+			// ignoreColumn: [0,0], //忽略某一列的索引
+			fileName : 'allClosingAccount', // 文件名称设置
+			worksheetName : 'Sheet1', // 表格工作区名称
+			tableName : 'DataTable'
+		},
+		onLoadSuccess : function(data) {
+            //console.log(data);
+        },
+        idField: 'closing_id',//主键
+		columns : [{
+					title : '序号',
+					align: "center",
+					width: 40,
+					formatter: function (value, row, index) {
+					    // 获取每页显示的数量
+						var pageSize = table.bootstrapTable('getOptions').pageSize;
+						//console.log("pageSize : " + pageSize);
+						// 获取当前是第几页
+						var pageNumber = table.bootstrapTable('getOptions').pageNumber;
+						//console.log("pageNumber : " + pageNumber);
+						// 返回序号，注意index是从0开始的，所以要加上1
+						return pageSize * (pageNumber - 1) + index + 1;
+					}
+				}, {
+					field : 'closing_id',
+					title : 'ID',
+					valign : 'middle',
+					align : 'center',
+					visible : false
+				}, {
+					field : 'closing_date',
+					title : '结账日期',
+					valign : 'middle',
+					align : 'center',
+					formatter: function (value, row, index) {
+						return new Date(value.time).format('yyyy-MM-dd');
+					}
+				}, {
+					field : 'member_id',
+					title : '处理人员',
+					valign : 'middle',
+					align : 'center'
+				}]
+	});
+}
+
+// 载入结账页面前先进行的设置处理函数
+function closingAccountSetting(){
+	$("#toolbar").css({
+		'padding-top' : 10,
+		'padding-left' : 15
+	})
+}
 
 
 
@@ -2579,6 +4918,29 @@ function getAllUnlockedList3(type, divName, valueName, textName, checkName, pare
 					}
 				}
 			})
+		}
+	})
+}
+function getAllUnlockedListMulti(type, selectName, valueName, textName, selectedVal) {
+	console.log(type, selectName, valueName, textName, selectedVal)
+	$.ajax({
+		url : type + "/listUnlocked.action",
+		type : "post",
+		dataType : "json",
+		scriptCharset : "utf-8",
+		success : function(data) {
+			var select = $('#' + selectName);
+			var list = data;
+			select.empty();
+			var option = $("<option value=0 selceted>--- 请选择 ---</option>");
+			option.appendTo(select);
+			for (var i in list) {
+				var option = $("<option value=" + list[i][valueName] + ">" + list[i][textName] + "</option>");
+				option.appendTo(select);
+			}
+			select.selectpicker('refresh');  
+			select.selectpicker('render');
+			select.val(selectedVal);
 		}
 	})
 }
@@ -3029,5 +5391,158 @@ window.operateEvents = {
 		
 		//顯示模態框
 		$("#showUpdateDept").modal("show");
+	},
+
+	// 显示修改入库记录模态框
+	"click #editWarehouseIn" : function(e, value, row, index) {
+		console.log(row)
+		$("#showUpdateWarehouseIn .modal-dialog .modal-content .modal-header .modal-title").text("修改入库记录");
+		$("#btnUpdateWarehouseIn").fadeIn(10);
+		$("#btnAddWarehouseIn").fadeOut(10);
+		
+		$("#modalWarehouseInId").val("");
+		$("#modalWarehouseInInDate").val("");
+		laydate.render({
+			elem: '#modalWarehouseInInDate' //指定元素
+		});
+		$("#modalWarehouseInTradeName").val("");
+		$("#modalWarehouseInSpec").val("");
+		$("#modalWarehouseInPartUnit").val("");
+		$("#modalWarehouseInQuantity").val("");
+		$("#modalWarehouseInPdrNo").val("");
+		$("#modalWarehouseInPurSheetId").val("");
+		$("#modalWarehouseInPrice").val("");
+		$("#modalWarehouseInNote").val("");
+		
+		var in_id = row.in_id;
+		var in_date = new Date(row.in_date.time).format('yyyy-MM-dd');
+		var part_code = row.part_code;
+		var quantity = row.quantity;
+		var pur_sheet_id = row.pur_sheet_id;
+		var price = row.price;
+		var note = row.note;
+		var in_reason = row.in_reason;
+		var pdr_no = row.pdr_no
+		var tradename = row.partInfo.tradename
+		var spec = row.partInfo.spec
+		var unit = row.partInfo.unit
+		
+		$("#modalWarehouseInId").val(in_id);
+		$("#modalWarehouseInInDate").val(in_date);
+		$("#modalWarehouseInPartCode").val(part_code);
+		/*getAllUnlockedListMulti("partinfo", "modalWarehouseInPartCode", "id", "part_code", part_code);
+		var id = row.partInfo.id;
+		if(id != "0" && id != 0){
+			$.ajax({
+				url : "partInfo/findById.action",
+				type : "post",
+				dataType : "json",
+				data : {
+					id : id
+				},
+				scriptCharset : "utf-8",
+				success : function(data) {
+					$("#modalWarehouseInTradeName").val(data.tradename);
+					$("#modalWarehouseInSpec").val(data.spec);
+					$("#modalWarehouseInPartUnit").val(data.type_unit_type.sub_type);
+				}
+			})
+		}*/
+
+		$("#modalWarehouseInTradeName").val(tradename);
+		$("#modalWarehouseInSpec").val(spec);
+		$("#modalWarehouseInPartUnit").val(unit);
+		
+		$("#modalWarehouseInQuantity").val(quantity);
+		$("#modalWarehouseInPurSheetId").val(pur_sheet_id);
+		$("#modalWarehouseInPrice").val(price);
+		$("#modalWarehouseInNote").val(note);
+		listByParentType("modalWarehouseInInReason", "id", "sub_type", "in_reason", in_reason);
+		var in_reason_text = row.type_in_reason.sub_type;
+		if (in_reason_text=="正常采购入库" || in_reason_text=="其它入库") {
+			$('#modalWarehouseInPdrNo').attr("disabled",true);
+			$("#modalWarehouseInPdrNo").val("");
+		} else if (in_reason_text == "退库") {
+			$('#modalWarehouseInPdrNo').attr("disabled",false);
+			$("#modalWarehouseInPdrNo").val(pdr_no);
+		}
+		
+		//清空异常提示文字
+		$("#modalWarehouseInMsg").text("");
+		//显示模态框
+		$("#showUpdateWarehouseIn").modal("show");
+	},
+	
+	// 显示修改出库记录模态框
+	"click #editWarehouseOut" : function(e, value, row, index) {
+		$("#showUpdateWarehouseOut .modal-dialog .modal-content .modal-header .modal-title").text("修改入库记录");
+		$("#btnUpdateWarehouseOut").fadeIn(10);
+		$("#btnAddWarehouseOut").fadeOut(10);
+		
+		$("#modalWarehouseOutId").val("");
+		$("#modalWarehouseOutOutDate").val("");
+		laydate.render({
+			elem: '#modalWarehouseOutOutDate' //指定元素
+		});
+		$("#modalWarehouseOutTradeName").val("");
+		$("#modalWarehouseOutSpec").val("");
+		$("#modalWarehouseOutPartUnit").val("");
+		$("#modalWarehouseOutTotalQuantity").val("");
+		$("#modalWarehouseOutPdrNo").val("");
+		$("#modalWarehouseOutNote").val("");
+		
+		var out_id = row.out_id;
+		var out_date = new Date(row.out_date.time).format('yyyy-MM-dd');
+		var part_code = row.part_code;
+		var total_quantity = row.total_quantity;
+		var out_reason = row.out_reason;
+		var pdr_no = row.pdr_no
+		var note = row.note;
+		var tradename = row.partInfo.tradename
+		var spec = row.partInfo.spec
+		var unit = row.partInfo.unit
+		
+		$("#modalWarehouseOutId").val(out_id);
+		$("#modalWarehouseOutOutDate").val(out_date);
+		$("#modalWarehouseOutPartCode").val(part_code);
+		/*getAllUnlockedListMulti("partinfo", "modalWarehouseOutPartCode", "id", "part_code", part_code);
+		var id = row.partInfo.id;
+		if(id != "0" && id != 0){
+			$.ajax({
+				url : "partInfo/findById.action",
+				type : "post",
+				dataType : "json",
+				data : {
+					id : id
+				},
+				scriptCharset : "utf-8",
+				success : function(data) {
+					$("#modalWarehouseOutTradeName").val(data.tradename);
+					$("#modalWarehouseOutSpec").val(data.spec);
+					$("#modalWarehouseOutPartUnit").val(data.type_unit_type.sub_type);
+				}
+			})
+		}*/
+
+		$("#modalWarehouseOutTradeName").val(tradename);
+		$("#modalWarehouseOutSpec").val(spec);
+		$("#modalWarehouseOutPartUnit").val(unit);
+		
+		$("#modalWarehouseOutTotalQuantity").val(total_quantity);
+		$("#modalWarehouseOutNote").val(note);
+		listByParentType("modalWarehouseOutOutReason", "id", "sub_type", "out_reason", out_reason);
+		var out_reason_text = row.type_out_reason.sub_type;
+		if (out_reason_text=="正常订单出库") {
+			$('#modalWarehouseOutPdrNo').attr("disabled",false);
+			$("#modalWarehouseOutPdrNo").val(pdr_no);
+		} else if (out_reason_text == "其它出库") {
+			$('#modalWarehouseOutPdrNo').attr("disabled",true);
+			$("#modalWarehouseOutPdrNo").val("");
+		}
+		
+		//清空异常提示文字
+		$("#modalWarehouseOutMsg").text("");
+		//显示模态框
+		$("#showUpdateWarehouseOut").modal("show");
 	}
 }

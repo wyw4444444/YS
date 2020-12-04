@@ -85,5 +85,8 @@
 	<select id="findJointType" resultType="Type" parameterType="String">
 		SELECT * FROM tbltype WHERE  locked=0 AND #{joint_type}= CONCAT(CONCAT(parent_type,'-'),sub_type);
 	</select>
+	<select id="findByParentType" resultType="Type" parameterType="String">
+		SELECT * FROM tbltype WHERE parent_type=#{parent_type} AND upper_id=0 ORDER BY id;
+	</select>
 	
 </mapper>

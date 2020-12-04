@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.IRecordDAO">
+	<cache />
+	<insert id="doCreateRecord" parameterType="Map">
+		INSERT INTO tblmember_record(member_id,reg_time)
+		VALUES(#{member_id},#{reg_time});
+	</insert>
+	
+	<select id="getAllCount" parameterType="java.util.Map" resultType="Long" flushCache="true">
+		SELECT COUNT(*) FROM tblmember_record
+		<where>
+			<if test="beginDate != null">
+				reg_time between #{beginDate} and #{endDate}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findAllSplit" parameterType="java.util.Map" resultType="Record" flushCache="true">
+		SELECT * FROM tblmember_record
+		<where>
+			<if test="beginDate != null">
+				reg_time between #{beginDate} and #{endDate}
+			</if>
+		</where>
+		ORDER BY no ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+</mapper>

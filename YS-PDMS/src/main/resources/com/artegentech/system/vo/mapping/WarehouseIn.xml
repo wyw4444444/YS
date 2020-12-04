@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.IWarehouseInDAO">
+	<cache />
+	<insert id="doCreateBatch" parameterType="java.util.List">
+		INSERT INTO tblwarehouse_in(in_id,in_date,part_code,quantity,pur_sheet_id,price,member_id,note,in_reason,pdr_no,surplus_quantity,locked,lock_date,history_in_id)
+		VALUES
+		<foreach collection ="list" item="warehouseIn" separator =",">
+			(#{warehouseIn.in_id},#{warehouseIn.in_date},#{warehouseIn.part_code},#{warehouseIn.quantity},#{warehouseIn.pur_sheet_id},#{warehouseIn.price},#{warehouseIn.member_id},#{warehouseIn.note},#{warehouseIn.in_reason},#{warehouseIn.pdr_no},#{warehouseIn.surplus_quantity},#{warehouseIn.locked},#{warehouseIn.lock_date},#{warehouseIn.history_in_id})
+        </foreach >
+	</insert>
+	<insert id="doCreate" parameterType="WarehouseIn">
+		INSERT INTO tblwarehouse_in(in_id,in_date,part_code,quantity,pur_sheet_id,price,member_id,note,in_reason,pdr_no,surplus_quantity,locked,lock_date,history_in_id)
+		VALUES(#{in_id},#{in_date},#{part_code},#{quantity},#{pur_sheet_id},#{price},#{member_id},#{note},#{in_reason},#{pdr_no},#{surplus_quantity},#{locked},#{lock_date},#{history_in_id});
+	</insert>
+	<update id="doUpdate" parameterType="WarehouseIn">
+		UPDATE tblwarehouse_in SET part_code=#{part_code},quantity=#{quantity},pur_sheet_id=#{pur_sheet_id},price=#{price},member_id=#{member_id},note=#{note},in_reason=#{in_reason},pdr_no=#{pdr_no},surplus_quantity=#{surplus_quantity},locked=#{locked},lock_date=#{lock_date},history_in_id=#{history_in_id} WHERE in_id=#{in_id};
+	</update>
+	<select id="getDayIdNum" parameterType="String" resultType="Long">
+		SELECT COUNT(*) FROM tblwarehouse_in WHERE in_id LIKE #{pre_in_id};
+	</select>
+	<select id="findById" resultType="WarehouseIn" parameterType="String">
+		SELECT in_id,in_date,part_code,quantity,pur_sheet_id,price,amount,member_id,note,in_reason,pdr_no,surplus_quantity,storage_amount,locked,lock_date,history_in_id FROM tblwarehouse_in WHERE in_id=#{in_id};
+	</select>
+	<select id="findAll" resultType="WarehouseIn">
+		SELECT in_id,in_date,part_code,quantity,pur_sheet_id,price,amount,member_id,note,in_reason,pdr_no,surplus_quantity,storage_amount,locked,lock_date,history_in_id FROM tblwarehouse_in;
+	</select>
+	<select id="findAllUnlocked" resultType="WarehouseIn">
+		SELECT in_id,in_date,part_code,quantity,pur_sheet_id,price,amount,member_id,note,in_reason,pdr_no,surplus_quantity,storage_amount,locked,lock_date,history_in_id FROM tblwarehouse_in WHERE locked=0;
+	</select>
+	<select id="findAllNoLockedByPartCode" resultType="WarehouseIn" parameterType="String">
+		SELECT in_id,in_date,part_code,quantity,pur_sheet_id,price,amount,member_id,note,in_reason,pdr_no,surplus_quantity,storage_amount,locked,lock_date,history_in_id FROM tblwarehouse_in 
+		WHERE locked=0 AND part_code=#{part_code} ORDER BY in_date,in_id ASC;
+	</select>
+	<select id="findAllSplit" parameterType="java.util.Map" resultType="WarehouseIn">
+		SELECT in_id,in_date,part_code,quantity,pur_sheet_id,price,amount,member_id,note,in_reason,pdr_no,surplus_quantity,storage_amount,locked,lock_date,history_in_id FROM tblwarehouse_in
+		<where>
+			<if test="start_date==null or end_date==null">
+				<if test="column != null and keyword !=null">
+					${column} = #{keyword}
+				</if>
+			</if>
+			<if test="start_date != null and end_date != null">
+				in_date BETWEEN #{start_date} AND #{end_date} 
+				<if test="column != null and keyword !=null">
+					and ${column} = #{keyword}
+				</if>
+			</if>
+		</where>
+		ORDER BY in_date,in_id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="findAllSplit2" parameterType="java.util.Map" resultType="WarehouseIn">
+		SELECT in_id,in_date,part_code,quantity,pur_sheet_id,price,amount,member_id,note,in_reason,pdr_no,surplus_quantity,storage_amount,locked,lock_date,history_in_id FROM tblwarehouse_in
+		WHERE history_in_id is null 
+		<if test="start_date==null or end_date==null">
+			<if test="column != null and keyword !=null">
+				AND ${column} = #{keyword}
+			</if>
+		</if>
+		<if test="start_date != null and end_date != null">
+			AND in_date BETWEEN #{start_date} AND #{end_date} 
+			<if test="column != null and keyword !=null">
+				AND ${column} = #{keyword}
+			</if>
+		</if>
+		ORDER BY in_date,in_id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="getAllCount" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM tblwarehouse_in
+		<where>
+			<if test="start_date==null or end_date==null">
+				<if test="column != null and keyword !=null">
+					${column} = #{keyword}
+				</if>
+			</if>
+			<if test="start_date != null and end_date != null">
+				in_date BETWEEN #{start_date} AND #{end_date} 
+				<if test="column != null and keyword !=null">
+					and ${column} = #{keyword}
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="getAllCount2" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM tblwarehouse_in
+		WHERE history_in_id is null 
+		<if test="start_date==null or end_date==null">
+			<if test="column != null and keyword !=null">
+				AND ${column} = #{keyword}
+			</if>
+		</if>
+		<if test="start_date != null and end_date != null">
+			AND in_date BETWEEN #{start_date} AND #{end_date} 
+			<if test="column != null and keyword !=null">
+				AND ${column} = #{keyword}
+			</if>
+		</if>
+	</select>
+	<select id="findAllUnlockedSplit" parameterType="java.util.Map" resultType="WarehouseIn">
+		SELECT in_id,in_date,part_code,quantity,pur_sheet_id,price,amount,member_id,note,in_reason,pdr_no,surplus_quantity,storage_amount,locked,lock_date,history_in_id FROM tblwarehouse_in
+		WHERE locked=0 
+		<if test="start_date==null or end_date==null">
+			<if test="column != null and keyword !=null">
+				AND ${column} = #{keyword}
+			</if>
+		</if>
+		<if test="start_date != null and end_date != null">
+			AND in_date BETWEEN #{start_date} AND #{end_date} 
+			<if test="column != null and keyword !=null">
+				AND ${column} = #{keyword}
+			</if>
+		</if>
+		ORDER BY in_date,in_id ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="getAllUnlockedCount" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM tblwarehouse_in
+		WHERE locked=0 
+		<if test="start_date==null or end_date==null">
+			<if test="column != null and keyword !=null">
+				AND ${column} = #{keyword}
+			</if>
+		</if>
+		<if test="start_date != null and end_date != null">
+			AND in_date BETWEEN #{start_date} AND #{end_date} 
+			<if test="column != null and keyword !=null">
+				AND ${column} = #{keyword}
+			</if>
+		</if>
+	</select>
+	<select id="getAllNoLockedByPartCodeCount" parameterType="String" resultType="Long">
+		SELECT COUNT(*) FROM tblwarehouse_in
+		WHERE locked=0 AND part_code=#{part_code};
+	</select>
+	<select id="findAllSurplusListByPartCode" parameterType="String" resultType="WarehouseIn">
+		SELECT in_id,in_date,part_code,quantity,pur_sheet_id,price,amount,member_id,note,in_reason,pdr_no,surplus_quantity,storage_amount,locked,lock_date,history_in_id FROM tblwarehouse_in
+		WHERE locked=0 AND part_code=#{part_code} AND surplus_quantity>0 ORDER BY in_date,in_id ASC;
+	</select>
+	<select id="findAllStorage" resultType="WarehouseIn">
+		SELECT in_id,in_date,part_code,quantity,pur_sheet_id,price,amount,member_id,note,in_reason,pdr_no,surplus_quantity,storage_amount,locked,lock_date,history_in_id FROM tblwarehouse_in
+		WHERE locked=0 AND surplus_quantity>0 ORDER BY in_date,in_id ASC;
+	</select>
+	<select id="findAllStorageSplit" parameterType="java.util.Map" resultType="WarehouseIn">
+		SELECT in_id,in_date,part_code,quantity,pur_sheet_id,price,amount,member_id,note,in_reason,pdr_no,surplus_quantity,storage_amount,locked,lock_date,history_in_id FROM tblwarehouse_in
+		WHERE locked=0 AND surplus_quantity>0 
+		<if test="column != null and keyword !=null">
+			AND ${column} = #{keyword}
+		</if>
+		ORDER BY in_id,in_id ASC LIMIT #{start},#{lineSize};
+	</select>
+	<select id="getAllStorageCount" parameterType="java.util.Map" resultType="Long">
+		SELECT COUNT(*) FROM tblwarehouse_in 
+		WHERE locked=0 AND surplus_quantity>0 
+		<if test="column != null and keyword !=null">
+			AND ${column} = #{keyword}
+		</if>
+	</select>
+	<select id="findAllStorageByPartCodeSplit" parameterType="java.util.Map" resultType="WarehouseIn">
+		SELECT part_code,sum(surplus_quantity) as surplus_quantity,sum(storage_amount) as storage_amount FROM tblwarehouse_in
+		WHERE locked=0 AND surplus_quantity>0 GROUP BY part_code 
+		LIMIT #{start},#{lineSize};
+	</select>
+	<select id="getAllStorageByPartCodeCount" resultType="Long">
+		SELECT COUNT(DISTINCT part_code) FROM tblwarehouse_in 
+		WHERE locked=0 AND surplus_quantity>0;
+	</select>
+	<select id="getSumQuantityByPartCode" parameterType="String" resultType="Double">
+		SELECT SUM(quantity) FROM tblwarehouse_in WHERE locked=0;
+	</select>
+	<select id="getSumSurplusQuantityByPartCode" parameterType="String" resultType="Double">
+		SELECT SUM(surplus_quantity) FROM tblwarehouse_in WHERE locked=0;
+	</select>
+	<select id="getSumStorageAmount" resultType="Double">
+		SELECT SUM(storage_amount) FROM tblwarehouse_in 
+		WHERE locked=0 
+		<if test="column != null and keyword !=null">
+			AND ${column} = #{keyword}
+		</if>
+	</select>
+</mapper>

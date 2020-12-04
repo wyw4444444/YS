@@ -1,6 +1,7 @@
 var part_code = localStorage.getItem("part_code")
 var version = localStorage.getItem("archives_version")
 var id = localStorage.getItem("knowledge_id")
+var sessionRoles;
 $('document').ready(function(){
 	console.log(part_code,version,id)
 	
@@ -15,7 +16,9 @@ $('document').ready(function(){
 		traditional : true,
 		success : function(data) {
 			console.log(data)
+			var member = data.reg_man;
 			$('#number').val(data.part_code);
+			$('#part_type').val(data.part_type);
 			$('#version').val(data.version);
 			$('#name').val(data.part_name);
 			$('#desc').val(data.descr);
@@ -25,52 +28,58 @@ $('document').ready(function(){
 				$('#printIframe').attr('src',localFormatUrl(data.fileUrl))
 			}
 //			$('.fileShow').attr('src',localFormatUrl(data.file))
-			var status = data.status
-			if(data.status=="1"){
-				$('.submit').show();
-				$('.cancel').show();
-				$('.getback').show();
-				$('.reject').show();
-			}
-			if(data.status=="3"||data.status=="2"||data.status=="4"){
-				$('.update').show();
-				$('.fileContent').show();
-			}
-			if(data.status=="5"){
-				$('.levelup').show(); 
-				$('.print').show(); 
-				$('.delete').show(); 
-				$('.pdfContent').show();
-			}
-			if(data.status=="6"){
-				$('.pdfContent').show();
-			}
-//			查詢分階列表
-			$.ajax({
-				type : "POST",
-				url : "knowledge/findPartList.action",
-				dataType : "json",
-				data : {
-					knowledge_id : data.id
-				},
-				traditional : true,
-				success : function(data) {
-					console.log(data)
-					for(var i=0;i<data.length;i++){
-						if(status!="5"&&status!="6"){
-							var html = '<tr><td>'+data[i].part_code+'</td><td>'+data[i].version+'</td>'
-							+'<td><button class="choose_knowledgePartDetail btn btn-primary" title="查看">查看</button></td>'
-							+'<td class="fileUrl" style="display:none;">'+data[i].fileUrl+'</td>'
-							+'</tr>';							
-						}else{
-							var html = '<tr><td>'+data[i].part_code+'</td><td>'+data[i].version+'</td>'
-							+'<td></td>'
-							+'<td class="fileUrl" style="display:none;">'+data[i].fileUrl+'</td>'
-							+'</tr>';
-						}
-						$('.partList tbody').append(html)
+			getActiveUserRolesActions(function(){
+				var status = data.status
+				if(data.status=="1"){
+					if(sessionRoles=="super_admin"||sessionRoles=="admin"){
+						$('.submit').show();
+						$('.reject').show();
+					}
+					if(member_id==member){
+						$('.getback').show();
+						$('.cancel').show();
 					}
 				}
+				if(data.status=="3"||data.status=="2"||data.status=="4"){
+					$('.update').show();
+					$('.fileContent').show();
+				}
+				if(data.status=="5"){
+					$('.levelup').show(); 
+					$('.print').show(); 
+					$('.delete').show(); 
+					$('.pdfContent').show();
+				}
+				if(data.status=="6"){
+					$('.pdfContent').show();
+				}
+	//			查詢分階列表
+				$.ajax({
+					type : "POST",
+					url : "knowledge/findPartList.action",
+					dataType : "json",
+					data : {
+						knowledge_id : data.id
+					},
+					traditional : true,
+					success : function(data) {
+						console.log(data)
+						for(var i=0;i<data.length;i++){
+							if(status!="5"&&status!="6"){
+								var html = '<tr><td>'+data[i].part_code+'</td><td>'+data[i].version+'</td>'
+								+'<td><button class="choose_knowledgePartDetail btn btn-primary" title="查看">查看</button></td>'
+								+'<td class="fileUrl" style="display:none;">'+data[i].fileUrl+'</td>'
+								+'</tr>';							
+							}else{
+								var html = '<tr><td>'+data[i].part_code+'</td><td>'+data[i].version+'</td>'
+								+'<td></td>'
+								+'<td class="fileUrl" style="display:none;">'+data[i].fileUrl+'</td>'
+								+'</tr>';
+							}
+							$('.partList tbody').append(html)
+						}
+					}
+				})
 			})
 		}
 	})
@@ -234,4 +243,26 @@ function doPrint(){
     }else
         $("#printIframe")[0].contentWindow.print();//不知为什么在IE中一直无法打印文件
  
+}
+
+//獲得登錄的member_id對應的Roles，以便後面的js函數中調用
+function getActiveUserRolesActions(cb){
+	$.ajax({
+		url : "member/getActiveUserRolesActions.action",
+		type : "post",
+		dataType : "json",
+		data : {
+			member_id : member_id
+		},
+		success : function(data) {
+			console.log(22,data)
+			sessionRolesArray = data.allRoles;
+			// 將數組轉為字符串，以便用search函數查找
+			sessionRoles = sessionRolesArray.join(',');
+			cb()
+			//console.log(sessionRoles);
+			//console.log(sessionRoles.length);
+			//console.log(sessionRoles.search("super_admin"));
+		}
+	})
 }

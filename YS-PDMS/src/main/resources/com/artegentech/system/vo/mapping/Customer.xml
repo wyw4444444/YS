@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.ICustomerDAO">
+	<cache />
+	<select id="findByShort_name" resultType="Customer" parameterType="String" flushCache="true">
+		SELECT * FROM tblcustomer
+		WHERE short_name = #{short_name};
+	</select>
+	
+	<select id="findByNo" resultType="Customer" parameterType="Integer" flushCache="true">
+		SELECT * FROM tblcustomer
+		WHERE no = #{no};
+	</select>
+	
+	<insert id="doCreate" parameterType="Customer" useGeneratedKeys="true" keyProperty="no">
+		INSERT INTO tblcustomer(short_name,full_name,reg_time,member_id,locked)
+		VALUES(#{short_name},#{full_name},#{reg_time},#{member_id},#{locked});
+	</insert>
+	<update id="doUpdate" parameterType="Customer">
+		UPDATE tblcustomer SET short_name=#{short_name},full_name=#{full_name},locked=#{locked} WHERE no=#{no};
+	</update>
+	
+	<select id="findAllSplit" parameterType="java.util.Map" resultType="Customer" flushCache="true">
+		SELECT * FROM tblcustomer
+		<where>
+			<if test="column != null and keyword !=null">
+				${column} LIKE #{keyword}
+			</if>
+		</where>
+		ORDER BY no ASC
+		LIMIT #{start},#{lineSize};
+	</select>
+	
+	<select id="getAllCount" parameterType="java.util.Map" resultType="Long" flushCache="true">
+		SELECT COUNT(*) FROM tblcustomer
+		<where>
+			<if test="column != null and keyword !=null">
+				${column} LIKE #{keyword}
+			</if>
+		</where>
+	</select>
+</mapper>

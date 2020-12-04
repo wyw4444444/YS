@@ -232,6 +232,17 @@ public class TypeAction extends AbstractAction {
 		JSONObject json = JSONObject.fromObject(map);
 		return json;
 	}
+	@RequiresUser
+	@SuppressWarnings("unchecked")
+	@RequestMapping("listByParentType")
+	public List<Type> listByParentType(HttpServletRequest request) throws Exception {
+		List<Type> result = new ArrayList<Type>();
+		String parent_type = request.getParameter("parent_type");
+		result = this.typeService.getByParentType(parent_type);
+		JsonConfig jsonConfig = new JsonConfig();
+		JSONArray jsonArray = JSONArray.fromObject(result, jsonConfig);
+		return jsonArray;
+	}
 	
 	@Override
 	public String getType() {

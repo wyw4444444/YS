@@ -31,7 +31,7 @@
 								<table style="width:100%;margin: 0px;padding: 0px;border-collapse: separate; border-spacing: 0px 12px;">
 									<tr>
 										<td style="padding:0px;"><label class="control-label" for="mid">用户名：</label></td>
-										<td colspan="2"><input class="form-control input-sm"
+										<td colspan="2"><input class="form-control input-sm" 
 											type="text" name="mid" id="mid" placeholder="请输入用户名..." />
 										</td>
 										<td style="padding:0px;">

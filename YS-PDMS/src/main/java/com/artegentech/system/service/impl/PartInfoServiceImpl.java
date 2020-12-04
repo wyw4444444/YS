@@ -122,7 +122,13 @@ public class PartInfoServiceImpl extends AbstractService implements IPartInfoSer
 		
 		return this.partInfoDao.findAllUnlockedSplit(map);
 	}
-	
+	@Override
+	public List<PartInfo> getAllUnlocked() throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("start", 0);
+		map.put("lineSize", 999);
+		return this.partInfoDao.findAllUnlockedSplit(map);
+	}
 	
 	
 	@Override

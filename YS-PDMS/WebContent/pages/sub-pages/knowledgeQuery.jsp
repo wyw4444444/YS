@@ -10,15 +10,15 @@
 		<div class="form-inline">
 			<div class="form-group">
 				<div class="input-group">
-					<select class="form-control" id="knowledgeStatus">
-						<option value="">請選擇查詢狀態</option>
-						<option value="1">待審核</option>
-						<option value="2">取回重辦</option>
-						<option value="3">退回重辦</option>
-						<option value="4">已取消</option>
-						<option value="5">已發行</option>
-						<option value="6">已廢止</option>
-					</select>
+<!-- 					<select class="form-control" id="knowledgeStatus"> -->
+<!-- 						<option value="">請選擇查詢狀態</option> -->
+<!-- 						<option value="1">待審核</option> -->
+<!-- 						<option value="2">取回重辦</option> -->
+<!-- 						<option value="3">退回重辦</option> -->
+<!-- 						<option value="4">已取消</option> -->
+<!-- 						<option value="5">已發行</option> -->
+<!-- 						<option value="6">已廢止</option> -->
+<!-- 					</select> -->
 					<input class="form-control" type="text" placeholder="输入料號" id="docSearchKeyWord" name="docSearchKeyWord"/>
 					<button class="btn btn-secondary form-control" onclick="loadAllKnowledge()">查詢</button>
 				</div>

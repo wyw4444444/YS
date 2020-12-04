@@ -18,7 +18,7 @@
 	<context:component-scan base-package="com.artegentech" />
 	<!--在本程序之中設置要導入的資源文件路徑，直接通過classpath加載 -->
 	<context:property-placeholder location="classpath:database.properties" />
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
 		<property name="driverClass" value="${db.driver}" />	<!-- 驅動程序 -->
 		<property name="jdbcUrl" value="${db.url}" /><!-- 連接地址 -->
 		<!-- <property name="user" value="${db.user}" /> --><!-- 用戶名 -->

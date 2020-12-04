@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.artegentech.system.dao.IPDRDetailDAO">
+	<cache />
+	<select id="findByPDR_id" resultType="PDRDetail" parameterType="String" flushCache="true">
+		SELECT * FROM tblpdr_detail WHERE PDR_id=#{PDR_id};
+	</select>
+	
+	<select id="findByLate" resultType="PDRDetail" flushCache="true">
+		SELECT * FROM tblpdr_detail WHERE CURDATE() > end_date and actual_end_date is null;
+	</select>
+	
+	<select id="findByDays" resultType="PDRDetail" flushCache="true">
+		SELECT * FROM tblpdr_detail WHERE end_date &lt;= SUBDATE(CURDATE(),interval -5 day) 
+		and end_date &gt;= CURDATE()
+		and actual_end_date is null;
+	</select>
+	
+	<insert id="doCreate" parameterType="PDRDetail">
+		INSERT INTO tblpdr_detail(PDR_id,task,type,start_date,end_date,actual_end_date,dept,person,remark) 
+		VALUES(#{PDR_id},#{task},#{type},#{start_date},#{end_date},#{actual_end_date},#{dept},#{person},#{remark});
+	</insert>
+	
+	<delete id="removeByPDR_id" parameterType="String">
+		DELETE FROM tblpdr_detail WHERE  PDR_id=#{PDR_id} ;
+	</delete>
+	
+</mapper>

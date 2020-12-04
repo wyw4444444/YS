@@ -231,4 +231,19 @@ public class MemberAction extends AbstractAction {
 	public String getType() {
 		return null;
 	}
+	@RequestMapping("PMList")
+	public List<Member> PMList(HttpServletRequest request) throws Exception {
+		String flag = request.getParameter("flag");
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("column", "role_id");
+		map.put("keyword", 2);
+		
+		List<Member> result = new ArrayList<Member>();
+		result = this.memberService.getAllByRole(map);
+		
+		JsonConfig jsonConfig = new JsonConfig();
+		jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());
+		JSONArray jsonArray = JSONArray.fromObject(result, jsonConfig);
+		return jsonArray;
+	}
 }

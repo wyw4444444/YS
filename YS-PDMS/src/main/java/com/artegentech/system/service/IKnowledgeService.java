@@ -46,7 +46,7 @@ public interface IKnowledgeService {
 	
 	public List<Knowledge_part> findPartByCode(String part_code,String status,Integer currentPage, Integer lineSize);
 	
-	public List<Knowledge> findKnowledgeByCode(String part_code,String status,Integer currentPage, Integer lineSize);
+	public List<Knowledge> findKnowledgeByCode(String part_code,String status,Integer currentPage, Integer lineSize,String member_id);
 	
 	public Knowledge findOneKnowledge(String part_code, String version);
 

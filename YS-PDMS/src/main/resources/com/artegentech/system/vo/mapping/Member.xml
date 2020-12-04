@@ -114,6 +114,17 @@
 			</if>
 		</where>
 	</select>
+	<select id="findAllByRole" parameterType="java.util.Map" resultType="Member" flushCache="true">
+		SELECT member_id,member_name,password,reg_date,locked FROM tblmember
+		<where>
+			<if test="column !=null and keyword !=null">
+				member_id IN(
+					SELECT member_id FROM tblmember_role WHERE role_id = #{keyword}
+				)
+			</if>
+		</where>
+		ORDER BY member_id ASC
+	</select>
 	<select id="getAllCountByDept" parameterType="java.util.Map" resultType="Long" flushCache="true">
 		SELECT COUNT(*) FROM tblmember
 		<where>

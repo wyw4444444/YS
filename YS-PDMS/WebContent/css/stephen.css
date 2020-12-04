@@ -1,0 +1,79 @@
+
+.table .thead-blue th {
+		color: #fff;
+		background-color: #244062;
+		border-color: #ffffff;
+}
+
+
+.status_line {
+	background-color: #0ca30a;
+}
+	
+ .weekend{
+	background:	#FFF0F5;
+}
+
+.gantt_selected .weekend {
+	background : #f7eb91;
+}
+
+.gantt_grid_head_cell{
+	font-size:14px;
+}
+.gantt_task_content{
+	font-size:14px;
+}
+.gantt_side_content{
+	 font-family: "微软雅黑";
+	 font-size:14px;
+	 font-weight: bold
+}
+.gantt_tree_content, .gantt_tree_icon {
+		   font-family: "微软雅黑";
+		   height: 100%;
+		   display: inline-block;
+ } 
+ .gantt_task_progress_wrapper {
+	color: red;
+	background: red;
+}  
+
+
+
+
+		
+
+.gantt_task_content{
+	overflow: visible;
+	color: #2F4F4F;
+} 
+
+.gantt_task_line{
+	align:left;
+}
+
+.gantt_message_area{
+	top:60px !important;
+}	
+.gantt-infor{
+	word-wrap:break-word
+}	
+
+
+
+		
+.btn-white {
+  color: #495057;
+  border-top: 1px solid #ced4da !important; 
+  border-left: 1px solid #ced4da !important; 
+  border-bottom: 1px solid #ced4da !important; 
+  height: calc(1.5em + 0.75rem + 2px);
+}
+
+.btn-light {
+  line-height: 1.2 !important;
+}
+		
+
+

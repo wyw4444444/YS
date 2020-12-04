@@ -159,7 +159,7 @@ function showimage(t,type){
 	$("#ShowImage_Form").modal();
 }
 function downloadimage(t){
-	var source = $('.'+t+' img')
+	var source = $('.'+t+' img').length?$('.'+t+' img'):$('.'+t)
 	console.log(source)
 	for(var i=0;i<source.length;i++){
 		var url = source.eq(i).attr('src');

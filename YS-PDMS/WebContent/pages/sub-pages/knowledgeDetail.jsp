@@ -15,6 +15,12 @@
 				</div>
 				<div class="number input-group mb-3">
 					<div class="input-group-prepend">
+						<span class="input-group-text">類型</span>
+					</div>
+					<input type="text" class="form-control" id="part_type" name="part_type" readonly />
+				</div>
+				<div class="number input-group mb-3">
+					<div class="input-group-prepend">
 						<span class="input-group-text">料號</span>
 					</div>
 					<input type="text" class="form-control" id="number" name="number" placeholder="" readonly/>
